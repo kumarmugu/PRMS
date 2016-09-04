@@ -6,6 +6,7 @@ package sg.edu.nus.iss.phoenix.core.dao;
 
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
+
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
@@ -25,5 +26,6 @@ public interface DAOFactory {
          PresenterDAO getPresenterDAO();
         
         ProducerDAO getProducerDAO();
+
 	
 }
