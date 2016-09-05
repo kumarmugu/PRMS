@@ -10,6 +10,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
+import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 
 /**
  *
@@ -23,9 +24,6 @@ public interface DAOFactory {
 
 	UserDao getUserDAO();
         
-         PresenterDAO getPresenterDAO();
-        
-        ProducerDAO getProducerDAO();
-
+	ScheduleDAO getScheduleDAO();
 	
 }
