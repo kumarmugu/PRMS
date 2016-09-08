@@ -17,6 +17,8 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.core.dao.DBConnection;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
@@ -25,8 +27,8 @@ import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 public class ScheduleDAOImpl implements ScheduleDAO {
 
     DBConnection dbUtil;
-    
-    public ScheduleDAOImpl(){
+
+    public ScheduleDAOImpl() {
         dbUtil = new DBConnection();
     }
 
@@ -44,35 +46,34 @@ public class ScheduleDAOImpl implements ScheduleDAO {
      * @throws AnnualSchedueNotExistException
      */
     @Override
-    public ArrayList<ProgramSlot> loadAllForWeek(int year, int week) throws SQLException, AnnualSchedueNotExistException {
-        if (isAnnualScheduleExist(year)) {
+    public WeeklySchedule loadAllForWeek(WeeklySchedule ws) throws SQLException, AnnualSchedueNotExistException {
+        if (getAnnualSchedule(ws) != null) {
             Connection conn = dbUtil.openConnection();
             PreparedStatement stmt = null;
             String sql = "SELECT * FROM `program-slot` where weekStartDate = (select startDate from `weekly-schedule` where year=? and weekNo= ?); ";
             stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, year);
-            stmt.setInt(2, week);
-            ArrayList<ProgramSlot> searchResults = listQuery(stmt);
+            stmt.setInt(1, ws.getYear());
+            stmt.setInt(2, ws.getWeekNo());
+            ws = listQuery(stmt, ws);
             dbUtil.closeConnection(conn);
-            System.out.println("record size" + searchResults.size());
-            return searchResults;
+            return ws;
         } else {
             throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         }
     }
 
-    private boolean isAnnualScheduleExist(int year) throws SQLException {
-        boolean isExist = false;
+    private AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException {
+        AnnualSchedule as = null;
         Connection conn = dbUtil.openConnection();
         ResultSet result = null;
         PreparedStatement stmt = null;
         String sql = "SELECT * FROM `annual-schedule` where year = ?; ";
         stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, year);
+        stmt.setInt(1, ws.getYear());
         try {
             result = stmt.executeQuery();
             while (result.next()) {
-                isExist = true;
+                as = new AnnualSchedule(result.getInt("year"), result.getString("assingedBy"));
             }
         } finally {
             if (result != null) {
@@ -83,10 +84,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             }
             dbUtil.closeConnection(conn);
         }
-        return isExist;
+        return as;
     }
 
-    protected ArrayList<ProgramSlot> listQuery(PreparedStatement stmt) throws SQLException {
+    protected WeeklySchedule listQuery(PreparedStatement stmt, WeeklySchedule ws) throws SQLException {
 
         ArrayList<ProgramSlot> searchResults = new ArrayList<>();
         ResultSet result = null;
@@ -98,13 +99,15 @@ public class ScheduleDAOImpl implements ScheduleDAO {
                 ProgramSlot temp = createValueObject();
                 Timestamp startDate = result.getTimestamp("programStartDateTime");
                 Time duration = result.getTime("duration");
-                long endDate = startDate.getTime() + 60 * 60 * 1000; // Need to modify
+                long endDate = startDate.getTime() + (duration.getHours() * 60 + duration.getMinutes()) * 60 * 1000; // Need to modify
                 temp.setStartTime(result.getTimestamp("programStartDateTime"));
                 temp.setEndTime(new Date(endDate));
                 temp.setProgramName(result.getString("program-name"));
-
+                ws.setStartDate(result.getDate("weekStartDate"));
                 searchResults.add(temp);
             }
+            System.out.println("record size" + searchResults.size());
+            ws.setProgramSlots((ArrayList<ProgramSlot>) searchResults);
 
         } finally {
             if (result != null) {
@@ -115,9 +118,7 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             }
         }
 
-        return (ArrayList<ProgramSlot>) searchResults;
+        return ws;
     }
-
-    
 
 }

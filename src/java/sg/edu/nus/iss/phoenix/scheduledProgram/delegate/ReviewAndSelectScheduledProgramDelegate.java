@@ -5,9 +5,8 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.delegate;
 
-import java.util.ArrayList;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
-import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewSelectScheduledProgramService;
 
 /**
@@ -21,7 +20,7 @@ public class ReviewAndSelectScheduledProgramDelegate {
         service = new ReviewSelectScheduledProgramService();
     }
 
-    public ArrayList<ProgramSlot> reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
         return service.reviewSelectScheduledProgram(year, week);
     }
 }

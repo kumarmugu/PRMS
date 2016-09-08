@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
@@ -18,5 +19,5 @@ public interface ScheduleDAO {
 
     public abstract ProgramSlot createValueObject();
 
-    public abstract ArrayList<ProgramSlot> loadAllForWeek(int year, int week) throws SQLException, AnnualSchedueNotExistException;
+    public abstract WeeklySchedule loadAllForWeek(WeeklySchedule ws) throws SQLException, AnnualSchedueNotExistException;
 }

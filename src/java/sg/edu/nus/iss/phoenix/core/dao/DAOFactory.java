@@ -25,5 +25,8 @@ public interface DAOFactory {
 	UserDao getUserDAO();
         
 	ScheduleDAO getScheduleDAO();
+        
+        ProducerDAO getProducerDAO();
+        PresenterDAO getPresenterDAO();
 	
 }
