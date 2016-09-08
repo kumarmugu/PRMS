@@ -31,6 +31,13 @@
 				</a>
 			</td>
 	</tr>
+	<tr>
+		<td>
+				<a href="<c:url value="/nocturne/managesp"/>"> <fmt:message
+						key="caption.menu.managesp" />
+				</a>
+			</td>
+	</tr>
          <tr>
 		<td>
 				<a href="<c:url value="/nocturne/managepp"/>"> 

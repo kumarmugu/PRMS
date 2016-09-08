@@ -14,6 +14,7 @@ import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
@@ -33,19 +34,20 @@ public class ReviewSelectScheduledProgramService {
     public void processDelete(String id) {
     }
 
-    public ArrayList<ProgramSlot> reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
-        ArrayList<ProgramSlot> data = new ArrayList<ProgramSlot>();
-
+    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+        WeeklySchedule ws = null;
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
-                data = spdao.loadAllForWeek(Integer.parseInt(year), Integer.parseInt(week));
+                ws = new WeeklySchedule(Integer.parseInt(year), Integer.parseInt(week));
+                ws = spdao.loadAllForWeek(ws);
             } else {
                 Calendar cal = Calendar.getInstance();
-                data = spdao.loadAllForWeek(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
+                ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
+                ws = spdao.loadAllForWeek(ws);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ReviewSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return data;
+        return ws;
     }
 }
