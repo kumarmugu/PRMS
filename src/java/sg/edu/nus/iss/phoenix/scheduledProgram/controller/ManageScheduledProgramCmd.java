@@ -8,14 +8,14 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.controller;
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
-import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
-import sg.edu.nus.iss.phoenix.util.DateUtil;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
@@ -27,18 +27,20 @@ public class ManageScheduledProgramCmd implements Perform {
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        ArrayList<ProgramSlot> data = new ArrayList<>();
+        WeeklySchedule ws = new WeeklySchedule();
         String year = req.getParameter("year");
         String week = req.getParameter("week");
         try {
-            data = del.reviewSelectScheduledProgram(year, week);
-            req.setAttribute("events", data);
-            req.setAttribute("startDate", DateUtil.getStartDateOfWeek(year, week));
+            ws = del.reviewSelectScheduledProgram(year, week);
+            req.setAttribute("events", ws.getProgramSlots());
+            req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
-        } catch (AnnualSchedueNotExistException e) {
+            req.setAttribute("weekNo", ws.getWeekNo());
+            req.setAttribute("currentYear", ws.getYear());
+        } catch (AnnualSchedueNotExistException ex) {
+            Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
         }
-
         return "/pages/crudsp.jsp";
     }
 }

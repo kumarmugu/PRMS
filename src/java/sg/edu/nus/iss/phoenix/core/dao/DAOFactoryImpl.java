@@ -8,8 +8,8 @@ import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.impl.ProgramDAOImpl;
-import sg.edu.nus.iss.phonix.presenterproducer.dao.impl.PresenterDAOImpl;
-import sg.edu.nus.iss.phonix.presenterproducer.dao.impl.ProducerDAOImpl;
+import sg.edu.nus.iss.phoenix.presenterproducer.dao.impl.PresenterDAOImpl;
+import sg.edu.nus.iss.phoenix.presenterproducer.dao.impl.ProducerDAOImpl;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.impl.ScheduleDAOImpl;
 
