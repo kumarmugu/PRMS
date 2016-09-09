@@ -20,7 +20,7 @@ public class ReviewAndSelectScheduledProgramDelegate {
         service = new ReviewSelectScheduledProgramService();
     }
 
-    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
-        return service.reviewSelectScheduledProgram(year, week);
+    public WeeklySchedule reviewAndSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+        return service.reviewAndSelectScheduledProgram(year, week);
     }
 }

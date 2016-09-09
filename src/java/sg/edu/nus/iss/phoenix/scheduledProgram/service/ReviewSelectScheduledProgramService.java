@@ -35,7 +35,7 @@ public class ReviewSelectScheduledProgramService {
     public void processDelete(String id) {
     }
 
-    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+    public WeeklySchedule reviewAndSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
         WeeklySchedule ws = null;
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
