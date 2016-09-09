@@ -21,6 +21,9 @@
 	<definition name="crudrpPage" extends="homePage">
 		<put-attribute name="body" value="/pages/tilepages/crudrp.jsp" />
 	</definition>
+        <definition name="cruduserPage" extends="homePage">
+		<put-attribute name="body" value="/pages/tilepages/cruduser.jsp" />
+	</definition>
 	<definition name="crudspPage" extends="homePage">
 		<put-attribute name="body" value="/pages/tilepages/crudsp.jsp" />
 	</definition>

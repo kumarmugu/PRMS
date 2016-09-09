@@ -7,43 +7,48 @@
 <head>
 <link href="<c:url value='/css/main.css'/>" rel="stylesheet" type="text/css"/>
 <fmt:setBundle basename="ApplicationResources" />
-<title> <fmt:message key="title.crudrp"/> </title>
+<title> <fmt:message key="title.cruduser"/> </title>
 </head>
 <body>
-        <h1><fmt:message key="label.crudrp"/></h1>
+        <h1><fmt:message key="label.cruduser"/></h1>
         <c:url var="url" scope="page" value="/nocturne/addeditrp">
-        		<c:param name="name" value=""/>
-                <c:param name="description" value=""/>
-                <c:param name="duration" value=""/>
+        		<c:param name="id" value=""/>
+                <c:param name="name" value=""/>
+                <c:param name="roles" value=""/>
                 <c:param name="insert" value="true"/>
         </c:url>
-        <a href="${url}"><fmt:message key="label.crudrp.add"/></a>
+        <a href="${url}"><fmt:message key="label.cruduser.add"/></a>
         <br/><br/>
         <table class="borderAll">
             <tr>
-                <th><fmt:message key="label.crudrp.name"/></th>
-                <th><fmt:message key="label.crudrp.description"/></th>
-                <th><fmt:message key="label.crudrp.duration"/></th>
-                <th><fmt:message key="label.crudrp.edit"/> <fmt:message key="label.crudrp.delete"/></th>
+                <th><fmt:message key="label.cruduser.id"/></th>
+                <th><fmt:message key="label.cruduser.name"/></th>
+                <th><fmt:message key="label.cruduser.roles"/></th>
+                <th><fmt:message key="label.cruduser.edit"/> 
+                <th><fmt:message key="label.cruduser.delete"/></th>
             </tr>
-            <c:forEach var="crudrp" items="${users}" varStatus="status">
+            <c:forEach var="cruduser" items="${users}" varStatus="status">
                 <tr class="${status.index%2==0?'even':'odd'}">
-                    <td class="nowrap">${crudrp.name}</td>
-                    <td class="nowrap">${crudrp.name}</td>
-                    <td class="nowrap">${crudrp.name}</td>
+                    <td class="nowrap">${cruduser.id}</td>
+                    <td class="nowrap">${cruduser.name}</td>
+                    <td class="nowrap">${cruduser.roles}</td>
                     <td class="nowrap">
-                        <c:url var="updurl" scope="page" value="/nocturne/addeditrp">
-                            <c:param name="name" value="${crudrp.name}"/>
-                            <c:param name="description" value="${crudrp.name}"/>
-                            <c:param name="typicalDuration" value="${crudrp.name}"/>
+                        <c:url var="updurl" scope="page" value="/nocturne/addedituser">
+                            <c:param name="name" value="${cruduser.id}"/>
+                            <c:param name="description" value="${cruduser.name}"/>
+                            <c:param name="typicalDuration" value="${cruduser.roles}"/>
                              <c:param name="insert" value="false"/>
                         </c:url>
-                        <a href="${updurl}"><fmt:message key="label.crudrp.edit"/></a>
+                        <a href="${updurl}"><fmt:message key="label.cruduser.edit"/></a>
                         &nbsp;&nbsp;&nbsp;
-                        <c:url var="delurl" scope="page" value="/nocturne/deleterp">
-                            <c:param name="name" value="${crudrp.name}"/>
+                       
+                    </td>
+                    <td>
+                         <c:url var="delurl" scope="page" value="/nocturne/deleteuser">
+                            <c:param name="name" value="${cruduser.name}"/>
                         </c:url>
-                        <a href="${delurl}"><fmt:message key="label.crudrp.delete"/></a>
+                        <a href="${delurl}"><fmt:message key="label.cruduser.delete"/></a>
+                        
                     </td>
                 </tr>
             </c:forEach>
