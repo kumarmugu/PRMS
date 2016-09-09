@@ -31,7 +31,7 @@ public class ManageScheduledProgramCmd implements Perform {
         String year = req.getParameter("year");
         String week = req.getParameter("week");
         try {
-            ws = del.reviewAndSelectScheduledProgram(year, week);
+            ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
