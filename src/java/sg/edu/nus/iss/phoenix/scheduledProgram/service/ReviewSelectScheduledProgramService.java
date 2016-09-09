@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
@@ -39,12 +40,15 @@ public class ReviewSelectScheduledProgramService {
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
                 ws = new WeeklySchedule(Integer.parseInt(year), Integer.parseInt(week));
-                ws = spdao.loadAllForWeek(ws);
             } else {
                 Calendar cal = Calendar.getInstance();
                 ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
-                ws = spdao.loadAllForWeek(ws);
             }
+            AnnualSchedule as = spdao.getAnnualSchedule(ws);
+            if(as != null)
+                ws = spdao.loadAllScheduleForWeek(ws);
+            else 
+                 throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         } catch (SQLException ex) {
             Logger.getLogger(ReviewSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }

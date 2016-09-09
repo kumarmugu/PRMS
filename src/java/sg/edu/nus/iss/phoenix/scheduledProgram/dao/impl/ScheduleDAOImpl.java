@@ -46,23 +46,20 @@ public class ScheduleDAOImpl implements ScheduleDAO {
      * @throws AnnualSchedueNotExistException
      */
     @Override
-    public WeeklySchedule loadAllForWeek(WeeklySchedule ws) throws SQLException, AnnualSchedueNotExistException {
-        if (getAnnualSchedule(ws) != null) {
-            Connection conn = dbUtil.openConnection();
-            PreparedStatement stmt = null;
-            String sql = "SELECT * FROM `program-slot` where weekStartDate = (select startDate from `weekly-schedule` where year=? and weekNo= ?); ";
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, ws.getYear());
-            stmt.setInt(2, ws.getWeekNo());
-            ws = listQuery(stmt, ws);
-            dbUtil.closeConnection(conn);
-            return ws;
-        } else {
-            throw new AnnualSchedueNotExistException("Annual Schedule not exist");
-        }
+    public WeeklySchedule loadAllScheduleForWeek(WeeklySchedule ws) throws SQLException {
+        Connection conn = dbUtil.openConnection();
+        PreparedStatement stmt = null;
+        String sql = "SELECT * FROM `program-slot` where weekStartDate = (select startDate from `weekly-schedule` where year=? and weekNo= ?); ";
+        stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, ws.getYear());
+        stmt.setInt(2, ws.getWeekNo());
+        ws = listQuery(stmt, ws);
+        dbUtil.closeConnection(conn);
+        return ws;
     }
 
-    private AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException {
+    @Override
+    public AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException {
         AnnualSchedule as = null;
         Connection conn = dbUtil.openConnection();
         ResultSet result = null;
