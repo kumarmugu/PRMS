@@ -39,7 +39,6 @@ public class DAOFactoryImpl implements DAOFactory {
 		return rpdao;
 	}
 
-         @Override
     public PresenterDAO getPresenterDAO() {
         return rpresenterdao;
     }
