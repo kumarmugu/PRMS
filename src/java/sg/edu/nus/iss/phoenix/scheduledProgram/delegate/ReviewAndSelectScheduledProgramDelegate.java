@@ -7,17 +7,17 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.delegate;
 
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
-import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewSelectScheduledProgramService;
+import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewAndSelectScheduledProgramService;
 
 /**
  * * @author Mugunthan
  */
 public class ReviewAndSelectScheduledProgramDelegate {
 
-    private ReviewSelectScheduledProgramService service;
+    private ReviewAndSelectScheduledProgramService service;
 
     public ReviewAndSelectScheduledProgramDelegate() {
-        service = new ReviewSelectScheduledProgramService();
+        service = new ReviewAndSelectScheduledProgramService();
     }
 
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {

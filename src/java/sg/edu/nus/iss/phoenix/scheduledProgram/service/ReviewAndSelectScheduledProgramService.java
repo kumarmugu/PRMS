@@ -21,12 +21,12 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
  *
  * @author Mugunthan
  */
-public class ReviewSelectScheduledProgramService {
+public class ReviewAndSelectScheduledProgramService {
 
     DAOFactoryImpl factory;
     ScheduleDAO spdao;
 
-    public ReviewSelectScheduledProgramService() {
+    public ReviewAndSelectScheduledProgramService() {
         super();
         factory = new DAOFactoryImpl();
         spdao = factory.getScheduleDAO();
@@ -50,7 +50,7 @@ public class ReviewSelectScheduledProgramService {
             else 
                  throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         } catch (SQLException ex) {
-            Logger.getLogger(ReviewSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ws;
     }
