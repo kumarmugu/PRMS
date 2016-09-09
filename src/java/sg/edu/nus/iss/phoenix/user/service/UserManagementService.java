@@ -44,5 +44,28 @@ public class UserManagementService {
         
         return alluser;
     }
+
+    public void processsModifyUser(User user) {
+        
+        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void processDeletUser(User user) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void processCreateUser(User user) {
+        try {
+            usrdao.create(user);
+            // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        } catch (SQLException ex) {
+            Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public ArrayList<User> processFindUser(String userName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

@@ -10,39 +10,49 @@
 
 <fmt:setBundle basename="ApplicationResources" />
 
-<title><fmt:message key="title.setuprp" /></title>
+<title><fmt:message key="title.setupuser" /></title>
 </head>
 <body>
-	<form action="${pageContext.request.contextPath}/nocturne/enterrp" method=post>
+	<form action="${pageContext.request.contextPath}/nocturne/enteruser" method=post>
 		<center>
 			<table cellpadding=4 cellspacing=2 border=0>
 				<tr>
-					<th width="30%"><fmt:message key="label.crudrp.name" /></th>
-					<th width="45%"><fmt:message key="label.crudrp.description" /></th>
-					<th width="25%"><fmt:message key="label.crudrp.duration" /></th>
+					<th width="30%"><fmt:message key="label.cruduser.name" /></th>
+					<th width="45%"><fmt:message key="label.cruduser.description" /></th>
+					<th width="25%"><fmt:message key="label.cruduser.duration" /></th>
 				</tr>
 				<tr>
-					<td><fmt:message key="label.crudrp.name" /></td>
+					<td><fmt:message key="label.cruduser.id" /></td>
 					<td><c:if test="${param['insert'] == 'true'}">
-							<input type="text" name="name" value="${param['name']}" size=15
+							<input type="text" name="id" value="${param['id']}" size=15
 								maxlength=20>
 							<input type="hidden" name="ins" value="true" />
 						</c:if> 
 						<c:if test="${param['insert']=='false'}">
-							<input type="text" name="name" value="${param['name']}" size=15
+							<input type="text" name="id" value="${param['id']}" size=15
 								maxlength=20 readonly="readonly">
 							<input type="hidden" name="ins" value="false" />
 						</c:if></td>
 				</tr>
 				<tr>
-					<td><fmt:message key="label.crudrp.description" /></td>
-					<td><input type="text" name="description"
-						value="${param['description']}" size=45 maxlength=20></td>
+					<td><fmt:message key="label.cruduser.name" /></td>
+					<td><input type="text" name="name"
+						value="${param['name']}" size=45 maxlength=20></td>
+				</tr>
+                                <tr>
+					<td><fmt:message key="label.cruduser.password" /></td>
+					<td><input type="password" name="password"
+						value="${param['password']}" size=45 maxlength=20></td>
+				</tr>
+                                <tr>
+					<td><fmt:message key="label.cruduser.password" /></td>
+					<td><input type="password" name="password"
+						value="${param['password1']}" size=45 maxlength=20></td>
 				</tr>
 				<tr>
-					<td><fmt:message key="label.crudrp.duration" /></td>
-					<td><input type="text" name="typicalDuration"
-						value="${param['typicalDuration']}" size=15 maxlength=20></td>
+					<td><fmt:message key="label.cruduser.roles" /></td>
+					<td><input type="text" name="roles"
+						value="${param['roles']}" size=15 maxlength=20></td>
 				</tr>
 			</table>
 		</center>

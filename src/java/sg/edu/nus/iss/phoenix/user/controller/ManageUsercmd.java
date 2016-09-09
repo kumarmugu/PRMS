@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ReviewSelectProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.entity.RadioProgram;
-import sg.edu.nus.iss.phoenix.user.delegate.ManageUserDelegate;
+import sg.edu.nus.iss.phoenix.user.delegate.UserDelegate;
 
 /**
  *
@@ -25,8 +25,8 @@ import sg.edu.nus.iss.phoenix.user.delegate.ManageUserDelegate;
 public class ManageUsercmd implements Perform {
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        ManageUserDelegate del = new ManageUserDelegate();
-        List<User> data = del.getAllUser();
+        UserDelegate del = new UserDelegate();
+        List<User> data = del.processLoadAllUser();
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }

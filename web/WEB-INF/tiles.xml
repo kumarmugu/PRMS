@@ -33,4 +33,7 @@
 	<definition name="setuprpPage" extends="homePage">
 		<put-attribute name="body" value="/pages/tilepages/setuprp.jsp" />
 	</definition>
+        <definition name="setupUserPage" extends="homePage">
+		<put-attribute name="body" value="/pages/tilepages/setupuser.jsp" />
+	</definition>
 </tiles-definitions>

@@ -11,7 +11,7 @@
 </head>
 <body>
         <h1><fmt:message key="label.cruduser"/></h1>
-        <c:url var="url" scope="page" value="/nocturne/addeditrp">
+        <c:url var="url" scope="page" value="/nocturne/createmodifyuser">
         		<c:param name="id" value=""/>
                 <c:param name="name" value=""/>
                 <c:param name="roles" value=""/>

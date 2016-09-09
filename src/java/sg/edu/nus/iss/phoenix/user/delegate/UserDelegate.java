@@ -13,20 +13,37 @@ import sg.edu.nus.iss.phoenix.user.service.UserManagementService;
  *
  * @author misitesawn
  */
-public class ManageUserDelegate {
+public class UserDelegate {
     private UserManagementService usrservice;
 
     
 
-    public ManageUserDelegate() {
+    public UserDelegate() {
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
        super();
        usrservice = new UserManagementService();
     }
 
     
-    public ArrayList<User> getAllUser(){
+    public ArrayList<User> processLoadAllUser(){
         return usrservice.getAllUser();
     }
     
+     
+    public ArrayList<User> processFindUser(String userName){
+        return usrservice.processFindUser(userName);
+    }
+    
+    public void processCreateUser(User user){
+        usrservice.processCreateUser(user);
+    }
+    
+     public void processModifyUser(User user){
+         usrservice.processsModifyUser(user);
+    }
+     
+    public void processDeleteUser(User user){
+        usrservice.processDeletUser(user);
+    }
+      
 }
