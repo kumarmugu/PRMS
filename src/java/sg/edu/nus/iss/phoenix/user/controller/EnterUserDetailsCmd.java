@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sg.edu.nus.iss.phoenix.radioprogram.controller;
+package sg.edu.nus.iss.phoenix.user.controller;
 
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;

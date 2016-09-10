@@ -13,6 +13,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 
 /**
  *
@@ -51,8 +52,16 @@ public class UserManagementService {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void processDeletUser(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     *
+     * @param userId
+     * @throws NotFoundException
+     */
+    public void processDeletUser(String userId)throws NotFoundException, SQLException  {
+        User user;
+        user = new User(userId);
+        usrdao.delete(user);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void processCreateUser(User user) {

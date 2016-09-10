@@ -45,7 +45,7 @@
                     </td>
                     <td>
                          <c:url var="delurl" scope="page" value="/nocturne/deleteuser">
-                            <c:param name="name" value="${cruduser.name}"/>
+                            <c:param name="id" value="${cruduser.id}"/>
                         </c:url>
                         <a href="${delurl}"><fmt:message key="label.cruduser.delete"/></a>
                         

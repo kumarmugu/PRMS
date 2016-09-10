@@ -5,8 +5,12 @@
  */
 package sg.edu.nus.iss.phoenix.user.delegate;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.user.service.UserManagementService;
 
 /**
@@ -42,8 +46,14 @@ public class UserDelegate {
          usrservice.processsModifyUser(user);
     }
      
-    public void processDeleteUser(User user){
-        usrservice.processDeletUser(user);
+    public void processDeleteUser(String userId){
+        try {
+            usrservice.processDeletUser(userId);
+        } catch (NotFoundException ex) {
+            Logger.getLogger(UserDelegate.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDelegate.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
       
 }
