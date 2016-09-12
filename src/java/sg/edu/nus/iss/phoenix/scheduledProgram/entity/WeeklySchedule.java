@@ -20,9 +20,17 @@ public class WeeklySchedule {
 
     ArrayList<ProgramSlot> programSlots = new ArrayList<ProgramSlot>();
 
+    /**
+     * 
+     */
     public WeeklySchedule() {
     }
 
+    /**
+     * 
+     * @param year
+     * @param weekNo 
+     */
     public WeeklySchedule(int year, int weekNo) {
         this.year = year;
         this.weekNo = weekNo;

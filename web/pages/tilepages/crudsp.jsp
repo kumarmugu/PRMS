@@ -49,6 +49,10 @@
                 $("#createScreen").hide();
                 $("#modifyScreen").hide();
                 $("#deleteScreen").hide();
+                $("#programDialog").hide();
+                $("#producerDialog").hide();
+                $("#presenterDialog").hide();
+
                 $("#copyButton").click(function () {
                     $("#createScreen").hide();
                     $("#modifyScreen").show();
@@ -66,6 +70,39 @@
                     $("#modifyScreen").hide();
                     $("#deleteScreen").show();
                     location.hash = "#deleteScreen";
+                });
+                $("#programBrowse").click(function () {
+                    $("#programDialog").dialog({
+                        width: 500,
+                        height: 400
+                    });
+                });
+                $("#presenterBrowse").click(function () {
+                    $("#presenterDialog").dialog({
+                        width: 500,
+                        height: 400
+                    });
+                });
+                $("#producerBrowse").click(function () {
+                    $("#producerDialog").dialog({
+                        width: 500,
+                        height: 400
+                    });
+                });
+                $('[id^="program-tr-"]').click(function () {
+                    var programId = $(this).attr('id').replace("tr", "td");
+                    $('#programDialog').dialog('close');
+                    $("#programCreate").val($("#" + programId).html());
+                });
+                $('[id^="presenter-tr-"]').click(function () {
+                    var presenterId = $(this).attr('id').replace("tr", "td");
+                    $('#presenterDialog').dialog('close');
+                    $("#presenterCreate").val($("#" + presenterId).html());
+                });
+                $('[id^="producer-tr-"]').click(function () {
+                    var producerId = $(this).attr('id').replace("tr", "td");
+                    $('#producerDialog').dialog('close');
+                    $("#producerCreate").val($("#" + producerId).html());
                 });
                 if (${isAnnualScheduleExist}) {
                     var $calendar = $('#calendar').weekCalendar({
@@ -99,6 +136,9 @@
                                 $("#createScreen").show();
                                 $("#modifyScreen").hide();
                                 $("#deleteScreen").hide();
+                                $("#programCreate").val('');
+                                $("#presenterCreate").val('');
+                                $("#producerCreate").val('');
                                 location.hash = "#createScreen";
                             }
                         },
@@ -132,6 +172,39 @@
 
     </head>
     <body>
+        <div id="programDialog" title="Radio program List">
+            <table class="table-fill">
+                <tbody class="table-hover">
+                    <% for(int i = 1; i <= 10; i++) { %>
+                        <tr id="program-tr-<%=i%>">
+                            <td id="program-td-<%=i%>" class="text-left">Program <%=i%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div id="presenterDialog" title="Presenter List">
+            <table class="table-fill">
+                <tbody class="table-hover">
+                    <% for(int i = 1; i <= 10; i++) { %>
+                        <tr id="presenter-tr-<%=i%>">
+                            <td id="presenter-td-<%=i%>" class="text-left">Presenter <%=i%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div id="producerDialog" title="Producer List">
+            <table class="table-fill">
+                <tbody class="table-hover">
+                    <% for(int i = 1; i <= 10; i++) { %>
+                        <tr id="producer-tr-<%=i%>">
+                            <td id="producer-td-<%=i%>" class="text-left">Producer <%=i%></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
         <h1><fmt:message key="label.crudsp"/></h1>
         <form action="${pageContext.request.contextPath}/nocturne/managesp" method="get">
             <div class="form-style-2" style="margin: auto;">
@@ -169,9 +242,9 @@
         <div id="createScreen" class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Create New Schedule</div>
             <form action="" method="post">
-                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" /></label>
-                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" /></label>
-                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" /></label>
+                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" disabled/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
+                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" disabled/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
+                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" disabled/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
                 <label for="yearCreate"><span>Year: </span><input class="tel-number-field" type="text" id="yearCreate"  name="yearCreate" maxlength="4"  readonly/></label>
                 <label for="weekCreate"><span>Week: </span><input class="tel-number-field" type="text" id="weekCreate"  name="weekCreate" maxlength="2" readonly/></label>
                 <label for="dayCreate"><span>Day: </span><input class="input-field" type="text" id="dayCreate"  name="dayCreate" readonly/></label><br/>

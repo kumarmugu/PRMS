@@ -14,6 +14,10 @@ import java.sql.SQLException;
  * @author Mugunthan
  */
 public class DBConnection {
+    /**
+     * 
+     * @return 
+     */
     public Connection openConnection() {
         Connection connection = null;
         try {
@@ -32,7 +36,11 @@ public class DBConnection {
         }
         return connection;
     }
-
+    
+    /**
+     * 
+     * @param connection 
+     */
     public void closeConnection(Connection connection) {
         try {
             connection.close();

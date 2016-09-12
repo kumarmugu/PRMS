@@ -16,10 +16,20 @@ public class ReviewAndSelectScheduledProgramDelegate {
 
     private ReviewAndSelectScheduledProgramService service;
 
+    /**
+     * 
+     */
     public ReviewAndSelectScheduledProgramDelegate() {
         service = new ReviewAndSelectScheduledProgramService();
     }
-
+    
+    /**
+     * 
+     * @param year
+     * @param week
+     * @return
+     * @throws AnnualSchedueNotExistException 
+     */
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
         return service.reviewSelectScheduledProgram(year, week);
     }

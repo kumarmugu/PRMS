@@ -28,6 +28,7 @@ public class ScheduleDAOImpl implements ScheduleDAO {
 
     DBConnection dbUtil;
 
+    
     public ScheduleDAOImpl() {
         dbUtil = new DBConnection();
     }
@@ -58,6 +59,13 @@ public class ScheduleDAOImpl implements ScheduleDAO {
         return ws;
     }
 
+    
+    /**
+     * 
+     * @param ws
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException {
         AnnualSchedule as = null;
@@ -83,7 +91,8 @@ public class ScheduleDAOImpl implements ScheduleDAO {
         }
         return as;
     }
-
+    
+    
     protected WeeklySchedule listQuery(PreparedStatement stmt, WeeklySchedule ws) throws SQLException {
 
         ArrayList<ProgramSlot> searchResults = new ArrayList<>();

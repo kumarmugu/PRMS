@@ -10,9 +10,14 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
  * @author Mugunthan
  */
 public class AnnualSchedule {
-    int year;
-    String assignedBy;
+    private int year;
+    private String assignedBy;
 
+    /**
+     * 
+     * @param year
+     * @param assignedBy 
+     */
     public AnnualSchedule(int year, String assignedBy) {
         this.year = year;
         this.assignedBy = assignedBy;

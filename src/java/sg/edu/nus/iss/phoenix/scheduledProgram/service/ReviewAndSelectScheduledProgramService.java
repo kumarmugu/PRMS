@@ -26,15 +26,29 @@ public class ReviewAndSelectScheduledProgramService {
     DAOFactoryImpl factory;
     ScheduleDAO spdao;
 
+    /**
+     * 
+     */
     public ReviewAndSelectScheduledProgramService() {
         super();
         factory = new DAOFactoryImpl();
         spdao = factory.getScheduleDAO();
     }
 
+    /**
+     * 
+     * 
+     */
     public void processDelete(String id) {
     }
 
+    /**
+     * 
+     * @param year
+     * @param week
+     * @return
+     * @throws AnnualSchedueNotExistException 
+     */
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
         WeeklySchedule ws = null;
         try {
