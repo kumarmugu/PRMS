@@ -72,37 +72,39 @@
                     location.hash = "#deleteScreen";
                 });
                 $("#programBrowse").click(function () {
+                    $('#presenterDialog').dialog('close');
+                    $('#producerDialog').dialog('close');
                     $("#programDialog").dialog({
-                        width: 500,
-                        height: 400
+                        width: 600,
+                        height: 600
                     });
                 });
                 $("#presenterBrowse").click(function () {
+                    $('#programDialog').dialog('close');
+                    $('#producerDialog').dialog('close');
+                    $.get( "managepp?submittype=loadall&type=presenter", function( data ) {
+                        $("#presenterDialog").html(data);
+                    });
                     $("#presenterDialog").dialog({
-                        width: 500,
-                        height: 400
+                        width: 600,
+                        height: 600
                     });
                 });
                 $("#producerBrowse").click(function () {
+                    $('#programDialog').dialog('close');
+                    $('#presenterDialog').dialog('close');
+                    $.get( "managepp?submittype=loadall&type=producer", function( data ) {
+                        $("#producerDialog").html(data);
+                    });
                     $("#producerDialog").dialog({
-                        width: 500,
-                        height: 400
+                        width: 600,
+                        height: 600
                     });
                 });
                 $('[id^="program-tr-"]').click(function () {
                     var programId = $(this).attr('id').replace("tr", "td");
                     $('#programDialog').dialog('close');
                     $("#programCreate").val($("#" + programId).html());
-                });
-                $('[id^="presenter-tr-"]').click(function () {
-                    var presenterId = $(this).attr('id').replace("tr", "td");
-                    $('#presenterDialog').dialog('close');
-                    $("#presenterCreate").val($("#" + presenterId).html());
-                });
-                $('[id^="producer-tr-"]').click(function () {
-                    var producerId = $(this).attr('id').replace("tr", "td");
-                    $('#producerDialog').dialog('close');
-                    $("#producerCreate").val($("#" + producerId).html());
                 });
                 if (${isAnnualScheduleExist}) {
                     var $calendar = $('#calendar').weekCalendar({
@@ -168,6 +170,17 @@
                     var r = confirm("Annual schedule not exist. Do you want to create?");
                 }
             });
+         function presenterProducerClicked(id, type){
+            $('#' + type + 'Dialog').dialog('close');
+            $('#' + type + 'Create').val($("#" + id).html());
+         }
+         
+        function searchProducerPresenter(type){
+            var searchtext = $('#searchText'+ type).val();
+            $.get('managepp?submittype=search&searchtype=' + type + '&inputname='+ searchtext, function( data ) {
+                $('#' + type + 'Dialog').html(data);
+            });
+        }
         </script>
 
     </head>
@@ -183,27 +196,9 @@
                 </tbody>
             </table>
         </div>
-        <div id="presenterDialog" title="Presenter List">
-            <table class="table-fill">
-                <tbody class="table-hover">
-                    <% for(int i = 1; i <= 10; i++) { %>
-                        <tr id="presenter-tr-<%=i%>">
-                            <td id="presenter-td-<%=i%>" class="text-left">Presenter <%=i%></td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+        <div id="presenterDialog" title="Presenter List">            
         </div>
         <div id="producerDialog" title="Producer List">
-            <table class="table-fill">
-                <tbody class="table-hover">
-                    <% for(int i = 1; i <= 10; i++) { %>
-                        <tr id="producer-tr-<%=i%>">
-                            <td id="producer-td-<%=i%>" class="text-left">Producer <%=i%></td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
         </div>
         <h1><fmt:message key="label.crudsp"/></h1>
         <form action="${pageContext.request.contextPath}/nocturne/managesp" method="get">
