@@ -43,12 +43,14 @@ public class ManagePresenterProducerCmd  implements Perform{
                  case "presenter":
                      {
                          List<Presenter> data=del.reviewSelectPresenter();
+                         req.setAttribute("type", type);
                          req.setAttribute("rps", data);
                          break;
                      }
                  case "producer":
                      {
                          List<Producer> data=del.reviewSelectProducer();
+                         req.setAttribute("type", type);
                          req.setAttribute("rps", data);
                          break;
                      }
@@ -65,13 +67,18 @@ public class ManagePresenterProducerCmd  implements Perform{
              switch (type) {
                  case "presenter":
                      {
+                         System.out.println(inputValue);
                          List<Presenter> data=del.reviewSelectPresenter(inputValue);
+                         req.setAttribute("type", type);
+                         req.setAttribute("searchText", inputValue);
                          req.setAttribute("rps", data);
                          break;
                      }
                  case "producer":
                      {
-                         List<Producer> data=del.reviewSelectProducer(inputValue);
+                         List<Producer> data=del.reviewSelectProducer(inputValue);                         
+                         req.setAttribute("type", type);
+                         req.setAttribute("searchText", inputValue);
                          req.setAttribute("rps", data);
                          break;
                      }
