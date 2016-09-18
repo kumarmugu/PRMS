@@ -19,7 +19,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Action("createmodifyuser")
 public class CreateModifyUserCmd implements Perform{
-      @Override
+
+    /**
+     *
+     * @param path
+     * @param req
+     * @param resp
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         return "/pages/setupuser.jsp";
     }

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
+import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
@@ -35,10 +36,15 @@ public class UserManagementService {
     }
     
     
-    public ArrayList<User> getAllUser(){
+    public ArrayList<User> getAllUser() throws NotFoundException{
         ArrayList<User> alluser = new ArrayList<>();
         try {
             alluser  = (ArrayList<User>) usrdao.loadAll();
+            for(User user:alluser){
+                for(Role role:user.getRoles()){
+                    role.setAccessPrivilege(roledao.getObject(role.getRole()).getAccessPrivilege());
+                }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
         }

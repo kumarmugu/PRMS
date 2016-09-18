@@ -99,7 +99,7 @@ public class UserDaoImpl implements UserDao {
 		String sql = "SELECT * FROM user ORDER BY id ASC ";
 		List<User> searchResults = listQuery(this.connection
 				.prepareStatement(sql));
-
+               
 		return searchResults;
 	}
 
