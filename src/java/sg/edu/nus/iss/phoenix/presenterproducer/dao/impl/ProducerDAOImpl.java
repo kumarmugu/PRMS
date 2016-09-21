@@ -32,7 +32,7 @@ public class ProducerDAOImpl implements ProducerDAO {
     @Override
     public  List<Producer> loadAll() throws SQLException{
         openConnection();
-		String sql = "SELECT * FROM phoenix.`user` where role='producer' ORDER BY `ID` ASC; ";
+		String sql = "SELECT * FROM phoenix.`user` where role like '%producer%' ORDER BY `ID` ASC; ";
 		List<Producer> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();
