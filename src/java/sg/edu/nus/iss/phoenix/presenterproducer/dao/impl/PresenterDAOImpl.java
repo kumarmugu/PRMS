@@ -31,7 +31,7 @@ public class PresenterDAOImpl implements PresenterDAO{
     @Override
     public  List<Presenter> loadAll() throws SQLException{
         openConnection();
-		String sql = "SELECT * FROM phoenix.`user` where role='presenter' ORDER BY `ID` ASC; ";
+		String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' ORDER BY `ID` ASC; ";
 		List<Presenter> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();
