@@ -16,23 +16,32 @@
 	<form action="${pageContext.request.contextPath}/nocturne/enteruser" method=post>
 		<center>
 			<table cellpadding=4 cellspacing=2 border=0>
-				<tr>
-					<th width="30%"><fmt:message key="label.cruduser.name" /></th>
-					<th width="45%"><fmt:message key="label.cruduser.description" /></th>
-					<th width="25%"><fmt:message key="label.cruduser.duration" /></th>
+                            <tr>
+					
 				</tr>
 				<tr>
+                                    <c:set var="userid" value ="" />
+                                    <c:set var="userName" value ="" />
+                                    
+                                    
 					<td><fmt:message key="label.cruduser.id" /></td>
 					<td><c:if test="${param['insert'] == 'true'}">
-							<input type="text" name="id" value="${param['id']}" size=15
+							<input type="text" name="id" value="" size=15
 								maxlength=20>
-							<input type="hidden" name="ins" value="true" />
-						</c:if> 
-						<c:if test="${param['insert']=='false'}">
+                                                    <input type="hidden" name="ins" value="true" />  
+                                            </c:if> 
+                                            <c:if test="${param['insert']=='false'}">
 							<input type="text" name="id" value="${param['id']}" size=15
 								maxlength=20 readonly="readonly">
-							<input type="hidden" name="ins" value="false" />
-						</c:if></td>
+                                                       
+                                                       <input type="hidden" name="ins" value="false" />
+                                            </c:if>
+                                        </td>
+                                      <%--  <td>  <c:set var="rolesString" value ="" />
+                                                <c:forEach var="cruduser" items="${cruduser.roles}" varStatus="status">
+                                                    <c:set var="rolesString" value="${status.first ? '' : rolesString} ${cruduser.accessPrivilege}" />
+                                                </c:forEach>
+                                        </td>  --%>
 				</tr>
 				<tr>
 					<td><fmt:message key="label.cruduser.name" /></td>
@@ -41,8 +50,18 @@
 				</tr>
 				<tr>
 					<td><fmt:message key="label.cruduser.roles" /></td>
-					
-				</tr>
+					<td><input type="text" name="roles"
+						value="${roles}" size=45 maxlength=20></td>
+                                        
+                                       <c:forEach var="role" items="${roles}">
+                                            <tr>
+                                                <c:forEach var="roleName" items="${role.role}">
+                                                    <td> <c:out value="${role.role}"></c:out> </td>
+                                                </c:forEach>
+                                                <td> <input type="checkbox" name="completed" value="?????"> </td>
+                                            </tr>
+                                </c:forEach>
+				
 			</table>
 		</center>
 		<input type="submit" value="Submit"> <input type="reset"

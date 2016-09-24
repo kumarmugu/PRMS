@@ -138,7 +138,11 @@ p.description {
     color: #fff;
 }
 
-//Table CSS classes
+
+/* 
+    Table CSS classes
+*/
+
 
 div.table-title {
    display: block;

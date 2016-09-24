@@ -3,16 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sg.edu.nus.iss.phoenix.radioprogram.controller;
+
 
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.user.delegate.UserDelegate;
 
 /**
@@ -28,7 +32,12 @@ public class DeleteUserCmd implements Perform{
         del.processDeleteUser(id);
 
        
-        List<User> data = del.processLoadAllUser();
+        List<User> data = new ArrayList<>()  ;
+        try {
+            data = del.processLoadAllUser();
+        } catch (NotFoundException ex) {
+            Logger.getLogger(DeleteUserCmd.class.getName()).log(Level.SEVERE, null, ex);
+        }
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }

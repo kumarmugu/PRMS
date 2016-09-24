@@ -33,8 +33,8 @@
                     <td class="nowrap">${cruduser.name}</td>
                     
                     <c:set var="rolesString" value ="" />
-                    <c:forEach var="cruduser" items="${cruduser.roles}" varStatus="status">
-                        <c:set var="rolesString" value="${stat.first ? '' : rolesString} ${cruduser.accessPrivilege}" />
+                    <c:forEach var="role" items="${cruduser.roles}" varStatus="status">
+                        <c:set var="rolesString" value="${status.first ? '' : rolesString} ${role.accessPrivilege}" />
                     </c:forEach>
                     
                   <%--  <c:forEach items="${users.roles}" var="roles">
@@ -43,8 +43,8 @@
                     </tr>
                     </c:forEach>
                   --%>
-                    <tx class ="nowrap">${rolesString}</td>
-                     <td class="nowrap">${cruduser.name}</td>
+                    <td class ="nowrap">${rolesString}</td>
+                    <td class="nowrap">${cruduser.name}</td>
                     <td class="nowrap">${rolesString}</td>
                     <%-- <td class="nowrap">${cruduser.roles}</td> --%>
                     <td class="nowrap">

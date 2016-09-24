@@ -7,6 +7,7 @@ package sg.edu.nus.iss.phoenix.user.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
@@ -36,7 +37,7 @@ public class UserManagementService {
     }
     
     
-    public ArrayList<User> getAllUser() throws NotFoundException{
+    public ArrayList<User> processLoadAllUser() throws NotFoundException{
         ArrayList<User> alluser = new ArrayList<>();
         try {
             alluser  = (ArrayList<User>) usrdao.loadAll();
@@ -53,9 +54,9 @@ public class UserManagementService {
     }
 
     public void processsModifyUser(User user) {
+        System.out.println("porcessmodifyuser");
         
-        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -79,8 +80,25 @@ public class UserManagementService {
         }
     }
 
-    public ArrayList<User> processFindUser(String userName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public ArrayList<User> processFindUser(String userName) throws SQLException {
+        ArrayList<User> users  = new ArrayList();
+        User user = new User(userName);
+        if(  user.getId().equalsIgnoreCase("superuser")){
+            try {
+                List<Role> roles =   roledao.loadAll();
+                user.setRoles((ArrayList<Role>) roles);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            users.add(user);
+            return users;
+            
+        }
+        
+        users = (ArrayList<User>) usrdao.searchMatching(user);
+        return users;
+        
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    } 
     
 }

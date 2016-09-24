@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ReviewSelectProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.entity.RadioProgram;
@@ -53,7 +54,12 @@ public class EnterUserDetailsCmd implements Perform {
        // ReviewSelectProgramDelegate rsdel = new ReviewSelectProgramDelegate();
         //List<RadioProgram> data = rsdel.reviewSelectRadioProgram();
         
-        List<User> data  =del.processLoadAllUser();
+        List<User> data= new ArrayList<User>();
+         try {
+             data = del.processLoadAllUser();
+         } catch (NotFoundException ex) {
+             Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+         }
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }
