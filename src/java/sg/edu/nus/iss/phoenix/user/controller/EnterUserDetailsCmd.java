@@ -35,17 +35,25 @@ public class EnterUserDetailsCmd implements Perform {
         UserDelegate del = new UserDelegate();
         User usr = new User();
         ArrayList<Role> roles = new ArrayList<Role>();
-        //role hardcoded
-        roles.add(new Role("manager"));
+        
+        String[] strRoles = req.getParameterValues("roleName") ;
+       if( strRoles != null)
+       {
+           for (int i = 0; i< strRoles.length ;i ++){
+                roles.add(new Role(strRoles[i]));
+           }
+          
+       }        
+     
         usr.setName(req.getParameter("name"));
         usr.setId(req.getParameter("id"));
         usr.setRoles((ArrayList<Role>) roles);
         System.out.println(usr.toString());
         
-        String ins = (String) req.getParameter("ins");
+        String insert = (String) req.getParameter("insert");
         Logger.getLogger(getClass().getName()).log(Level.INFO,
-                        "Insert Flag: " + ins);
-        if (ins.equalsIgnoreCase("true")) {
+                        "Insert Flag: " + insert);
+        if (insert.equalsIgnoreCase("true")) {
                 del.processCreateUser(usr);
         } else {
                 del.processModifyUser(usr);

@@ -53,8 +53,9 @@ public class UserManagementService {
         return alluser;
     }
 
-    public void processsModifyUser(User user) {
+    public void processsModifyUser(User user) throws NotFoundException, SQLException {
         System.out.println("porcessmodifyuser");
+        usrdao.save(user);
         
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

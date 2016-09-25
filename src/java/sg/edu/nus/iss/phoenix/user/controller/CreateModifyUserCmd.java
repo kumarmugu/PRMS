@@ -11,6 +11,7 @@ import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,14 @@ public class CreateModifyUserCmd implements Perform{
         UserDelegate del = new UserDelegate();
         ArrayList<User> users = new ArrayList();
         List<Role> roles = new ArrayList();
+        List<Role> userRoles = new ArrayList();
+        List<String> listUserRole = new ArrayList<String>();
+        if (req.getParameter("roles") != null) {
+             listUserRole = Arrays.asList(req.getParameter("roles").split(":"));
+            for (String strUserRole : listUserRole) {
+                userRoles.add(new Role(strUserRole));
+            }
+        }
         
         try {
             users = del.processFindUser("superUser");
@@ -61,7 +70,7 @@ public class CreateModifyUserCmd implements Perform{
 
         
 
-      
+        req.setAttribute("listUserRole", req.getParameter("roles"));
         req.setAttribute("roles", roles);
         
         return "/pages/setupuser.jsp";
