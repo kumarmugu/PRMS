@@ -81,9 +81,9 @@ public class UserManagementService {
         }
     }
 
-    public ArrayList<User> processFindUser(String userName) throws SQLException {
+    public ArrayList<User> processFindUser(String userId) throws SQLException {
         ArrayList<User> users  = new ArrayList();
-        User user = new User(userName);
+        User user = new User(userId);
         if(  user.getId().equalsIgnoreCase("superuser")){
             try {
                 List<Role> roles =   roledao.loadAll();
@@ -96,7 +96,7 @@ public class UserManagementService {
             
         }
         
-        users = (ArrayList<User>) usrdao.searchMatching(user);
+        users = (ArrayList<User>) usrdao.searchById(userId);
         return users;
         
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

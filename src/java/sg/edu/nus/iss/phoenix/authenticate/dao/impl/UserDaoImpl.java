@@ -274,8 +274,8 @@ public class UserDaoImpl implements UserDao {
 		}
 		return allRows;
 	}
-
-	@Override
+        
+        @Override
 	public User searchMatching(String uid) throws SQLException {
 		try {
 			return (getObject(uid));
@@ -283,6 +283,29 @@ public class UserDaoImpl implements UserDao {
 			logger.log(Level.WARNING, "Fail to find user: {0}", uid);
 		}
 		return (null);
+	}
+
+	@Override
+	public  List<User> searchById(String uid) throws SQLException {
+		List<User> searchResults;
+
+		
+		StringBuffer sql = new StringBuffer("SELECT * FROM user WHERE 1=1 ");
+
+		if (uid != "") {
+			
+			sql.append("AND id LIKE '%").append(uid).append("%' ");
+		}
+
+
+		sql.append("ORDER BY id ASC ");
+
+			searchResults = new ArrayList<User>();
+		
+			searchResults = listQuery(this.connection.prepareStatement(sql
+					.toString()));
+
+		return searchResults;
 	}
 	/*
 	 * (non-Javadoc)

@@ -68,6 +68,8 @@ public class PhoenixFrontController extends HttpServlet {
 			return "/ProcessController/process";
 		case "crudrp":
 			return "/CRUDRpController";
+                case "finduser":
+                        return "ProcessController/process";
 		case "loadrp":
 			return "/ProcessController/load";	
 		case "deleterp":

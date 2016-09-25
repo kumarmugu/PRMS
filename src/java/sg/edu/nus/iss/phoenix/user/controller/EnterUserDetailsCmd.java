@@ -8,6 +8,7 @@ package sg.edu.nus.iss.phoenix.user.controller;
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,13 @@ public class EnterUserDetailsCmd implements Perform {
         if (insert.equalsIgnoreCase("true")) {
                 del.processCreateUser(usr);
         } else {
+            try {
                 del.processModifyUser(usr);
+            } catch (NotFoundException ex) {
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
        // ReviewSelectProgramDelegate rsdel = new ReviewSelectProgramDelegate();

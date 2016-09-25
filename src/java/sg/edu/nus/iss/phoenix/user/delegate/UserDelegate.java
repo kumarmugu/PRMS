@@ -34,15 +34,15 @@ public class UserDelegate {
     }
     
      
-    public ArrayList<User> processFindUser(String userName) throws SQLException{
-        return usrservice.processFindUser(userName);
+    public ArrayList<User> processFindUser(String userId) throws SQLException{
+        return usrservice.processFindUser(userId);
     }
     
     public void processCreateUser(User user){
         usrservice.processCreateUser(user);
     }
     
-     public void processModifyUser(User user){
+     public void processModifyUser(User user) throws NotFoundException, SQLException{
          usrservice.processsModifyUser(user);
     }
      

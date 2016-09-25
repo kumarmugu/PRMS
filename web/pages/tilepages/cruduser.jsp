@@ -18,7 +18,21 @@
                 <c:param name="insert" value="true"/>
         </c:url>
         <a href="${url}"><fmt:message key="label.cruduser.add"/></a>
-        
+        <form action="${pageContext.request.contextPath}/nocturne/finduser"
+		method=post>
+		<center>
+			<table>
+				
+				<tr>
+					<td><fmt:message key="label.cruduser.findbyid" /></td>
+					<td><input type="text" name="userid" size=45 maxlength=45></td>
+                                        <td colspan="2" align="center"><input type="submit" value="Submit"> <input
+						type="reset" value="Reset"></td>
+                                </tr>
+			</table>
+		</center>
+
+	</form>
         <br/><br/>
         <table class="borderAll">
             <tr>
