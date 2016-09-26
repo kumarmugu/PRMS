@@ -1,79 +1,26 @@
 <%-- 
-    Document   : reviewselectpp
-    Created on : 01-Sep-2016, 05:08:10
+    Document   : reviewselectppjsp
+    Created on : 01-Sep-2016, 05:06:51
     Author     : THIRILWIN
 --%>
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<html>
-<head>
-<link href="<c:url value='/css/main.css'/>" rel="stylesheet" type="text/css"/>
-<fmt:setBundle basename="ApplicationResources" />
-<title> <fmt:message key="title.reviewselectpp"/> </title>
-</head>
-<body>
-     <form action="${pageContext.request.contextPath}/nocturne/managepp"
-		method=post>
-		<center>
-			<table class="framed">
-                            <tr>
-                                <td>Select the type:</td>
-                                <td> 
-                                   <select name="type">
-                                    <option value="presenter">Presenter</option>
-                                    <option value="producer">Producer</option>
-                                  </select></td>
-                            </tr>
-                            <tr>
-                                <input type="hidden" name="submittype" value="loadall" />
-				<td colspan="2" align="center"><input type="submit" value="LOAD ALL"> </td>
-				</tr>
-                                <Tr>
-                                    <td>&nbsp;</td>
-                                </Tr>
-	</form>	
-        <form action="${pageContext.request.contextPath}/nocturne/managepp"
-		method=post>
-				<tr>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-				</tr>
-				<tr>
-					<td>Key in presenter/producer</td>
-					<td><input type="text" name="inputname" size=45 maxlength=45></td>
-				</tr>
-                                 <tr>
-                                <td>Select the type:</td>
-                                <td> 
-                                   <select name="searchtype">
-                                    <option value="presenter">Presenter</option>
-                                    <option value="producer">Producer</option>
-                                  </select></td>
-                                </tr>
-				<tr>
-                                    <input type="hidden" name="submittype" value="search" />
-				    <td colspan="2" align="center"><input type="submit" value="Search"> </td>
-				</tr>
-			</table>
-		</center>
-	</form>
-      <c:if test="${! empty  rps}">
-        <table class="borderAll">
-            <tr>
-                <th><fmt:message key="label.reviewselectpp.id"/></th>
-                <th><fmt:message key="label.reviewselectpp.Name"/></th>
+<div style="padding:10px;height:15px;padding-bottom: 30px;padding-left: 170px;">
+    <input name="searchText" id="searchText${type}" type="text" value="${searchText}" style="height:30px;" />
+    &nbsp;<input type="button" onclick="searchProducerPresenter('${type}')" value="Search" />
+</div>
+<table class="table-fill">
+    <tbody class="table-hover">        
+        <c:forEach var="crudrp" items="${rps}" varStatus="loop">
+            <tr id="${type}-tr-${loop.index + 1}" onclick="presenterProducerClicked('${type}-td-${loop.index +1 }', '${type}',${type}-hdid-${loop.index +1 });">
+                <td id="${type}-td-${loop.index +1 }" class="text-left">${crudrp.name}
+                 <input type="hidden" id="${type}-hdid-${loop.index +1 }" name="${type}-hdid-${loop.index +1 }"  value="${crudrp.id}"/>
+                </td>
             </tr>
-            <c:forEach var="crudrp" items="${rps}" varStatus="status">
-                <tr class="${status.index%2==0?'even':'odd'}">
-                    <td class="nowrap">${crudrp.id}</td>
-                    <td class="nowrap">${crudrp.name}</td>
-                </tr>
-            </c:forEach>
-        </table>
-        </c:if>
-</body>
-</html>
+        </c:forEach>
+    </tbody>
+</table>

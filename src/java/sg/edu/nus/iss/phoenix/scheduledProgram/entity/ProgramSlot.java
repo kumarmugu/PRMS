@@ -5,6 +5,7 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 
+import java.sql.Time;
 import java.util.Date;
 
 /**
@@ -30,7 +31,16 @@ public class ProgramSlot {
     private Date startTime;
     private Date endTime;
     private String programName;
-
+    
+    private String producerId;
+    private String presenterId;
+    private Date weekStartDate;
+    private Time duration;
+    private String updatedBy;
+    private Date updatedOn;
+    
+    
+    
     public Date getStartTime() {
         return startTime;
     }
@@ -54,8 +64,57 @@ public class ProgramSlot {
     public void setProgramName(String programName) {
         this.programName = programName;
     }
+       
+    
+    public String getProducerId(){
+        return producerId;
+    }
+    
+    public void setProducerId(String producerId){
+        this.producerId=producerId;
+    }
+    
+    public String getPresenterId(){
+        return presenterId;
+    }
+    
+    public void setPresenterId(String presenterId){
+        this.presenterId=presenterId;
+    }
+    
+    public Date getweeekStartDate(){
+        return this.weekStartDate;
+    }
+    
+    public void setweeekStartDate(Date weekStartDate )
+    {
+        this.weekStartDate=weekStartDate;
+    }
     
     
+    public Time getduration() {
+        return duration;
+    }
+
+    public void setDuration(Time duration) {
+        this.duration = duration;
+    }
     
+      public String getupdatedBy(){
+        return updatedBy;
+    }
+    
+    public void setupdatedBy(String updatedBy){
+        this.updatedBy=updatedBy;
+    }
+    
+    public Date getupdatedOn(){
+        return this.updatedOn;
+    }
+    
+    public void setupdatedOn(Date updatedOn )
+    {
+        this.updatedOn=updatedOn;
+    }
     
 }

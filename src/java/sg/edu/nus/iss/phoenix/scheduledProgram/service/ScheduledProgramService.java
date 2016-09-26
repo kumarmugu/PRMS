@@ -7,12 +7,9 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.TransactionManagement;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
-import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -23,7 +20,7 @@ import sg.edu.nus.iss.phoenix.util.DateUtil;
  *
  * @author Mugunthan
  */
-public class ReviewAndSelectScheduledProgramService {
+public class ScheduledProgramService {
 
     DAOFactoryImpl factory;
     ScheduleDAO spdao;
@@ -31,7 +28,7 @@ public class ReviewAndSelectScheduledProgramService {
     /**
      * 
      */
-    public ReviewAndSelectScheduledProgramService() {
+    public ScheduledProgramService() {
         super();
         factory = new DAOFactoryImpl();
         spdao = factory.getScheduleDAO();
@@ -46,7 +43,7 @@ public class ReviewAndSelectScheduledProgramService {
     
     // public abstract Boolean PorcessCreateAnnualSchedule(AnnualSchedule as) throws SQLException;
 
-    public  void PorcessCreateAnnualSchedule(AnnualSchedule as){
+    public  void processCreateAnnualSchedule(AnnualSchedule as){
         
         try { 
                 ArrayList<WeeklySchedule> wsList= new ArrayList<WeeklySchedule>();
@@ -70,37 +67,19 @@ public class ReviewAndSelectScheduledProgramService {
               }
             
          catch (SQLException ex) {
-            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
     
+     public  void PorcessCreate(ProgramSlot srp)
+     {
+            spdao.create(srp);
+           
+     }
+    
+    
    
     
-    /**
-     * 
-     * @param year
-     * @param week
-     * @return
-     * @throws AnnualSchedueNotExistException 
-     */
-    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
-        WeeklySchedule ws = null;
-        try {
-            if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
-                ws = new WeeklySchedule(Integer.parseInt(year), Integer.parseInt(week));
-            } else {
-                Calendar cal = Calendar.getInstance();
-                ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
-            }
-            AnnualSchedule as = spdao.getAnnualSchedule(ws);
-            if(as != null)
-                ws = spdao.loadAllScheduleForWeek(ws);
-            else 
-                 throw new AnnualSchedueNotExistException("Annual Schedule not exist");
-        } catch (SQLException ex) {
-            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return ws;
-    }
+    
 }

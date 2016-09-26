@@ -6,6 +6,7 @@
 package sg.edu.nus.iss.phoenix.scheduledProgram.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
@@ -17,6 +18,8 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 public interface ScheduleDAO {
 
     public abstract ProgramSlot createValueObject();
+    
+    public abstract void create (ProgramSlot ValueObject);
 
     /**
      * 
@@ -32,4 +35,7 @@ public interface ScheduleDAO {
     public abstract AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException;
     
     public abstract WeeklySchedule loadWeekInfo(WeeklySchedule ws) throws SQLException;
+    public abstract Boolean processCreateAnnualSchedule(AnnualSchedule as, ArrayList<WeeklySchedule> wsList) throws SQLException;
+    
+  
 }

@@ -81,7 +81,7 @@ public class ProgramDAOImpl implements ProgramDAO {
 		List<RadioProgram> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();
-		System.out.println("record size"+searchResults.size());
+		System.out.println("record size (no of radio programs)"+searchResults.size());
 		return searchResults;
 	}
 
