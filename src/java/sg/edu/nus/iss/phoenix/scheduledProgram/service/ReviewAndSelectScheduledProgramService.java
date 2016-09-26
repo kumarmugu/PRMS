@@ -91,9 +91,12 @@ public class ReviewAndSelectScheduledProgramService {
                 ws = new WeeklySchedule(Integer.parseInt(year), Integer.parseInt(week));
             } else {
                 Calendar cal = Calendar.getInstance();
-                ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
+                ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR) );
             }
             AnnualSchedule as = spdao.getAnnualSchedule(ws);
+            
+            ws = spdao.loadWeekInfo(ws);
+            
             if(as != null)
                 ws = spdao.loadAllScheduleForWeek(ws);
             else 

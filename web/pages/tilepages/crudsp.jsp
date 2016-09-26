@@ -99,8 +99,9 @@
                 $("#programBrowse").click(function () {
                     $('#presenterDialog').dialog('close');
                     $('#producerDialog').dialog('close');
-                    $.get( "managerp?submittype=loadall", function( data ) {
-                    $("#programDialog").html(data);
+                    $.get( "managerp?submittype=loadall&source=schedule", function( data ) {
+                        //alert(data);
+                        $("#programDialog").html(data);
                     });
                     $("#programDialog").dialog({
                         width: 600,
@@ -135,8 +136,10 @@
                     $("#programCreate").val($("#" + programId).html());
                 });
                 if (${isAnnualScheduleExist}) {
+                    //    pointer-events: none;
                     var $calendar = $('#calendar').weekCalendar({
                         date: new Date(${startDate.getTime()}),
+                        businessHours : false,
                         data: eventData,
                         timeslotsPerHour: 2,
                         scrollToHourMillis: 0,
@@ -248,16 +251,15 @@
              alert( document.getElementById(type + "Createid").value);
              
          }
-         
-       
-         
+         function programClicked(id){
+            $('#programDialog').dialog('close');
+            $('#programCreate').val($("#" + id).html());
+         }
         function searchProducerPresenter(type){
             var searchtext = $('#searchText'+ type).val();
             $.get('managepp?submittype=search&searchtype=' + type + '&inputname='+ searchtext, function( data ) {
                 $('#' + type + 'Dialog').html(data);
             });
-            
-            
         }
         
         function loadScheduledProgram(mode) {
