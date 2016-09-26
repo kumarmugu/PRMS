@@ -151,14 +151,17 @@
                             if (!calEvent.id) {
                                 console.log(calEvent.start);
                                 $('.wc-cal-event').css('backgroundColor', '#68a1e5');
-                                var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
-                                var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
-                                $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
-                                $('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
+                                //var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
+                                //var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
+                               // $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
+                                //$('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
+                                $('#startTimeCreate').val(getFormatedTimeStringHHMM(calEvent.start));
+                                $('#endTimeCreate').val(getFormatedTimeStringHHMM(calEvent.end));
                                 $('#yearCreate').val($('#year').val());
                                 $('#weekCreate').val($('#week').val());
                                 $('#dayCreate').val(days[calEvent.start.getDay()]);
-                                $('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
+                                $('#dateCreate').val($.datepicker.formatDate('dd/mm/yy', calEvent.end) );
+                                //$('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
                                 $('#copyButton').hide();
                                 $('#modifyButton').hide();
                                 $('#deleteButton').hide();
@@ -283,8 +286,8 @@
                 $("#details #year").val(selectedScheduledProgram.year);
                 $("#details #week").val(selectedScheduledProgram.week);
                 $("#day").val(selectedScheduledProgram.day);
-                $("#startTime").val( getFormatedTimeString(selectedScheduledProgram.start));
-                $("#endTime").val(getFormatedTimeString(selectedScheduledProgram.end));
+                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
 
                 $("#details #year").attr('readonly', true);
                 $("#details #week").attr('readonly', false);
@@ -300,8 +303,8 @@
                 $("#details #year").val(selectedScheduledProgram.year);
                 $("#details #week").val(selectedScheduledProgram.week + 1);
                 $("#day").val(selectedScheduledProgram.day);
-                $("#startTime").val( getFormatedTimeString(selectedScheduledProgram.start));
-                $("#endTime").val(getFormatedTimeString(selectedScheduledProgram.end));
+                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
 
                 $("#details #year").attr('readonly', false);
                 $("#details #week").attr('readonly', false);
@@ -313,8 +316,8 @@
             return $("#details");            
         }
         
-        function getFormatedTimeString(time) {
-            return time.getHours() + ":" + time.getMinutes();
+        function getFormatedTimeStringHHMM(time) {
+            return ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2);
         }
         
         
