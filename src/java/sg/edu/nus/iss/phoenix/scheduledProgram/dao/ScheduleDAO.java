@@ -18,7 +18,18 @@ public interface ScheduleDAO {
 
     public abstract ProgramSlot createValueObject();
 
+    /**
+     * 
+     * loadAllScheduleForWeek-method. This will read all scheduled programs from database table for a particular week and
+     * assign the list of programSlot to Weekly Schedule. 
+     * of data.
+     * @param ws
+     * @return
+     * @throws SQLException 
+     */
     public abstract WeeklySchedule loadAllScheduleForWeek(WeeklySchedule ws) throws SQLException;
     
     public abstract AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException;
+    
+    public abstract WeeklySchedule loadWeekInfo(WeeklySchedule ws) throws SQLException;
 }
