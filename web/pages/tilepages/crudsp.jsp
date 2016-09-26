@@ -208,16 +208,8 @@
            
             $('#' + type + 'Dialog').dialog('close');
             $('#' + type + 'Create').val($("#" + id).html());
-            $('#' + type + 'Createid').val(document.getElementById(hdid).value);
-           
-           // if(type !=null){
-           // var createrid=document.getElementById(hdid).value;
-          //  document.getElementById(type + "Createid").value = createrid;
-            
-           //document.getElementById($('#' + type + 'Createid')).value = document.getElementById(hdid).value;
-             
-            // alert ( type + "Createid");}
-             alert( document.getElementById(type + "Createid").value);
+            //alert($("#" + hdid).val());
+            $('#' + type + 'Createid').val($("#" + hdid).val());
              
          }
          function programClicked(id){
