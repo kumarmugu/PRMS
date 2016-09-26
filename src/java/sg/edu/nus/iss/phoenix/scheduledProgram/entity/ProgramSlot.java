@@ -5,7 +5,10 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -17,6 +20,19 @@ import java.util.Date;
 //Note:: This class does not include all the parameters
 public class ProgramSlot {
 
+     private static final Map<Integer, String> myDayMap = new HashMap<Integer, String>(){
+        {
+            put(0, "Unknown");
+            put(1, "Sunday");
+            put(2, "Monday");
+            put(3, "Tuesday");
+            put(4, "Wednesday");
+            put(5, "Thursday");
+            put(6, "Friday");
+            put(6, "Saturday");            
+        }
+    };
+     
     public ProgramSlot(){
         
     };
@@ -56,6 +72,24 @@ public class ProgramSlot {
     }
     
     
+    public int getYear() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startTime);
+        return cal.get(Calendar.YEAR);
+    }
+    public int getWeek() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startTime);
+        return cal.get(Calendar.WEEK_OF_YEAR);
+    }
     
+    public String getDay() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startTime);
+        return myDayMap.get(cal.get(Calendar.DAY_OF_WEEK));
+    }
     
+    public long getID() {
+        return startTime.getTime();
+    }
 }
