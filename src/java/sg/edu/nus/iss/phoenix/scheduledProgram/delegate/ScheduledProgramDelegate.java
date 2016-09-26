@@ -6,7 +6,9 @@
 package sg.edu.nus.iss.phoenix.scheduledProgram.delegate;
 
 
+import java.sql.SQLException;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 
@@ -42,6 +44,10 @@ public class ScheduledProgramDelegate {
     public void ProcessCreate(ProgramSlot prd)
     {
         service.PorcessCreate(prd);
+    }
+
+    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
+        service.processDelete(programSlot);
     }
     
 }

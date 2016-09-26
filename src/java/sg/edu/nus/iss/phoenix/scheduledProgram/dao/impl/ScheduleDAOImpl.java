@@ -19,6 +19,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.core.dao.DBConnection;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
@@ -267,7 +268,37 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-  
+   public  void delete(ProgramSlot valueObject)
+			throws NotFoundException, SQLException{
+                 if (valueObject.getStartTime() == null) {
+			throw new NotFoundException("Can not delete without Primary-Key!");
+		}
+
+		String sql = "DELETE FROM `program-slot` WHERE (`programStartDateTime` = ? ); ";
+		PreparedStatement stmt = null;
+		Connection conn = dbUtil.openConnection();
+		try {
+			stmt = conn.prepareStatement(sql);
+                        System.out.println(new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+			stmt.setTimestamp(1, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+
+			int rowcount = stmt.executeUpdate();
+			if (rowcount == 0) {
+				// System.out.println("Object could not be deleted (PrimaryKey not found)");
+				throw new NotFoundException(
+						"Object could not be deleted! (PrimaryKey not found)");
+			}
+			if (rowcount > 1) {
+				// System.out.println("PrimaryKey Error when updating DB! (Many objects were deleted!)");
+				throw new SQLException(
+						"PrimaryKey Error when updating DB! (Many objects were deleted!)");
+			}
+		} finally {
+			if (stmt != null)
+				stmt.close();
+			conn.close();
+		}
+   }
    
 
    

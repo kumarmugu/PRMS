@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -38,7 +39,11 @@ public class ScheduledProgramService {
      * 
      * 
      */
-    public void processDelete(String id) {
+    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
+        if(IsProgramSlotDeletable(programSlot))
+        {
+            spdao.delete(programSlot);
+        }
     }
     
     // public abstract Boolean PorcessCreateAnnualSchedule(AnnualSchedule as) throws SQLException;
@@ -77,9 +82,10 @@ public class ScheduledProgramService {
             spdao.create(srp);
            
      }
-    
-    
-   
+
+    private boolean IsProgramSlotDeletable(ProgramSlot programSlot) {
+        return true;
+    }
     
     
 }

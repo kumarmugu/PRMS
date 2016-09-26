@@ -261,15 +261,6 @@
             $('#' + type ).val($("#" + id).html());
             $('#' + type + 'Createid').val(document.getElementById(hdid).value);
            
-           // if(type !=null){
-           // var createrid=document.getElementById(hdid).value;
-          //  document.getElementById(type + "Createid").value = createrid;
-            
-           //document.getElementById($('#' + type + 'Createid')).value = document.getElementById(hdid).value;
-             
-            // alert ( type + "Createid");}
-             alert( document.getElementById(type + "Createid").value);
-             
          }
          function programClicked(id){
             $('#programDialog').dialog('close');
