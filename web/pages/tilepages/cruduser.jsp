@@ -18,6 +18,21 @@
                 <c:param name="insert" value="true"/>
         </c:url>
         <a href="${url}"><fmt:message key="label.cruduser.add"/></a>
+        <form action="${pageContext.request.contextPath}/nocturne/finduser"
+		method=post>
+		<center>
+			<table>
+				
+				<tr>
+					<td><fmt:message key="label.cruduser.findbyid" /></td>
+					<td><input type="text" name="userid" size=45 maxlength=45></td>
+                                        <td colspan="2" align="center"><input type="submit" value="Submit"> <input
+						type="reset" value="Reset"></td>
+                                </tr>
+			</table>
+		</center>
+
+	</form>
         <br/><br/>
         <table class="borderAll">
             <tr>
@@ -27,31 +42,35 @@
                 <th><fmt:message key="label.cruduser.edit"/> 
                 <th><fmt:message key="label.cruduser.delete"/></th>
             </tr>
+            
             <c:forEach var="cruduser" items="${users}" varStatus="status">
+                <c:set var="rolesString" value ="" />
                 <tr class="${status.index%2==0?'even':'odd'}">
                     <td class="nowrap">${cruduser.id}</td>
                     <td class="nowrap">${cruduser.name}</td>
                     
-                    <c:set var="rolesString" value ="" />
-                    <c:forEach var="cruduser" items="${cruduser.roles}" varStatus="status">
-                        <c:set var="rolesString" value="${stat.first ? '' : rolesString} ${cruduser.accessPrivilege}" />
+                    
+                    <c:forEach var="role" items="${cruduser.roles}" varStatus="status">
+                        
+                    <c:choose>
+                        <c:when test="${rolesString==''}">
+                            <c:set var="rolesString" value="${status.first ? '' :   rolesString}${role.accessPrivilege}" />
+                        </c:when>    
+                        <c:otherwise>
+                           <c:set var="rolesString" value="${status.first ? '' :   rolesString}:${role.accessPrivilege}" />
+                        </c:otherwise>
+                    </c:choose>
+                        
                     </c:forEach>
                     
-                  <%--  <c:forEach items="${users.roles}" var="roles">
-                    <tr>
-                        <td><c:out value="rolesString+=helloroles"/></td>  
-                    </tr>
-                    </c:forEach>
-                  --%>
-                    <tx class ="nowrap">${rolesString}</td>
-                     <td class="nowrap">${cruduser.name}</td>
                     <td class="nowrap">${rolesString}</td>
                     <%-- <td class="nowrap">${cruduser.roles}</td> --%>
                     <td class="nowrap">
                         <c:url var="updurl" scope="page" value="/nocturne/createmodifyuser">
                             <c:param name="id" value="${cruduser.id}"/>
                             <c:param name="name" value="${cruduser.name}"/>
-                            <c:param name="roles" value="${cruduser.roles}"/>
+                          
+                            <c:param name="roles" value="${rolesString}"/>
                              <c:param name="insert" value="false"/>
                         </c:url>
                         <a href="${updurl}"><fmt:message key="label.cruduser.edit"/></a>

@@ -5,38 +5,41 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <html>
 <head>
+<link href="<c:url value='/css/main.css'/>" rel="stylesheet" type="text/css"/>
 <fmt:setBundle basename="ApplicationResources" />
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title><fmt:message key="title.searchrp" /></title>
 </head>
 <body>
-	<h2>
-		<fmt:message key="title.searchrp" />
-	</h2>
-	<form action="${pageContext.request.contextPath}/nocturne/searchrp"
+    
+     <form action="${pageContext.request.contextPath}/nocturne/searchrp"
 		method=post>
-		<center>
-			<table class="framed">
+
+	<table class="framed">
 				<tr>
 					<th width="45%"><fmt:message key="caption.name" /></th>
 					<th width="55%"><fmt:message key="caption.desc" /></th>
 				</tr>
 				<tr>
 					<td><fmt:message key="fieldLabel.name" /></td>
-					<td><input type="text" name="name" size=45 maxlength=45></td>
+					<td><input type="text" name="rpnametxt" id="rpnametxt" size=45 maxlength=45></td>
 				</tr>
 				<tr>
 					<td><fmt:message key="fieldLabel.description" /></td>
-					<td><input type="text" name="description" size=45 maxlength=45></td>
+					<td><input type="text" name="rpdescriptiontxt" id="rpdescriptiontxt" size=45 maxlength=45></td>
 				</tr>
 				<tr>
-					<td colspan="2" align="center"><input type="submit" value="Submit"> <input
-						type="reset" value="Reset"></td>
+					<td colspan="2" align="center">
+                                            <input type="button" value="Submit" onClick="searchProgram()" value="Search"> 
+                                            <input type="button" value="Reset">
+                                        </td>
 				</tr>
 			</table>
 		</center>
-
-	</form>
+            
+    
+        </div>
+                                
+       </form>                                 
 	<c:if test="${! empty  searchrplist}">
 		<table class="borderAll">
 			<tr>
@@ -44,15 +47,18 @@
 				<th><fmt:message key="label.radioprogram.description" /></th>
 				<th><fmt:message key="label.radioprogram.duration" /></th>
 			</tr>
-			<c:forEach var="rprogram" items="${searchrplist}" varStatus="status">
-				<tr class="${status.index%2==0?'even':'odd'}">
-					<td class="nowrap">${rprogram.name}</td>
-					<td class="nowrap">${rprogram.description}</td>
-					<td class="nowrap">${rprogram.typicalDuration}</td>
+			<c:forEach var="rprogram" items="${searchrplist}" varStatus="loop">
+				<tr class="${loop.index%2==0?'even':'odd'}" id="tr-rpid-${loop.index + 1}" onclick="pradioProgramClicked('td-rpname-${loop.index + 1 }');">
+					<td class="nowrap" id="td-rpname-${loop.index + 1}">${rprogram.name}</td>
+					<td class="nowrap" id="td-rpdesc-${loop.index + 1}">${rprogram.description}</td>
+					<td class="nowrap" id="td-rpduration-${loop.index + 1}">${rprogram.typicalDuration}</td>
+                                        
 				</tr>
 			</c:forEach>
 		</table>
+                        
+                        
 	</c:if>
-
+    
 </body>
 </html>

@@ -99,6 +99,9 @@
                 $("#programBrowse").click(function () {
                     $('#presenterDialog').dialog('close');
                     $('#producerDialog').dialog('close');
+                    $.get( "managerp?submittype=loadall", function( data ) {
+                    $("#programDialog").html(data);
+                    });
                     $("#programDialog").dialog({
                         width: 600,
                         height: 600
@@ -150,12 +153,12 @@
                                 $('.wc-cal-event').css('backgroundColor', '#68a1e5');
                                 var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
                                 var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
-                                $('#startTimeCreate').val(calEvent.start.getHours() + ":" + startMinutes);
-                                $('#endTimeCreate').val(calEvent.end.getHours() + ":" + endMinutes);
+                                $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
+                                $('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
                                 $('#yearCreate').val($('#year').val());
                                 $('#weekCreate').val($('#week').val());
                                 $('#dayCreate').val(days[calEvent.start.getDay()]);
-                                $('#dateCreate').val(calEvent.end.getDate() + "/" + calEvent.end.getMonth() + "/" + calEvent.end.getFullYear());
+                                $('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
                                 $('#copyButton').hide();
                                 $('#modifyButton').hide();
                                 $('#deleteButton').hide();
@@ -195,19 +198,63 @@
                         }
                     });
                 } else {
-                    var r = confirm("Annual schedule not exist. Do you want to create?");
+                        var jscurrentYear=new Date().getFullYear() ;
+                        var userInputYear= parseInt($('#year').val()) ;
+                        var DiffYear= userInputYear-jscurrentYear;
+
+                        var createscheduleflag=document.getElementById("txtcreateAnnualSchedule").value;
+
+                        if( $('#year').val()<jscurrentYear)
+                        {
+                             alert ("No Annual Schedule found for selected Year!!!");
+                        }
+                        else if (( userInputYear > jscurrentYear ||userInputYear == jscurrentYear) )
+                        {  
+                            if(DiffYear<4 && createscheduleflag =="0" )
+                            { 
+
+                              var r = confirm("Annual schedule not exist. Do you want to create Annual Schedule for the Year : ("+ userInputYear +" ) Current Year :"+ jscurrentYear);
+                              if(r==true)
+                              {document.getElementById("txtcreateAnnualSchedule").value = "1";
+                                 alert(document.getElementById("txtcreateAnnualSchedule").value); 
+                               document.getElementById("searchScheduleform").submit();                          
+
+                              }
+                            
+
+                        }
+                         else
+                             alert ("No Annual Schedule found for Year("+ userInputYear +" !!) New annual schdeule allow to create only for upcoming 3 Years!!!"); 
+                      }
                 }
             });
-         function presenterProducerClicked(id, type){
+            
+         function presenterProducerClicked(id, type, hdid){
+           
             $('#' + type + 'Dialog').dialog('close');
             $('#' + type + 'Create').val($("#" + id).html());
+            $('#' + type + 'Createid').val(document.getElementById(hdid).value);
+           
+           // if(type !=null){
+           // var createrid=document.getElementById(hdid).value;
+          //  document.getElementById(type + "Createid").value = createrid;
+            
+           //document.getElementById($('#' + type + 'Createid')).value = document.getElementById(hdid).value;
+             
+            // alert ( type + "Createid");}
+             alert( document.getElementById(type + "Createid").value);
+             
          }
+         
+       
          
         function searchProducerPresenter(type){
             var searchtext = $('#searchText'+ type).val();
             $.get('managepp?submittype=search&searchtype=' + type + '&inputname='+ searchtext, function( data ) {
                 $('#' + type + 'Dialog').html(data);
             });
+            
+            
         }
         
         function loadScheduledProgram(mode) {
@@ -275,23 +322,14 @@
 
     </head>
     <body>
-        <div id="programDialog" title="Radio program List">
-            <table class="table-fill">
-                <tbody class="table-hover">
-                    <% for(int i = 1; i <= 10; i++) { %>
-                        <tr id="program-tr-<%=i%>">
-                            <td id="program-td-<%=i%>" class="text-left">Program <%=i%></td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
+        <div id="programDialog" title="Radio program List">            
         </div>
         <div id="presenterDialog" title="Presenter List">            
         </div>
         <div id="producerDialog" title="Producer List">
         </div>
         <h1><fmt:message key="label.crudsp"/></h1>
-        <form action="${pageContext.request.contextPath}/nocturne/managesp" method="get">
+        <form action="${pageContext.request.contextPath}/nocturne/managesp" method="get"  id="searchScheduleform" name="searchScheduleform">
             <div class="form-style-2" style="margin: auto;">
                 Year: <input type="text" class="tel-number-field" name="year" id="year" value="${(param['year']!=null) ? param['year'] : currentYear}" size=15
                              maxlength=20>
@@ -303,6 +341,7 @@
                 </select>
                 <span style="width:50px;">&nbsp;</span>
                 <input type="submit" value="Search">
+                <input  type="hidden" name="txtcreateAnnualSchedule" id="txtcreateAnnualSchedule" value="0" >
             </div>
         </form>
         <div class="clearer"></div>
@@ -328,18 +367,22 @@
 
                 
         <div id="createScreen" class="form-style-2" style="diplay:none;">
-            <div class="form-style-2-heading">Create New Schedule</div>
-            <form action="${pageContext.request.contextPath}/nocturne/createsp" method="post">
-                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" readonly/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
-                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
-                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
+        <div class="form-style-2-heading">Create New Schedule</div>
+        
+            <form action="${pageContext.request.contextPath}/nocturne/addsp" method="post">
+                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" value="charity" disabled/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
+                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" disabled/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
+                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" disabled/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
                 <label for="yearCreate"><span>Year: </span><input class="tel-number-field" type="text" id="yearCreate"  name="yearCreate" maxlength="4"  readonly/></label>
                 <label for="weekCreate"><span>Week: </span><input class="tel-number-field" type="text" id="weekCreate"  name="weekCreate" maxlength="2" readonly/></label>
                 <label for="dayCreate"><span>Day: </span><input class="input-field" type="text" id="dayCreate"  name="dayCreate" readonly/></label><br/>
-                <label for="dateCreate"><span>Date </span><input class="tel-number-field" type="text" id="dateCreate"  name="dayCreate" readonly/></label><br/>
+                <label for="dateCreate"><span>Date </span><input class="input-field" type="text" id="dateCreate"  name="dateCreate" readonly/></label><br/>
                 <label for="startTimeCreate"><span>Start Time: </span><input class="tel-number-field" type="text" id="startTimeCreate"  name="startTimeCreate" readonly/></label>
                 <label for="endTimeCreate"><span>End Time: </span><input class="tel-number-field" type="text" id="endTimeCreate"  name="endTimeCreate" readonly/></label
-
+                
+               
+                <input type="hidden" name="presenterCreateid" id="presenterCreateid" value=""/>
+                <input type="hidden" name="producerCreateid"  id="producerCreateid" value=""/>
 
                 <label><span>&nbsp;</span><input type="submit" value="Create Schedule" /></label>
             </form>

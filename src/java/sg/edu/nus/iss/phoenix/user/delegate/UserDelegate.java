@@ -29,20 +29,20 @@ public class UserDelegate {
     }
 
     
-    public ArrayList<User> processLoadAllUser(){
-        return usrservice.getAllUser();
+    public ArrayList<User> processLoadAllUser() throws NotFoundException{
+        return usrservice.processLoadAllUser();
     }
     
      
-    public ArrayList<User> processFindUser(String userName){
-        return usrservice.processFindUser(userName);
+    public ArrayList<User> processFindUser(String userId) throws SQLException{
+        return usrservice.processFindUser(userId);
     }
     
     public void processCreateUser(User user){
         usrservice.processCreateUser(user);
     }
     
-     public void processModifyUser(User user){
+     public void processModifyUser(User user) throws NotFoundException, SQLException{
          usrservice.processsModifyUser(user);
     }
      

@@ -7,7 +7,7 @@ import sg.edu.nus.iss.phoenix.radioprogram.entity.RadioProgram;
 import sg.edu.nus.iss.phoenix.radioprogram.service.ProgramService;
 
 public class ProgramDelegate {
-/*	
+	
 	public ArrayList<RadioProgram> searchPrograms(RPSearchObject rpso) {
 		RadioProgram rp = new RadioProgram(rpso.getName());
 		rp.setDescription(rpso.getDescription());
@@ -33,7 +33,7 @@ public class ProgramDelegate {
 		return service.findAllRP();
 		
 	}
-*/	
+	
 	public void processCreate(RadioProgram rp) {
 		ProgramService service = new ProgramService();
 		service.processCreate(rp);

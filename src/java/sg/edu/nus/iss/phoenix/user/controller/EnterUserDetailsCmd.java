@@ -8,6 +8,7 @@ package sg.edu.nus.iss.phoenix.user.controller;
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ReviewSelectProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.entity.RadioProgram;
@@ -34,26 +36,45 @@ public class EnterUserDetailsCmd implements Perform {
         UserDelegate del = new UserDelegate();
         User usr = new User();
         ArrayList<Role> roles = new ArrayList<Role>();
-        //role hardcoded
-        roles.add(new Role("manager"));
+        
+        String[] strRoles = req.getParameterValues("roleName") ;
+       if( strRoles != null)
+       {
+           for (int i = 0; i< strRoles.length ;i ++){
+                roles.add(new Role(strRoles[i]));
+           }
+          
+       }        
+     
         usr.setName(req.getParameter("name"));
         usr.setId(req.getParameter("id"));
         usr.setRoles((ArrayList<Role>) roles);
         System.out.println(usr.toString());
         
-        String ins = (String) req.getParameter("ins");
+        String insert = (String) req.getParameter("insert");
         Logger.getLogger(getClass().getName()).log(Level.INFO,
-                        "Insert Flag: " + ins);
-        if (ins.equalsIgnoreCase("true")) {
+                        "Insert Flag: " + insert);
+        if (insert.equalsIgnoreCase("true")) {
                 del.processCreateUser(usr);
         } else {
+            try {
                 del.processModifyUser(usr);
+            } catch (NotFoundException ex) {
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
        // ReviewSelectProgramDelegate rsdel = new ReviewSelectProgramDelegate();
         //List<RadioProgram> data = rsdel.reviewSelectRadioProgram();
         
-        List<User> data  =del.processLoadAllUser();
+        List<User> data= new ArrayList<User>();
+         try {
+             data = del.processLoadAllUser();
+         } catch (NotFoundException ex) {
+             Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+         }
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }

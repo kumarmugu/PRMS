@@ -159,6 +159,12 @@ public interface UserDao {
 	public abstract List<User> searchMatching(User valueObject)
 			throws SQLException;
 
-	public abstract User searchMatching(String uid)
+        public abstract User searchMatching(String uid)
 			throws SQLException;
+        
+	public abstract List<User> searchById(String uid)
+			throws SQLException;
+        
+        
+        
 }

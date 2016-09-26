@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.TransactionManagement;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -41,7 +43,40 @@ public class ReviewAndSelectScheduledProgramService {
      */
     public void processDelete(String id) {
     }
+    
+    // public abstract Boolean PorcessCreateAnnualSchedule(AnnualSchedule as) throws SQLException;
 
+    public  void PorcessCreateAnnualSchedule(AnnualSchedule as){
+        
+        try { 
+                ArrayList<WeeklySchedule> wsList= new ArrayList<WeeklySchedule>();
+                WeeklySchedule ws;
+                  
+                  for(int i=1;i<54;i++)
+                  {
+                     ws = new WeeklySchedule();
+                      if(i==1){
+                          ws.setStartDate(DateUtil.getFirstDayOfYear(as.getYear()));}
+                      else{
+                            ws.setStartDate(DateUtil.getStartDateOfWeek( String.valueOf(as.getYear()), String.valueOf(i)));}                        
+                            ws.setWeekNo(i);
+                            ws.setYear(as.getYear());                      
+                            wsList.add(ws);
+                  }
+                  
+                   spdao.processCreateAnnualSchedule(as,wsList);
+                
+                  
+              }
+            
+         catch (SQLException ex) {
+            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+   
+    
     /**
      * 
      * @param year
