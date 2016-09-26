@@ -21,24 +21,31 @@
         <script type='text/javascript' src="<c:url value='/js/jquery.weekcalendar.js'/>"></script>
 
         <script type='text/javascript'>
-            var events = [];
+            var scheduledPrograms = [];
+            var selectedScheduledProgram = null;
+            
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             <c:forEach items="${events}" var="item">
-            events.push({
-                'id': 1,
+            scheduledPrograms.push({
+                'id': ${item.getID()},
+                'title': '${item.programName}',
+                'producerID': 0,
+                'presenterID': 0,                
+                'year' : ${item.getYear()},
+                'week' : ${item.getWeek()},
+                'day' : '${item.getDay()}',
                 'start': new Date(${item.startTime.getTime()}),
-                'end': new Date(${item.endTime.getTime()}),
-                'title': '${item.programName}'
+                'end': new Date(${item.endTime.getTime()})                
             });
             </c:forEach>
-            console.log(events);
+            console.log(scheduledPrograms);
 
             var eventData = {
                 options: {
                     allowEventDelete: false,
                     readonly: true
                 },
-                events: events
+                events: scheduledPrograms
             };
 
             $(document).ready(function () {
@@ -47,27 +54,45 @@
                 $('#deleteButton').hide();
 //                $('#createButton').hide();
                 $("#createScreen").hide();
+                
                 $("#modifyScreen").hide();
+                $("#copyScreen").hide();
+                //$("#details").hide();
+                
                 $("#deleteScreen").hide();
                 $("#programDialog").hide();
                 $("#producerDialog").hide();
                 $("#presenterDialog").hide();
-
+                
                 $("#copyButton").click(function () {
                     $("#createScreen").hide();
-                    $("#modifyScreen").show();
+                    $("#modifyScreen").hide();
+                    $("#copyScreen").show();
                     $("#deleteScreen").hide();
-                    location.hash = "#modifyScreen";
+                    
+                    loadScheduledProgram("copy");
+                    $('#copyScreen #body').html( $("#details") );
+                    $("#details").show();
+                    
+                    location.hash = "#copyScreen";
                 });
                 $("#modifyButton").click(function () {
                     $("#createScreen").hide();
                     $("#modifyScreen").show();
+                    $("#copyScreen").hide();
                     $("#deleteScreen").hide();
+                    
+                    loadScheduledProgram("modify");
+                    $('#modifyScreen #body').html( $("#details") );
+                    $("#details").show();
+                    
+                    
                     location.hash = "#modifyScreen";
                 });
                 $("#deleteButton").click(function () {
                     $("#createScreen").hide();
                     $("#modifyScreen").hide();
+                    $("#copyScreen").hide();
                     $("#deleteScreen").show();
                     location.hash = "#deleteScreen";
                 });
@@ -129,20 +154,24 @@
                             if (!calEvent.id) {
                                 console.log(calEvent.start);
                                 $('.wc-cal-event').css('backgroundColor', '#68a1e5');
-                                var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
-                                var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
-                                $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
-                                $('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
+                                //var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
+                                //var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
+                               // $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
+                                //$('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
+                                $('#startTimeCreate').val(getFormatedTimeStringHHMM(calEvent.start));
+                                $('#endTimeCreate').val(getFormatedTimeStringHHMM(calEvent.end));
                                 $('#yearCreate').val($('#year').val());
                                 $('#weekCreate').val($('#week').val());
                                 $('#dayCreate').val(days[calEvent.start.getDay()]);
-                                $('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
+                                $('#dateCreate').val($.datepicker.formatDate('dd/mm/yy', calEvent.end) );
+                                //$('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
                                 $('#copyButton').hide();
                                 $('#modifyButton').hide();
                                 $('#deleteButton').hide();
 //                                $('#createButton').show();
                                 $("#createScreen").show();
                                 $("#modifyScreen").hide();
+                                $("#copyScreen").hide();
                                 $("#deleteScreen").hide();
                                 $("#programCreate").val('');
                                 $("#presenterCreate").val('');
@@ -155,8 +184,9 @@
                             return false;
                         },
                         eventClick: function (calEvent, $event) {
+                            selectedScheduledProgram = calEvent;
                             $('.wc-cal-event').css('backgroundColor', '#68a1e5');
-                            $event.css('backgroundColor', '#aaa');
+                            $event.css('backgroundColor', '#F09E73');
                             $event.find('.time').css({'backgroundColor': '#999', 'border': '1px solid #888'});
                             $('#sStartTime').val(calEvent.start.getTime());
                             $('#sEndTime').val(calEvent.end.getTime());
@@ -169,6 +199,7 @@
                             $('#createButton').hide();
                             $("#createScreen").hide();
                             $("#modifyScreen").hide();
+                            $("#copyScreen").hide();
                             $("#deleteScreen").hide();
                         }
                     });
@@ -222,6 +253,68 @@
                 $('#' + type + 'Dialog').html(data);
             });
         }
+        
+        function loadScheduledProgram(mode) {
+                    
+           
+            
+            $("#program").attr('readonly', true);
+            $("#presenter").attr('readonly', true);
+            $("#producer").attr('readonly', true);
+
+            if (mode === "create") {
+                $("#program").val("");
+                $("#presenter").val("");
+                $("#producer").val("");
+            
+                $("#year").attr('readonly', true);
+                $("#week").attr('readonly', true);
+                $("#startTime").attr('readonly', true);
+                $("#endTime").attr('readonly', true);
+            }
+            else if(mode === "modify") {
+                $("#scheduledProgramId").val(selectedScheduledProgram.id);                
+                $("#program").val(selectedScheduledProgram.title);
+                $("#presenter").val("");
+                $("#producer").val("");
+                $("#details #year").val(selectedScheduledProgram.year);
+                $("#details #week").val(selectedScheduledProgram.week);
+                $("#day").val(selectedScheduledProgram.day);
+                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+
+                $("#details #year").attr('readonly', true);
+                $("#details #week").attr('readonly', false);
+                $("#day").attr('readonly', false);
+                $("#startTime").attr('readonly', false);
+                $("#endTime").attr('readonly', false);
+            }
+            else if( mode === "copy") {
+                $("#scheduledProgramId").val(0);                
+                $("#program").val(selectedScheduledProgram.title);
+                $("#presenter").val("");
+                $("#producer").val("");
+                $("#details #year").val(selectedScheduledProgram.year);
+                $("#details #week").val(selectedScheduledProgram.week + 1);
+                $("#day").val(selectedScheduledProgram.day);
+                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+
+                $("#details #year").attr('readonly', false);
+                $("#details #week").attr('readonly', false);
+                $("#day").attr('readonly', false);
+                $("#startTime").attr('readonly', false);
+                $("#endTime").attr('readonly', false);
+            }
+            
+            return $("#details");            
+        }
+        
+        function getFormatedTimeStringHHMM(time) {
+            return ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2);
+        }
+        
+        
         </script>
 
     </head>
@@ -267,6 +360,9 @@
         <input type="hidden" name="sDay" id="sDay"/>
         <input type="hidden" name="sStartTime" id="sStartTime"/>
         <input type="hidden" name="sEndTime" id="sEndTime"/>
+        
+
+                
         <div id="createScreen" class="form-style-2" style="diplay:none;">
         <div class="form-style-2-heading">Create New Schedule</div>
         
@@ -288,24 +384,31 @@
                 <label><span>&nbsp;</span><input type="submit" value="Create Schedule" /></label>
             </form>
         </div>
+        
+        
         <div id="modifyScreen"  class="form-style-2" style="diplay:none;">
-            <div class="form-style-2-heading">Modify/Copy Schedule</div>
-            <form action="" method="post">
-                <label for="programModify"><span>Program Name: </span><input type="text" class="input-field" id="programModify"  name="programModify" /></label>
-                <label for="presenterModify"><span>Presenter: </span><input type="text" class="input-field" id="presenterModify" name="presenterModify" /></label>
-                <label for="producerModify"><span>Producer: </span><input type="text" class="input-field" id="producerModify" name="producerv" /></label>
-                <label for="yearModify"><span>Year: </span><input class="tel-number-field" type="text" id="yearModify"  name="yearModify" maxlength="4"  readonly/></label>
-                <label for="weekModify"><span>Week: </span><input class="tel-number-field" type="text" id="weekModify"  name="weekModify" maxlength="2" readonly/></label>
-                <label for="startTimeModify"><span>Start Time: </span><input class="input-field" type="text" id="startTimeModify"  name="startTimeModify" readonly/></label>
-                <label for="endTimeModify"><span>End Time: </span><input class="input-field" type="text" id="endTimeModify"  name="endTimeModify" readonly/></label
-
-
-                <label><span>&nbsp;</span><input type="submit" value="Modify/Copy Schedule" /></label>
+            <div class="form-style-2-heading">Modify Schedule</div>
+            <form action="${pageContext.request.contextPath}/nocturne/modifysp" method="post">
+                <div id="body">
+                    
+                </div>
+                <label><span>&nbsp;</span><input type="submit" value="Modify Schedule" /></label>
             </form>
         </div>
+        <div id="copyScreen"  class="form-style-2" style="diplay:none;">
+            <div class="form-style-2-heading">Copy Schedule</div>
+            <form action="${pageContext.request.contextPath}/nocturne/copysp" method="post">
+                <div id="body">
+                    
+                </div>
+                <label><span>&nbsp;</span><input type="submit" value="Copy Schedule" /></label>
+            </form>
+        </div>
+        
+        
         <div id="deleteScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Delete Schedule</div>
-            <form action="" method="post">
+            <form action="${pageContext.request.contextPath}/nocturne/deletesp" method="post">
                 <label for="program"><span>Program Name: </span><span>XXXXXXXXXXXXX</span></label>
                 <label for="presenter"><span>Presenter: </span><span>XXXXXXXXXXXXX</span></label>
                 <label for="producer"><span>Producer: </span><span>XXXXXXXXXXXXX</span></label>
@@ -317,6 +420,19 @@
 
                 <label><span>&nbsp;</span><input type="submit" value="Delete Schedule" /></label>
             </form>
+        </div>
+                
+        <div id="details" style="diplay:none;" hidden>
+            <input class="input-field" type="hidden" id="scheduledProgramId"  name="scheduledProgramId" hidden/>
+            
+            <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program"  name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." /></label>
+            <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
+            <label for="producer"><span>Producer: </span><input type="text" class="input-field" id="producer" name="producer" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
+            <label for="year"><span>Year: </span><input class="tel-number-field" type="text" id="year"  name="year" maxlength="4"  readonly/></label>
+            <label for="week"><span>Week: </span><input class="tel-number-field" type="text" id="week"  name="week" maxlength="2" readonly/></label>
+            <label for="day"><span>Day: </span><input class="tel-number-field" type="text" id="day"  name="day" maxlength="10" readonly/></label>
+            <label for="startTime"><span>Start Time: </span><input class="input-field" type="text" id="startTime"  name="startTime" readonly/></label>
+            <label for="endTime"><span>End Time: </span><input class="input-field" type="text" id="endTime"  name="endTime" readonly/></label>
         </div>
     </body>
 </html>
