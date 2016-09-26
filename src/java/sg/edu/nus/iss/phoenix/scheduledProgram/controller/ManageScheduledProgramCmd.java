@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
@@ -33,6 +34,7 @@ public class ManageScheduledProgramCmd implements Perform {
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
+            req.setAttribute("default", new ProgramSlot());            
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());

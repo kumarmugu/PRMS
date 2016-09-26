@@ -35,7 +35,9 @@ public class ProgramSlot {
     };
      
     public ProgramSlot(){
-        
+        this.startTime = new Date();
+        this.duration = new Time(3600000);
+        this.endTime = new Date( startTime.getTime() + duration.getTime() );
     };
     
     public ProgramSlot(Date startTime, Date endTime, String programName) {
@@ -113,6 +115,7 @@ public class ProgramSlot {
         cal.setTime(startTime);
         return cal.get(Calendar.YEAR);
     }
+    
     public int getWeek() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(startTime);

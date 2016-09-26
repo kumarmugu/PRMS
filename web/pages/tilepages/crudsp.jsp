@@ -22,7 +22,17 @@
 
         <script type='text/javascript'>
             var scheduledPrograms = [];
-            var selectedScheduledProgram = null;
+            var selectedScheduledProgram = {    
+                'id': ${default.getID()},
+                'title': '${default.programName}',
+                'producerID': 0,
+                'presenterID': 0,                
+                'year' : ${default.getYear()},
+                'week' : ${default.getWeek()},
+                'day' : '${default.getDay()}',
+                'start': new Date(${default.startTime.getTime()}),
+                'end': new Date(${default.endTime.getTime()})
+            };
             
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             <c:forEach items="${events}" var="item">
@@ -38,6 +48,7 @@
                 'end': new Date(${item.endTime.getTime()})                
             });
             </c:forEach>
+            
             console.log(scheduledPrograms);
 
             var eventData = {
@@ -94,6 +105,11 @@
                     $("#modifyScreen").hide();
                     $("#copyScreen").hide();
                     $("#deleteScreen").show();
+                    
+                    loadScheduledProgram("delete");
+                    $('#deleteScreen #body').html( $("#details") );
+                    $("#details").show();
+                    
                     location.hash = "#deleteScreen";
                 });
                 $("#programBrowse").click(function () {
@@ -133,7 +149,7 @@
                 $('[id^="program-tr-"]').click(function () {
                     var programId = $(this).attr('id').replace("tr", "td");
                     $('#programDialog').dialog('close');
-                    $("#programCreate").val($("#" + programId).html());
+                    $("#program").val($("#" + programId).html());
                 });
                 if (${isAnnualScheduleExist}) {
                     //    pointer-events: none;
@@ -153,17 +169,18 @@
                             //console.log(calEvent);
                             if (!calEvent.id) {
                                 console.log(calEvent.start);
-                                $('.wc-cal-event').css('backgroundColor', '#68a1e5');
+                                createScheduleProgram(calEvent);
+                                //$('.wc-cal-event').css('backgroundColor', '#68a1e5');
                                 //var startMinutes = (calEvent.start.getMinutes() == 0) ? (calEvent.start.getMinutes() + '0') : calEvent.start.getMinutes();
                                 //var endMinutes = (calEvent.end.getMinutes() == 0) ? (calEvent.end.getMinutes() + '0') : calEvent.end.getMinutes();
                                // $('#startTimeCreate').val(calEvent.start.getHours().toString().padStart(2,"0") + ":" + startMinutes);
                                 //$('#endTimeCreate').val(calEvent.end.getHours().toString().padStart(2,"0") + ":" + endMinutes);
-                                $('#startTimeCreate').val(getFormatedTimeStringHHMM(calEvent.start));
-                                $('#endTimeCreate').val(getFormatedTimeStringHHMM(calEvent.end));
-                                $('#yearCreate').val($('#year').val());
-                                $('#weekCreate').val($('#week').val());
-                                $('#dayCreate').val(days[calEvent.start.getDay()]);
-                                $('#dateCreate').val($.datepicker.formatDate('dd/mm/yy', calEvent.end) );
+                                //$('#startTimeCreate').val(getFormatedTimeStringHHMM(calEvent.start));
+                                //$('#endTimeCreate').val(getFormatedTimeStringHHMM(calEvent.end));
+                                //$('#yearCreate').val($('#year').val());
+                                //$('#weekCreate').val($('#week').val());
+                               // $('#dayCreate').val(days[calEvent.start.getDay()]);
+                              //  $('#dateCreate').val($.datepicker.formatDate('dd/mm/yy', calEvent.end) );
                                 //$('#dateCreate').val(calEvent.end.getDate().toString().padStart(2,"0") + "/" + calEvent.end.getMonth().toString().padStart(2,"0") + "/" + calEvent.end.getFullYear());
                                 $('#copyButton').hide();
                                 $('#modifyButton').hide();
@@ -173,9 +190,12 @@
                                 $("#modifyScreen").hide();
                                 $("#copyScreen").hide();
                                 $("#deleteScreen").hide();
-                                $("#programCreate").val('');
-                                $("#presenterCreate").val('');
-                                $("#producerCreate").val('');
+                                //$("#programCreate").val('');
+                                //$("#presenterCreate").val('');
+                                //$("#producerCreate").val('');
+                                loadScheduledProgram("create");
+                                $('#createScreen #body').html( $("#details") );
+                                $("#details").show();
                                 location.hash = "#createScreen";
                             }
                         },
@@ -238,7 +258,7 @@
          function presenterProducerClicked(id, type, hdid){
            
             $('#' + type + 'Dialog').dialog('close');
-            $('#' + type + 'Create').val($("#" + id).html());
+            $('#' + type ).val($("#" + id).html());
             $('#' + type + 'Createid').val(document.getElementById(hdid).value);
            
            // if(type !=null){
@@ -253,7 +273,7 @@
          }
          function programClicked(id){
             $('#programDialog').dialog('close');
-            $('#programCreate').val($("#" + id).html());
+            $('#program').val($("#" + id).html());
          }
         function searchProducerPresenter(type){
             var searchtext = $('#searchText'+ type).val();
@@ -262,59 +282,63 @@
             });
         }
         
+        
+        function createScheduleProgram(calEvent) {
+            selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
+            selectedScheduledProgram.start = new Date(calEvent.start.getTime());
+            selectedScheduledProgram.end = new Date(calEvent.end.getTime());
+        }        
+        
         function loadScheduledProgram(mode) {
-                    
-           
-            
+            $("#scheduledProgramId").val(selectedScheduledProgram.id);                
+            $("#program").val(selectedScheduledProgram.title);
+            $("#presenter").val("");
+            $("#producer").val("");
+            $("#details #year").val(selectedScheduledProgram.year);
+            $("#details #week").val(selectedScheduledProgram.week);
+            $("#day").val(selectedScheduledProgram.day);
+            $("#date").val($.datepicker.formatDate('dd/mm/yy', selectedScheduledProgram.start));
+            $("#startTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+            $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+
+            $("#details #programBrowse").attr('hidden', false);
+            $("#details #presenterBrowse").attr('hidden', false);
+            $("#details #producerBrowse").attr('hidden', false);
             $("#program").attr('readonly', true);
             $("#presenter").attr('readonly', true);
             $("#producer").attr('readonly', true);
-
-            if (mode === "create") {
-                $("#program").val("");
-                $("#presenter").val("");
-                $("#producer").val("");
-            
-                $("#year").attr('readonly', true);
-                $("#week").attr('readonly', true);
-                $("#startTime").attr('readonly', true);
-                $("#endTime").attr('readonly', true);
+            $("#details #year").attr('readonly', true);
+               
+            if (mode === "create") {                            
+                $("#details #week").attr('readonly', true);
+                $("#details #day").attr('readonly', true);
+                $("#details #startTime").attr('readonly', true);
+                $("#details #endTime").attr('readonly', true);
             }
-            else if(mode === "modify") {
-                $("#scheduledProgramId").val(selectedScheduledProgram.id);                
-                $("#program").val(selectedScheduledProgram.title);
-                $("#presenter").val("");
-                $("#producer").val("");
-                $("#details #year").val(selectedScheduledProgram.year);
-                $("#details #week").val(selectedScheduledProgram.week);
-                $("#day").val(selectedScheduledProgram.day);
-                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
-                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
-
-                $("#details #year").attr('readonly', true);
+            else if(mode === "modify") {                
                 $("#details #week").attr('readonly', false);
-                $("#day").attr('readonly', false);
-                $("#startTime").attr('readonly', false);
-                $("#endTime").attr('readonly', false);
+                $("#details #day").attr('readonly', false);
+                $("#details #startTime").attr('readonly', false);
+                $("#details #endTime").attr('readonly', false);
             }
             else if( mode === "copy") {
                 $("#scheduledProgramId").val(0);                
-                $("#program").val(selectedScheduledProgram.title);
-                $("#presenter").val("");
-                $("#producer").val("");
-                $("#details #year").val(selectedScheduledProgram.year);
+                var nextWeek = new Date();
+                nextWeek.setDate(selectedScheduledProgram.start.getDate() + 7);
                 $("#details #week").val(selectedScheduledProgram.week + 1);
-                $("#day").val(selectedScheduledProgram.day);
-                $("#startTime").val( getFormatedTimeStringHHMM(selectedScheduledProgram.start));
-                $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+                $("#date").val($.datepicker.formatDate('dd/mm/yy', nextWeek));
 
-                $("#details #year").attr('readonly', false);
                 $("#details #week").attr('readonly', false);
-                $("#day").attr('readonly', false);
-                $("#startTime").attr('readonly', false);
-                $("#endTime").attr('readonly', false);
+                $("#details #day").attr('readonly', false);
+                $("#details #startTime").attr('readonly', false);
+                $("#details #endTime").attr('readonly', false);
             }
-            
+            else if (mode === "delete")
+            {
+                $("#details #programBrowse").attr('hidden', true);
+                $("#details #presenterBrowse").attr('hidden', true);
+                $("#details #producerBrowse").attr('hidden', true);
+            }
             return $("#details");            
         }
         
@@ -375,20 +399,8 @@
         <div class="form-style-2-heading">Create New Schedule</div>
         
             <form action="${pageContext.request.contextPath}/nocturne/addsp" method="post">
-                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" value="charity" disabled/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
-                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" disabled/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
-                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" disabled/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
-                <label for="yearCreate"><span>Year: </span><input class="tel-number-field" type="text" id="yearCreate"  name="yearCreate" maxlength="4"  readonly/></label>
-                <label for="weekCreate"><span>Week: </span><input class="tel-number-field" type="text" id="weekCreate"  name="weekCreate" maxlength="2" readonly/></label>
-                <label for="dayCreate"><span>Day: </span><input class="input-field" type="text" id="dayCreate"  name="dayCreate" readonly/></label><br/>
-                <label for="dateCreate"><span>Date </span><input class="input-field" type="text" id="dateCreate"  name="dateCreate" readonly/></label><br/>
-                <label for="startTimeCreate"><span>Start Time: </span><input class="tel-number-field" type="text" id="startTimeCreate"  name="startTimeCreate" readonly/></label>
-                <label for="endTimeCreate"><span>End Time: </span><input class="tel-number-field" type="text" id="endTimeCreate"  name="endTimeCreate" readonly/></label
+                <div id="body"> </div>              
                 
-               
-                <input type="hidden" name="presenterCreateid" id="presenterCreateid" value=""/>
-                <input type="hidden" name="producerCreateid"  id="producerCreateid" value=""/>
-
                 <label><span>&nbsp;</span><input type="submit" value="Create Schedule" /></label>
             </form>
         </div>
@@ -397,18 +409,14 @@
         <div id="modifyScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Modify Schedule</div>
             <form action="${pageContext.request.contextPath}/nocturne/modifysp" method="post">
-                <div id="body">
-                    
-                </div>
+                <div id="body"> </div>
                 <label><span>&nbsp;</span><input type="submit" value="Modify Schedule" /></label>
             </form>
         </div>
         <div id="copyScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Copy Schedule</div>
             <form action="${pageContext.request.contextPath}/nocturne/copysp" method="post">
-                <div id="body">
-                    
-                </div>
+                <div id="body"> </div>
                 <label><span>&nbsp;</span><input type="submit" value="Copy Schedule" /></label>
             </form>
         </div>
@@ -417,28 +425,24 @@
         <div id="deleteScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Delete Schedule</div>
             <form action="${pageContext.request.contextPath}/nocturne/deletesp" method="post">
-                <label for="program"><span>Program Name: </span><span>XXXXXXXXXXXXX</span></label>
-                <label for="presenter"><span>Presenter: </span><span>XXXXXXXXXXXXX</span></label>
-                <label for="producer"><span>Producer: </span><span>XXXXXXXXXXXXX</span></label>
-                <label for="yearDelete"><span>Year: </span><span id="yearDelete"></span></label>
-                <label for="weekDelete"><span>Week: </span><span id="weekDelete"></span></label>
-                <label for="dayDelete"><span>Day: </span><span id="dayDelete"></span></label>
-                <label for="startTimeDelete"><span>Start Time: </span><span id="startTimeDelete"></span></label>
-                <label for="endTimeDelete"><span>End Time: </span><span id="endTimeDelete"></span></label>
-
+                 <div id="body"> </div>
                 <label><span>&nbsp;</span><input type="submit" value="Delete Schedule" /></label>
             </form>
         </div>
                 
         <div id="details" style="diplay:none;" hidden>
             <input class="input-field" type="hidden" id="scheduledProgramId"  name="scheduledProgramId" hidden/>
+            <input type="hidden" name="presenterCreateid" id="presenterCreateid" value=""/>
+            <input type="hidden" name="producerCreateid"  id="producerCreateid" value=""/>
             
             <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program"  name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." /></label>
             <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
             <label for="producer"><span>Producer: </span><input type="text" class="input-field" id="producer" name="producer" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
+            
             <label for="year"><span>Year: </span><input class="tel-number-field" type="text" id="year"  name="year" maxlength="4"  readonly/></label>
             <label for="week"><span>Week: </span><input class="tel-number-field" type="text" id="week"  name="week" maxlength="2" readonly/></label>
             <label for="day"><span>Day: </span><input class="tel-number-field" type="text" id="day"  name="day" maxlength="10" readonly/></label>
+            <label for="date"><span>Date: </span><input class="tel-number-field" type="text" id="date"  name="date" maxlength="10" readonly/></label>
             <label for="startTime"><span>Start Time: </span><input class="input-field" type="text" id="startTime"  name="startTime" readonly/></label>
             <label for="endTime"><span>End Time: </span><input class="input-field" type="text" id="endTime"  name="endTime" readonly/></label>
         </div>
