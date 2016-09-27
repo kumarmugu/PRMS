@@ -67,9 +67,11 @@ public class CreateModifyUserCmd implements Perform{
         } catch (SQLException ex) {
             Logger.getLogger(CreateModifyUserCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         
-
+        req.setAttribute("insert", req.getParameter("insert"));
+        req.setAttribute("errMsg", "");
+        req.setAttribute("name", req.getParameter("name"));
+        req.setAttribute("id", req.getParameter("id"));
         req.setAttribute("listUserRole", req.getParameter("roles"));
         req.setAttribute("roles", roles);
         

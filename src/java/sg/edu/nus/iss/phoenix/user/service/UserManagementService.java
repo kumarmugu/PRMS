@@ -72,12 +72,14 @@ public class UserManagementService {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void processCreateUser(User user) {
+    public void processCreateUser(User user) throws SQLException{
         try {
             usrdao.create(user);
             // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         } catch (SQLException ex) {
+            
             Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException(ex.getMessage());
         }
     }
 

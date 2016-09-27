@@ -38,7 +38,7 @@ public class UserDelegate {
         return usrservice.processFindUser(userId);
     }
     
-    public void processCreateUser(User user){
+    public void processCreateUser(User user) throws SQLException{
         usrservice.processCreateUser(user);
     }
     
