@@ -368,15 +368,15 @@
         <div class="form-style-2-heading">Create New Schedule</div>
         
             <form action="${pageContext.request.contextPath}/nocturne/addsp" method="post">
-                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate"  name="programCreate" value="charity" disabled/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
-                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" disabled/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
-                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" disabled/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
+                <label for="programCreate"><span>Program Name: </span><input type="text" class="input-field" id="programCreate" name="programCreate" value="charity" readonly/>&nbsp;<input type="button" id="programBrowse" value="..." /></label>
+                <label for="presenterCreate"><span>Presenter: </span><input type="text" class="input-field" id="presenterCreate" name="presenterCreate" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>
+                <label for="producerCreate"><span>Producer: </span><input type="text" class="input-field" id="producerCreate" name="producerCreate" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." /></label>
                 <label for="yearCreate"><span>Year: </span><input class="tel-number-field" type="text" id="yearCreate"  name="yearCreate" maxlength="4"  readonly/></label>
                 <label for="weekCreate"><span>Week: </span><input class="tel-number-field" type="text" id="weekCreate"  name="weekCreate" maxlength="2" readonly/></label>
                 <label for="dayCreate"><span>Day: </span><input class="input-field" type="text" id="dayCreate"  name="dayCreate" readonly/></label><br/>
                 <label for="dateCreate"><span>Date </span><input class="input-field" type="text" id="dateCreate"  name="dateCreate" readonly/></label><br/>
                 <label for="startTimeCreate"><span>Start Time: </span><input class="tel-number-field" type="text" id="startTimeCreate"  name="startTimeCreate" readonly/></label>
-                <label for="endTimeCreate"><span>End Time: </span><input class="tel-number-field" type="text" id="endTimeCreate"  name="endTimeCreate" readonly/></label
+                <label for="endTimeCreate"><span>End Time: </span><input class="tel-number-field" type="text" id="endTimeCreate"  name="endTimeCreate" readonly/></label>
                 
                
                 <input type="hidden" name="presenterCreateid" id="presenterCreateid" value=""/>
