@@ -34,7 +34,7 @@ public class ReviewAndSelectScheduledProgramDelegate {
      * @return
      * @throws AnnualSchedueNotExistException 
      */
-    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException, SQLException {
         return service.reviewSelectScheduledProgram(year, week);
     }
     
