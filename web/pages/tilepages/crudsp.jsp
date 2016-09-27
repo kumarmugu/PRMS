@@ -33,19 +33,22 @@
                 'start': new Date(${default.startTime.getTime()}),
                 'end': new Date(${default.endTime.getTime()})
             };
+            var mode = '${mode}';
+            var msg = '${msg}';
             
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             <c:forEach items="${events}" var="item">
             scheduledPrograms.push({
                 'id': ${item.getID()},
                 'title': '${item.programName}',
-                'producerID': 0,
-                'presenterID': 0,                
+                'producerID': '${item.producerId}',
+                'presenterID': '${item.presenterId}',                  
                 'year' : ${item.getYear()},
                 'week' : ${item.getWeek()},
                 'day' : '${item.getDay()}',
                 'start': new Date(${item.startTime.getTime()}),
-                'end': new Date(${item.endTime.getTime()})                
+                'end': new Date(${item.endTime.getTime()}) ,
+                'updatedBy' : 'you'
             });
             </c:forEach>
             
@@ -58,6 +61,7 @@
                 },
                 events: scheduledPrograms
             };
+            
 
             $(document).ready(function () {
                 $('#copyButton').hide();
@@ -254,12 +258,15 @@
                       }
                 }
             });
+            if (mode === "modify") {
+                $("#modifyButton").click();
+            }
             
          function presenterProducerClicked(id, type, hdid){
            
             $('#' + type + 'Dialog').dialog('close');
             $('#' + type ).val($("#" + id).html());
-            $('#' + type + 'Createid').val(document.getElementById(hdid).value);
+            //$('#' + type + 'Createid').val(document.getElementById(hdid).value);
            
          }
          function programClicked(id){
@@ -283,14 +290,15 @@
         function loadScheduledProgram(mode) {
             $("#scheduledProgramId").val(selectedScheduledProgram.id);                
             $("#program").val(selectedScheduledProgram.title);
-            $("#presenter").val("");
-            $("#producer").val("");
+            $("#presenter").val(selectedScheduledProgram.presenterID);
+            $("#producer").val(selectedScheduledProgram.producerID);
             $("#details #year").val(selectedScheduledProgram.year);
             $("#details #week").val(selectedScheduledProgram.week);
             $("#day").val(selectedScheduledProgram.day);
             $("#date").val($.datepicker.formatDate('dd/mm/yy', selectedScheduledProgram.start));
             $("#startTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.start));
             $("#endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+            $("updatedBy").val(selectedScheduledProgram.updatedBy);
 
             $("#details #programBrowse").attr('hidden', false);
             $("#details #presenterBrowse").attr('hidden', false);
@@ -300,7 +308,10 @@
             $("#producer").attr('readonly', true);
             $("#details #year").attr('readonly', true);
                
-            if (mode === "create") {                            
+            if (mode === "create") {   
+                $("#program").val("");
+                $("#presenter").val("");
+                $("#producer").val("");
                 $("#details #week").attr('readonly', true);
                 $("#details #day").attr('readonly', true);
                 $("#details #startTime").attr('readonly', true);
@@ -423,8 +434,7 @@
                 
         <div id="details" style="diplay:none;" hidden>
             <input class="input-field" type="hidden" id="scheduledProgramId"  name="scheduledProgramId" hidden/>
-            <input type="hidden" name="presenterCreateid" id="presenterCreateid" value=""/>
-            <input type="hidden" name="producerCreateid"  id="producerCreateid" value=""/>
+            <input type="hidden" name="updateBy" id="updateBy" value=""/>
             
             <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program"  name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." /></label>
             <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." /></label>

@@ -75,7 +75,7 @@ public class AddScheduledProgramCmd implements Perform {
         srd.setupdatedOn(new Date());        
         srd.setStartTime(srdStartDate);
         
-        srd.setweeekStartDate(DateUtil.getStartDateOfWeek(year, week));
+        srd.setweekStartDate(DateUtil.getStartDateOfWeek(year, week));
         try {
             srd.setDuration(DateUtil.getTimeDiff(starttime, endtime));
         } catch (ParseException ex) {

@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import static sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot.AddDateTime;
 
 /**
  *
@@ -121,6 +123,96 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
         return ws;
     }
     
+    @Override
+    public WeeklySchedule getScheduleForWeek(int year, int weekNo) throws NotFoundException, SQLException {
+        Connection conn = dbUtil.openConnection();
+        PreparedStatement stmt = null;
+        String sql = "select startDate from `weekly-schedule` where year=? and weekNo= ?; ";
+        stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, year);
+        stmt.setInt(2, weekNo);
+        ResultSet result = null;
+        WeeklySchedule ws= null;
+        try {
+            result = stmt.executeQuery();
+            if (result.next()) 
+            {
+                ws = new WeeklySchedule();
+                ws.setStartDate(result.getDate("startDate"));
+                ws.setYear(year);
+                ws.setWeekNo(weekNo);
+            }     
+            else throw new NotFoundException("WeeklySchedule not found.");
+        } finally {
+            if (result != null) {
+                result.close();
+            }
+            stmt.close();
+            
+            dbUtil.closeConnection(conn);
+        }
+        return ws;
+    }
+    
+    @Override
+    public ProgramSlot getProgramSlot(Date theStartTime) throws NotFoundException, SQLException{
+        Connection conn = dbUtil.openConnection();
+        ResultSet result = null;
+        PreparedStatement stmt = null;
+        String sql = "SELECT * FROM `program-slot` where programStartDateTime = ?;";
+        stmt = conn.prepareStatement(sql);
+        stmt.setTimestamp(1, new java.sql.Timestamp(theStartTime.getTime()));
+        ProgramSlot ps = null;
+        try {
+            result = stmt.executeQuery();
+            if (result.next()) ps = constructProgramSlot(result);    
+            else throw new NotFoundException("ProgramSlot not found.");
+        } finally {
+            if (result != null) {
+                result.close();
+            }
+            stmt.close();
+            dbUtil.closeConnection(conn);
+        }
+        return ps;
+    }
+    
+    private ProgramSlot constructProgramSlot(ResultSet result) {
+        ProgramSlot ps = null;
+        try {
+            Date startTime = new Date(result.getTimestamp("programStartDateTime").getTime());
+            String programName  = result.getString("program-name");
+            Timestamp duration  = result.getTimestamp("duration");  
+            Date endTime = ProgramSlot.AddDateTime(startTime, duration);
+            ps = new ProgramSlot(startTime, endTime, programName);
+            ps.setDuration(duration);
+            ps.setweekStartDate(new Date(result.getDate("weekStartDate").getTime()));
+            ps.setProducerId(result.getString("producerid"));
+            ps.setPresenterId(result.getString("presenterid"));
+            ps.setupdatedBy(result.getString("update_by"));
+            ps.setupdatedOn(new Date(result.getTimestamp("update_on").getTime()));
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+        return ps;
+    }
+    
+    private void constructProgramSlotSQLStatement(PreparedStatement stmt, ProgramSlot valueObject) {
+        try {
+            stmt.setTime(1, new java.sql.Time(valueObject.getduration().getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+            stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
+            stmt.setString(4, valueObject.getProducerId());
+            stmt.setString(5, valueObject.getPresenterId());
+            stmt.setString(6, valueObject.getProgramName());
+            stmt.setString(7,valueObject.getupdatedBy());
+            stmt.setDate(8,new java.sql.Date(valueObject.getupdatedOn().getTime()));
+        } catch (SQLException ex) {
+            Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
     
     protected WeeklySchedule listQuery(PreparedStatement stmt, WeeklySchedule ws) throws SQLException {
 
@@ -128,18 +220,19 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
         ResultSet result = null;
         try {
             result = stmt.executeQuery();
-
             while (result.next()) {
+                ProgramSlot ps = constructProgramSlot(result); // Refactored by zehua
+                if (ps != null) searchResults.add(ps);
                 //Need to refactor 
-                ProgramSlot temp = createValueObject();
-                Timestamp startDate = result.getTimestamp("programStartDateTime");
-                Time duration = result.getTime("duration");
-                long endDate = startDate.getTime() + (duration.getHours() * 60 + duration.getMinutes()) * 60 * 1000; // Need to modify
-                temp.setStartTime(result.getTimestamp("programStartDateTime"));
-                temp.setEndTime(new Date(endDate));
-                temp.setProgramName(result.getString("program-name"));
+                //ProgramSlot temp = createValueObject();
+                //Timestamp startDate = result.getTimestamp("programStartDateTime");
+                //Time duration = result.getTime("duration");
+                //long endDate = startDate.getTime() + (duration.getHours() * 60 + duration.getMinutes()) * 60 * 1000; // Need to modify
+                //temp.setStartTime(result.getTimestamp("programStartDateTime"));
+                //temp.setEndTime(new Date(endDate));
+                //temp.setProgramName(result.getString("program-name"));
                 ws.setStartDate(result.getDate("weekStartDate"));
-                searchResults.add(temp);
+                //searchResults.add(temp);
             }
             System.out.println("record size" + searchResults.size());
             ws.setProgramSlots((ArrayList<ProgramSlot>) searchResults);
@@ -222,53 +315,81 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
     }
 
  
-    public void create(ProgramSlot valueObject)  {
-        
-        
-		     Connection conn = dbUtil.openConnection();
-         Boolean success =true;
-         String sql = "";
-		PreparedStatement stmt = null;
-              
-		try {
-			sql = "INSERT INTO `program-slot` (`duration`, `programStartDateTime`, `weekStartDate`, `producer_id`, `presenter_id`, `program-name`, `update_by`, `update_on`) VALUES "+ 
-                              "(?,?,?,?,?,?,?,?); ";
-			stmt = conn.prepareStatement(sql);
-			stmt.setTime(1, valueObject.getduration());
-                        stmt.setDate(2, new java.sql.Date(valueObject.getStartTime().getTime()));
-                        stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
-			stmt.setString(4, valueObject.getProducerId());
-                        stmt.setString(5, valueObject.getPresenterId());
-                        stmt.setString(6, valueObject.getProgramName());
-                        stmt.setString(7,valueObject.getupdatedBy());
-                        stmt.setDate(8,new java.sql.Date(valueObject.getupdatedOn().getTime()));
-                        
-			int rowcount = stmt.executeUpdate();
-                    } catch (SQLException e ) {
-                        
-                        e.printStackTrace();
-              
-                    } finally {
-			if (stmt != null)
-				try {
-                                    stmt.close();
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                       
-                         try {
-                             conn.close();
-                         } catch (SQLException ex) {
-                             Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
-                         }
-		}
-        
-               // return success;
-        
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 
-   public  void delete(ProgramSlot valueObject)
+    @Override
+    public void create(ProgramSlot valueObject) {
+        Connection conn = dbUtil.openConnection();
+        Boolean success =true;
+        String sql = "";
+        PreparedStatement stmt = null;
+
+        try {
+                sql = "INSERT INTO `program-slot` (`duration`, `programStartDateTime`, `weekStartDate`, `producerid`, `presenterid`, `program-name`, `update_by`, `update_on`) VALUES "+ 
+                      "(?,?,?,?,?,?,?,?); ";
+                stmt = conn.prepareStatement(sql);
+                constructProgramSlotSQLStatement(stmt, valueObject);
+//                stmt.setTime(1, new java.sql.Time(valueObject.getduration().getTime()));
+//                stmt.setTimestamp(2, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+//                stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
+//                stmt.setString(4, valueObject.getProducerId());
+//                stmt.setString(5, valueObject.getPresenterId());
+//                stmt.setString(6, valueObject.getProgramName());
+//                stmt.setString(7,valueObject.getupdatedBy());
+//                stmt.setDate(8,new java.sql.Date(valueObject.getupdatedOn().getTime()));
+
+                int rowcount = stmt.executeUpdate();
+                
+            } catch (SQLException e ) {
+
+                e.printStackTrace();
+
+            } finally {
+                if (stmt != null)
+                        try {
+                            stmt.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                 try {
+                     conn.close();
+                 } catch (SQLException ex) {
+                     Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+        }    
+    }
+   
+    
+    public void save(ProgramSlot valueObject)  {
+        Connection conn = dbUtil.openConnection();
+        Boolean success =true;
+        String sql = "";
+	PreparedStatement stmt = null;
+              
+        try {
+                sql = "UPDATE `program-slot` SET `duration` = ?, `programStartDateTime` = ?, `weekStartDate` = ?, `producerid` = ?, `presenterid` = ?, `program-name` = ?, `update_by` = ?, `update_on` =? "+ 
+                      "WHERE (`programStartDateTime` = ?); ";
+                stmt = conn.prepareStatement(sql);
+                constructProgramSlotSQLStatement(stmt, valueObject);
+                stmt.setTimestamp(9, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+
+                int rowcount = stmt.executeUpdate();
+            } catch (SQLException e ) {
+
+                e.printStackTrace();
+
+            } finally {
+                try {
+                        stmt.close();
+                        conn.close();
+                 } catch (SQLException ex) {
+                        Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }    
+    }
+    
+    public  void delete(ProgramSlot valueObject)
 			throws NotFoundException, SQLException{
                  if (valueObject.getStartTime() == null) {
 			throw new NotFoundException("Can not delete without Primary-Key!");
@@ -299,9 +420,8 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
 			conn.close();
 		}
    }
-   
+
+    
 
    
-  
-
 }

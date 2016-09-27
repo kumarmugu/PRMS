@@ -39,6 +39,7 @@ public class ManageScheduledProgramCmd implements Perform {
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());
             req.setAttribute("currentYear", ws.getYear());
+            
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
