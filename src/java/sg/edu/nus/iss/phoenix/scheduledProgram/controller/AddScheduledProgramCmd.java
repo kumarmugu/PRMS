@@ -8,6 +8,7 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.controller;
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,10 +53,9 @@ public class AddScheduledProgramCmd implements Perform {
          
         Date srdStartDate = null;
         try {
-            srdStartDate = formatter.parse(programStartDateime);
-            
-            System.out.println("srdStartDate: " + srdStartDate);
-            
+                srdStartDate = formatter.parse(programStartDateime);            
+                System.out.println("srdStartDate: " + srdStartDate);
+
         } catch (ParseException ex) {
             Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -65,9 +65,12 @@ public class AddScheduledProgramCmd implements Perform {
         String starttime = req.getParameter("startTimeCreate");
         String endtime=req.getParameter("endTimeCreate");
          
-        srd.setProgramName("IC Unplug");  // Hardcoded Need to take value      
+        //srd.setProgramName(req.getParameter("programCreate"));   
+         srd.setProgramName("MM News");
+         System.out.println("==============================================");
+         System.out.println("req.getParameter(\"programCreate\"):  "+req.getParameter("programCreate"));
         //srd.setPresenterId(req.getParameter("presenterCreateid")); 
-        srd.setPresenterId("mozert");// Hardcoded Need to take value  
+        srd.setPresenterId("mozert"); 
         System.out.println("srd.getPresenterId():  "+srd.getPresenterId());
         srd.setProducerId(req.getParameter("producerCreateid"));
          System.out.println("srd.getProducerId():  "+srd.getProducerId());
@@ -81,13 +84,7 @@ public class AddScheduledProgramCmd implements Perform {
         } catch (ParseException ex) {
             Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-         
-               
-        System.out.println("Session Userid : "+user.getId());
-        System.out.println("++++++++ useraction : "+useraction);
-        
-        
+                
         ScheduledProgramDelegate srddel= new ScheduledProgramDelegate();
         srddel.ProcessCreate(srd); 
        
@@ -112,6 +109,8 @@ public class AddScheduledProgramCmd implements Perform {
             Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
           
+        } catch (SQLException ex) {
+            Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         
          
