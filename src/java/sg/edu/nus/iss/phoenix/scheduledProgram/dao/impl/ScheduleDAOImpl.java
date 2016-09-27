@@ -22,6 +22,7 @@ import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -235,14 +236,14 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
                               "(?,?,?,?,?,?,?,?); ";
 			stmt = conn.prepareStatement(sql);
 			stmt.setTime(1, valueObject.getduration());
-                        stmt.setDate(2, new java.sql.Date(valueObject.getStartTime().getTime()));
+                        stmt.setTimestamp(2, DateUtil.getTimestamp(valueObject.getStartTime()));
                         stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
 			stmt.setString(4, valueObject.getProducerId());
                         stmt.setString(5, valueObject.getPresenterId());
                         stmt.setString(6, valueObject.getProgramName());
-                        stmt.setString(7,valueObject.getupdatedBy());
-                        stmt.setDate(8,new java.sql.Date(valueObject.getupdatedOn().getTime()));
-                        
+                        stmt.setString(7,valueObject.getupdatedBy());                       
+                        stmt.setTimestamp(8,DateUtil.getTimestamp(valueObject.getupdatedOn()));
+  
 			int rowcount = stmt.executeUpdate();
                     } catch (SQLException e ) {
                         
