@@ -8,6 +8,7 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.controller;
 import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -40,6 +41,8 @@ public class ModifyScheduledProgramCmd implements Perform {
             Logger.getLogger(
                     ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "/pages/crudsp.jsp";
     }
