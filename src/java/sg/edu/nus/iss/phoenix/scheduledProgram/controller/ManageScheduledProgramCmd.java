@@ -19,9 +19,10 @@ import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
-/**
+/**  
  *
  * @author Mugunthan
  */
@@ -61,15 +62,21 @@ public class ManageScheduledProgramCmd implements Perform {
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
+            req.setAttribute("default", new ProgramSlot());            
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());
             req.setAttribute("currentYear", ws.getYear());
+            
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
         } catch (SQLException ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         catch (Exception ex) {
+            Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+         
         }
         return "/pages/crudsp.jsp";
     }

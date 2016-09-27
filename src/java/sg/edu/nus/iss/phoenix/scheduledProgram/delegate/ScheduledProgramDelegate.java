@@ -7,6 +7,7 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.delegate;
 
 
 import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
@@ -50,4 +51,32 @@ public class ScheduledProgramDelegate {
         service.processDelete(programSlot);
     }
     
+    public ProgramSlot processModify(long modifyingProgramSlotId, 
+                                     ProgramSlot newProgramSlot) throws Exception{
+        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (existingProgramSlot != null) {
+            throw new Exception("A Program already exists in the new timeslot.");
+        }
+        
+        ProgramSlot modifyingProgramSlot = getProgramSlot(modifyingProgramSlotId);
+        if (modifyingProgramSlot == null) {
+            throw new NotFoundException("Modifying Program slot can't found.");
+        }
+        
+        boolean isValid = service.validateProgramSlotDetail(newProgramSlot);
+        if (!isValid) {
+            throw new Exception("Invalid Program Slot.");
+        }
+        
+        service.processModify(modifyingProgramSlot, newProgramSlot);        
+        return newProgramSlot;        
+    }
+    
+    public ProgramSlot getProgramSlot(long id) {
+        return service.getProgramSlot(id);
+    }
+    
+    public ProgramSlot getProgramSlot(HttpServletRequest req) {
+        return service.constructProgramSlot(req);
+    }
 }

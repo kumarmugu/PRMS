@@ -10,6 +10,7 @@ import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -35,13 +36,25 @@ public class ProgramSlot {
     };
      
     public ProgramSlot(){
-        
+        this.startTime = new Date( );
+        this.duration = new Time(3600000);
+        this.endTime = AddDateTime(startTime, duration);// new Date( startTime.getTime() + duration.getTime() );
     };
     
     public ProgramSlot(Date startTime, Date endTime, String programName) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.programName = programName;
+        long timeMs = getDateDiff(startTime, endTime, TimeUnit.SECONDS);
+        Calendar cal = Calendar.getInstance();
+        cal.set(0, 0, 0, (int)timeMs / 3600, (int)timeMs % 3600 / 60, (int)timeMs %60 );
+        //cal.setTimeInMillis(timeMs);
+        this.duration = cal.getTime();        
+    }
+    
+    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
     
     private Date startTime;
@@ -51,11 +64,17 @@ public class ProgramSlot {
     private String producerId;
     private String presenterId;
     private Date weekStartDate;
-    private Time duration;
+    private Date duration;
     private String updatedBy;
     private Date updatedOn;
     
-    
+    public boolean valdiate() {
+        boolean isTimeValid = startTime.getTime() < endTime.getTime();
+        
+        //boolean isDurationValid = AddDateTime(startTime, duration).getTime() == endTime.getTime();
+        boolean isProgramNameValid = programName != null;        
+        return isTimeValid  && isProgramNameValid; //&& isDurationValid
+    }
     
     public Date getStartTime() {
         return startTime;
@@ -102,7 +121,7 @@ public class ProgramSlot {
         return this.weekStartDate;
     }
     
-    public void setweeekStartDate(Date weekStartDate )
+    public void setweekStartDate(Date weekStartDate )
     {
         this.weekStartDate=weekStartDate;
     }
@@ -113,17 +132,18 @@ public class ProgramSlot {
         cal.setTime(startTime);
         return cal.get(Calendar.YEAR);
     }
+    
     public int getWeek() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(startTime);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
     
-    public Time getduration() {
+    public Date getduration() {
         return duration;
     }
 
-    public void setDuration(Time duration) {
+    public void setDuration(Date duration) {
         this.duration = duration;
     }
     
@@ -152,5 +172,20 @@ public class ProgramSlot {
     
     public long getID() {
         return startTime.getTime();
+    }
+    
+    public static Date AddDateTime(Date d1, Date durationLessThan1Day) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(d1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(durationLessThan1Day);
+       //cal1.add(Calendar.YEAR, cal2.get(Calendar.YEAR) - 1970);
+       // cal1.add(Calendar.MONTH, cal2.get(Calendar.MONTH));
+       // cal1.add(Calendar.DAY_OF_MONTH, cal2.get(Calendar.DAY_OF_MONTH) );
+        cal1.add(Calendar.HOUR, cal2.get(Calendar.HOUR));
+        cal1.add(Calendar.MINUTE, cal2.get(Calendar.MINUTE));
+        cal1.add(Calendar.SECOND, cal2.get(Calendar.SECOND));
+        cal1.add(Calendar.MILLISECOND, cal2.get(Calendar.MILLISECOND));
+        return cal1.getTime();
     }
 }

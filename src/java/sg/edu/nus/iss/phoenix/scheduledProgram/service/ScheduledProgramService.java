@@ -6,11 +6,20 @@
 package sg.edu.nus.iss.phoenix.scheduledProgram.service;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
+import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
+import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -24,15 +33,22 @@ import sg.edu.nus.iss.phoenix.util.DateUtil;
 public class ScheduledProgramService {
 
     DAOFactoryImpl factory;
-    ScheduleDAO spdao;
-
+    ScheduleDAO spDao;
+    ProgramDAO rpDao;
+    PresenterDAO preDao;
+    ProducerDAO proDao;
+    UserDao     userDAO;
     /**
      * 
      */
     public ScheduledProgramService() {
         super();
         factory = new DAOFactoryImpl();
-        spdao = factory.getScheduleDAO();
+        spDao = factory.getScheduleDAO();
+        rpDao = factory.getProgramDAO();
+        preDao = factory.getPresenterDAO();
+        proDao = factory.getProducerDAO();     
+        userDAO = factory.getUserDAO();
     }
 
     /**
@@ -42,7 +58,7 @@ public class ScheduledProgramService {
     public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
         if(IsProgramSlotDeletable(programSlot))
         {
-            spdao.delete(programSlot);
+            spDao.delete(programSlot);
         }
     }
     
@@ -66,7 +82,7 @@ public class ScheduledProgramService {
                             wsList.add(ws);
                   }
                   
-                   spdao.processCreateAnnualSchedule(as,wsList);
+                   spDao.processCreateAnnualSchedule(as,wsList);
                 
                   
               }
@@ -79,7 +95,7 @@ public class ScheduledProgramService {
     
      public  void PorcessCreate(ProgramSlot srp)
      {
-            spdao.create(srp);
+            spDao.create(srp);
            
      }
 
@@ -88,4 +104,95 @@ public class ScheduledProgramService {
     }
     
     
+    public void processModify(ProgramSlot spOld, ProgramSlot spNew) {		
+       try {
+                spDao.delete(spOld);
+                spDao.create(spNew);
+        } catch (NotFoundException | SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+        }      
+        
+        //spDao.create(spNew);
+    }
+    
+    public ProgramSlot getProgramSlot(long id) {
+        try {
+            return spDao.getProgramSlot(new Date(id));
+        } catch (NotFoundException | SQLException ex) {
+            return null;
+        }
+    }
+    
+    public ProgramSlot constructProgramSlot(HttpServletRequest req) {
+        
+        String programName = req.getParameter("program");
+        String presenter = req.getParameter("presenter");
+        String producer = req.getParameter("producer");
+        
+        Date startDate = getDate(req.getParameter("date"));
+        Date startTime = getTime(req.getParameter("startTime"));
+        Date endTime = getTime(req.getParameter("endTime"));
+        
+        Date startDateTime = ProgramSlot.AddDateTime(startDate, startTime);
+        Date endDateTime = ProgramSlot.AddDateTime(startDate, endTime);
+        //Date duration = new Date(endDateTime.getTime() - startDateTime.getTime());
+                
+        String updateBy = "pointyhead";//req.getParameter("updateBy");
+        Date updateOn = new Date();
+        
+        ProgramSlot ps = new ProgramSlot(startDateTime, endDateTime, programName);        
+        //ps.setDuration(duration);
+        ps.setProducerId(producer);
+        ps.setPresenterId(presenter);
+        ps.setupdatedBy(updateBy);
+        ps.setupdatedOn(new Date(updateOn.getTime()));        
+        
+        try {
+            WeeklySchedule ws = spDao.getScheduleForWeek(ps.getYear(), ps.getWeek());
+            ps.setweekStartDate(ws.getStartDate());
+        } catch (NotFoundException | SQLException ex) {
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return ps;        
+    }
+    
+    public boolean validateProgramSlotDetail(ProgramSlot ps) {
+        boolean isPSvalid = ps.valdiate();
+        if (isPSvalid == false) return false;
+        try {
+            rpDao.getObject(ps.getProgramName());
+            //preDao.findPresenter(ps.getPresenterId()).get(0);
+            //proDao.findProducer(ps.getProducerId()).get(0);
+            //userDAO.getObject(ps.getupdatedBy());
+            //boolean isUpdatingTimeValid = ps.getupdatedOn().getTime() < ps.getStartTime().getTime();
+            //return isUpdatingTimeValid;
+            return true;
+        } catch (NotFoundException | SQLException ex) {
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    private Date getDate(String dateString) {
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+        Date date = null;
+        try {
+            date = df.parse(dateString);
+        } catch (ParseException e) {
+            //e.printStackTrace();
+        }
+        return date;
+    }
+    
+    private Date getTime(String timeString) {
+        DateFormat df = new SimpleDateFormat("HH:mm"); 
+        Date time = null;
+        try {
+            time = df.parse(timeString);
+        } catch (ParseException e) {
+            //e.printStackTrace();
+        }
+        return time;
+    }
 }

@@ -65,12 +65,12 @@ public class AddScheduledProgramCmd implements Perform {
         String starttime = req.getParameter("startTimeCreate");
         String endtime=req.getParameter("endTimeCreate");
          
-        //srd.setProgramName(req.getParameter("programCreate"));   
-         srd.setProgramName("MM News");
+        srd.setProgramName(req.getParameter("programCreate"));   
+        // srd.setProgramName("MM News");
          System.out.println("==============================================");
          System.out.println("req.getParameter(\"programCreate\"):  "+req.getParameter("programCreate"));
-        //srd.setPresenterId(req.getParameter("presenterCreateid")); 
-        srd.setPresenterId("mozert"); 
+        srd.setPresenterId(req.getParameter("presenterCreateid")); 
+        //srd.setPresenterId("mozert"); 
         System.out.println("srd.getPresenterId():  "+srd.getPresenterId());
         srd.setProducerId(req.getParameter("producerCreateid"));
          System.out.println("srd.getProducerId():  "+srd.getProducerId());
@@ -78,7 +78,7 @@ public class AddScheduledProgramCmd implements Perform {
         srd.setupdatedOn(new Date());        
         srd.setStartTime(srdStartDate);
         
-        srd.setweeekStartDate(DateUtil.getStartDateOfWeek(year, week));
+        srd.setweekStartDate(DateUtil.getStartDateOfWeek(year, week));
         try {
             srd.setDuration(DateUtil.getTimeDiff(starttime, endtime));
         } catch (ParseException ex) {
