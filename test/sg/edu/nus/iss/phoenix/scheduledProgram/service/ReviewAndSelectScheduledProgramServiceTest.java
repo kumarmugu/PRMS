@@ -49,6 +49,13 @@ public class ReviewAndSelectScheduledProgramServiceTest {
     public static void tearDownClass() {
     }
 
+    /**
+     * This method will execute before test case execute. This method mock the
+     * ScheduleDAO, DAOFactoryImpl. Also it mocks methods of ScheduleDAO with
+     * some outputs.
+     *
+     * @throws SQLException
+     */
     @Before
     public void setUp() throws SQLException {
         spdao = mock(ScheduleDAO.class);
@@ -77,60 +84,103 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         when(spdao.loadAllScheduleForWeek(ws2)).thenReturn(ws2);
 //
         WeeklySchedule ws3 = new WeeklySchedule(2018, 10);
-        when(spdao.getAnnualSchedule(ws3)).thenReturn(null);        
-        
-//        ArrayList<ProgramSlot> programSlots2 = new ArrayList<ProgramSlot>();
-//        WeeklySchedule ws4 = new WeeklySchedule(2016, 10);
-//        ws3.setProgramSlots(programSlots2);
-//        when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
-//        when(spdao.loadWeekInfo(ws4)).thenThrow(SQLException.class);
+        when(spdao.getAnnualSchedule(ws3)).thenReturn(null);
+
+        ArrayList<ProgramSlot> programSlots2 = new ArrayList<ProgramSlot>();
+        WeeklySchedule ws4 = new WeeklySchedule(2016, 10);
+        ws3.setProgramSlots(programSlots2);
+        when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
+        when(spdao.loadWeekInfo(ws4)).thenThrow(SQLException.class);
     }
 
     @After
     public void tearDown() {
     }
 
+    /**
+     * This is the testReviewSelectScheduledProgramWithNullValues test method
+     * for reviewSelectScheduledProgram method in reviewSelectScheduledService
+     * This method checks the size of the program slot in the output, when the
+     * method arguments is equal to null
+     *
+     * @throws AnnualSchedueNotExistException
+     * @throws SQLException
+     */
     @Test
     public void testReviewSelectScheduledProgramWithNullValues() throws AnnualSchedueNotExistException, SQLException {
 
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram(null, null);
         assertEquals(5, wx.getProgramSlots().size());
-        
-    } 
-    
+
+    }
+
+    /**
+     * This is the testReviewSelectScheduledProgramNoProgramSlots test method
+     * for reviewSelectScheduledProgram method in reviewSelectScheduledService
+     * This method expect the empty program slot list in the output when
+     * arguments are 2017 and 12
+     *
+     * @throws AnnualSchedueNotExistException
+     * @throws SQLException
+     */
     @Test
     public void testReviewSelectScheduledProgramNoProgramSlots() throws AnnualSchedueNotExistException, SQLException {
 
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2017", "12");
         assertEquals(0, wx.getProgramSlots().size());
-        
+
     }
-    
+
+    /**
+     * This is the
+     * testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException test
+     * method for reviewSelectScheduledProgram method in
+     * reviewSelectScheduledService This method expect
+     * AnnualSchedueNotExistException when it try to fetch the schedule data
+     * from DB for non exist year
+     *
+     * @throws AnnualSchedueNotExistException
+     * @throws SQLException
+     */
     @Test(expected = AnnualSchedueNotExistException.class)
     public void testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException() throws AnnualSchedueNotExistException, SQLException {
 
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2018", "10");
-        
+
     }
-    
+
+    /**
+     * This is the
+     * testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException test
+     * method for reviewSelectScheduledProgram method in
+     * reviewSelectScheduledService This method expect to get the current week
+     * schedule when wrong arguments pass as parameters
+     *
+     * @throws AnnualSchedueNotExistException
+     * @throws SQLException
+     */
     @Test
     public void testReviewSelectScheduledProgramWithWrongInput() throws AnnualSchedueNotExistException, SQLException {
 
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("abc", "aa");
         assertEquals(5, wx.getProgramSlots().size());
-        
+
     }
-    
-//    @Test(expected = SQLException.class)
-//    public void testReviewSelectScheduledProgramThrowSQLException() throws AnnualSchedueNotExistException {
-//        try {
-//            
-//            WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
-//            fail();
-//        } catch (SQLException e){
-//            System.out.println(e.getMessage());
-//            assertTrue(true);
-//        }
-//    }
+
+    /**
+     * This is the
+     * testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException test
+     * method for reviewSelectScheduledProgram method in
+     * reviewSelectScheduledService This method expect SQLException where data
+     * is inconsistency in the database
+     *
+     * @throws AnnualSchedueNotExistException
+     * @throws SQLException
+     */
+    @Test(expected = SQLException.class)
+    public void testReviewSelectScheduledProgramThrowSQLException() throws AnnualSchedueNotExistException, SQLException {
+        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
+        fail();
+    }
 
 }
