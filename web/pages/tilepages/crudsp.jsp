@@ -245,14 +245,13 @@
 
                               var r = confirm("Annual schedule not exist. Do you want to create Annual Schedule for the Year : ("+ userInputYear +" ) Current Year :"+ jscurrentYear);
                               if(r==true)
-                              {document.getElementById("txtcreateAnnualSchedule").value = "1";
+                              {
+                                document.getElementById("txtcreateAnnualSchedule").value = "1";
                                  alert(document.getElementById("txtcreateAnnualSchedule").value); 
-                               document.getElementById("searchScheduleform").submit();                          
-
+                                document.getElementById("searchScheduleform").submit();                          
                               }
-                            
-
-                        }
+   
+    }
                          else
                              alert ("No Annual Schedule found for Year("+ userInputYear +" !!) New annual schdeule allow to create only for upcoming 3 Years!!!"); 
                       }
@@ -372,7 +371,7 @@
                 </select>
                 <span style="width:50px;">&nbsp;</span>
                 <input type="submit" value="Search">
-                <input  type="hidden" name="txtcreateAnnualSchedule" id="txtcreateAnnualSchedule" value="0" >
+                <input  type="hidden" name="txtcreateAnnualSchedule" id="txtcreateAnnualSchedule" value="0" >               
             </div>
         </form>
         <div class="clearer"></div>

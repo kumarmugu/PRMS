@@ -11,6 +11,10 @@ package sg.edu.nus.iss.phoenix.core.exceptions;
  */
 public class AnnualSchedueNotExistException extends Exception {
 
+    /**
+     * 
+     * @param message 
+     */
     public AnnualSchedueNotExistException(String message) {
         super(message);
     }

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Mugunthan
  */
 public class DateUtil {
+   // private static Timestamp Timestamp;
 
     public static Date getStartDateOfWeek(String year, String week) {
         Date date = null;
@@ -108,15 +109,18 @@ public class DateUtil {
          d2=hmformatter.parse("21:00");
          
          long datediff = d2.getTime() -d.getTime();
-         System.out.println(datediff);
+         //System.out.println(datediff);
          
          String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(datediff),
             TimeUnit.MILLISECONDS.toMinutes(datediff) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(datediff)),
             TimeUnit.MILLISECONDS.toSeconds(datediff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(datediff)));
          
          Time t = Time.valueOf(hms);
-       
-    System.out.println(t);
+         
+         Date dd= new Date();
+         Timestamp tt =new java.sql.Timestamp(dd.getTime());
+    System.out.println("*********************");
+    System.out.println("TimeStamp: "+ tt);
          
          
      }

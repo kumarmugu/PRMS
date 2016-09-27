@@ -44,6 +44,10 @@ public class ManageScheduledProgramCmd implements Perform {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
         }
+         catch (Exception ex) {
+            Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+         
+        }
         return "/pages/crudsp.jsp";
     }
 }

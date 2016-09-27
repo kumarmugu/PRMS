@@ -84,7 +84,8 @@ public class ReviewAndSelectScheduledProgramService {
      * @return
      * @throws AnnualSchedueNotExistException 
      */
-    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException {
+    
+    public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException, SQLException {
         WeeklySchedule ws = null;
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
@@ -103,6 +104,7 @@ public class ReviewAndSelectScheduledProgramService {
                  throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         } catch (SQLException ex) {
             Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
         }
         return ws;
     }
