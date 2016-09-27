@@ -24,6 +24,7 @@ import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 import static sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot.AddDateTime;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -201,13 +202,13 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
     private void constructProgramSlotSQLStatement(PreparedStatement stmt, ProgramSlot valueObject) {
         try {
             stmt.setTime(1, new java.sql.Time(valueObject.getduration().getTime()));
-            stmt.setTimestamp(2, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
+            stmt.setTimestamp(2, DateUtil.getTimestamp(valueObject.getStartTime()));
             stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
             stmt.setString(4, valueObject.getProducerId());
             stmt.setString(5, valueObject.getPresenterId());
             stmt.setString(6, valueObject.getProgramName());
             stmt.setString(7,valueObject.getupdatedBy());
-            stmt.setDate(8,new java.sql.Date(valueObject.getupdatedOn().getTime()));
+            stmt.setTimestamp(8, DateUtil.getTimestamp(valueObject.getupdatedOn()));
         } catch (SQLException ex) {
             Logger.getLogger(ScheduleDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -329,6 +330,20 @@ public  class ScheduleDAOImpl implements ScheduleDAO {
                       "(?,?,?,?,?,?,?,?); ";
                 stmt = conn.prepareStatement(sql);
                 constructProgramSlotSQLStatement(stmt, valueObject);
+                /*
+sql = "INSERT INTO `program-slot` (`duration`, `programStartDateTime`, `weekStartDate`, `producer_id`, `presenter_id`, `program-name`, `update_by`, `update_on`) VALUES "+ 
+"(?,?,?,?,?,?,?,?); ";
+stmt = conn.prepareStatement(sql);
+stmt.setTime(1, valueObject.getduration());
+stmt.setTimestamp(2, DateUtil.getTimestamp(valueObject.getStartTime()));
+stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
+stmt.setString(4, valueObject.getProducerId());
+stmt.setString(5, valueObject.getPresenterId());
+stmt.setString(6, valueObject.getProgramName());
+stmt.setString(7,valueObject.getupdatedBy());                       
+stmt.setTimestamp(8,DateUtil.getTimestamp(valueObject.getupdatedOn()));
+*/
+
 //                stmt.setTime(1, new java.sql.Time(valueObject.getduration().getTime()));
 //                stmt.setTimestamp(2, new java.sql.Timestamp(valueObject.getStartTime().getTime()));
 //                stmt.setDate(3, new java.sql.Date(valueObject.getweeekStartDate().getTime()));
