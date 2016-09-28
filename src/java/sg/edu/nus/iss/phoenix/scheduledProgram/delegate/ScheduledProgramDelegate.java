@@ -90,6 +90,11 @@ public class ScheduledProgramDelegate {
         if (!validation.result) {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
+        
+        boolean isOverlapping = service.isProgramSlotOverlapping(newProgramSlot, null);
+        if (isOverlapping) {
+            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        }
         service.PorcessCreate(newProgramSlot);
         return newProgramSlot;  
     }

@@ -330,12 +330,15 @@
                 $("#details #endTime").attr('readonly', false);
             }
             else if( mode === "copy") {
-                $("#scheduledProgramId").val(0);                
-                var nextWeek = new Date();
-                nextWeek.setDate(selectedScheduledProgram.start.getDate() + 7);
-                $("#details #week").val(selectedScheduledProgram.week + 1);
-                $("#date").val($.datepicker.formatDate('dd/mm/yy', nextWeek));
+                $("#scheduledProgramId").val(0);          
+                if (msg === "")
+                {
+                    var nextWeek = new Date(selectedScheduledProgram.start);
+                    nextWeek.setDate(nextWeek.getDate() + 7);
 
+                    $("#details #date").attr('value',$.datepicker.formatDate('yy-mm-dd', nextWeek));
+                    dateChange();
+                }               
                 $("#details #date").attr('readonly', false);
                 $("#details #startTime").attr('readonly', false);
                 $("#details #endTime").attr('readonly', false);

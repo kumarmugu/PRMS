@@ -202,16 +202,18 @@ public class ScheduledProgramService {
     
     public boolean isProgramSlotOverlapping(ProgramSlot newPs, ProgramSlot oldPs) {
         if (newPs == null) return false;
-        if (oldPs == null) oldPs = newPs;
         WeeklySchedule ws;
         
         try {
             ws = spDao.getScheduleForWeek(newPs.getYear(), newPs.getWeek());
             ws = spDao.loadAllScheduleForWeek(ws);
             for(ProgramSlot eps : ws.getProgramSlots()) {
-                if (eps.getID() != oldPs.getID() && eps.getDay().equals(newPs.getDay())) {
-                    if (newPs.getStartTime().getTime() < eps.getEndTime().getTime() &&
-                        newPs.getEndTime().getTime() > eps.getStartTime().getTime() )
+                if ((oldPs == null || eps.getID() != oldPs.getID()) && 
+                        eps.getDay().equals(newPs.getDay())) {
+                    if ( ( newPs.getStartTime().getTime() >= eps.getStartTime().getTime() && 
+                            newPs.getStartTime().getTime() < eps.getEndTime().getTime() ) ||
+                         ( newPs.getEndTime().getTime() > eps.getStartTime().getTime() && 
+                            newPs.getEndTime().getTime() <= eps.getEndTime().getTime()))
                         return true;
                 }
             }
