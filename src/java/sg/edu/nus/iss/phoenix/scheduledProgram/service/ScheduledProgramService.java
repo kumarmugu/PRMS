@@ -15,16 +15,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
+import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
+import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
+import sg.edu.nus.iss.phoenix.presenterproducer.entity.Producer;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 import sg.edu.nus.iss.phoenix.util.DateUtil;
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
@@ -127,8 +131,8 @@ public class ScheduledProgramService {
     public ProgramSlot constructProgramSlot(HttpServletRequest req) {
         
         String programName = req.getParameter("program");
-        String presenter = req.getParameter("presenter");
-        String producer = req.getParameter("producer");
+        String presenter = req.getParameter("presenterId");
+        String producer = req.getParameter("producerId");
         
         Date startDate = getDate(req.getParameter("date"));
         Date startTime = getTime(req.getParameter("startTime"));
@@ -137,8 +141,9 @@ public class ScheduledProgramService {
         Date startDateTime = ProgramSlot.AddDateTime(startDate, startTime);
         Date endDateTime = ProgramSlot.AddDateTime(startDate, endTime);
         //Date duration = new Date(endDateTime.getTime() - startDateTime.getTime());
-                
-        String updateBy = "pointyhead";//req.getParameter("updateBy");
+        
+        User user = (User) req.getSession().getAttribute("user");
+        String updateBy = user.getId();//req.getParameter("updateBy");
         Date updateOn = new Date();
         
         ProgramSlot ps = new ProgramSlot(startDateTime, endDateTime, programName);        
@@ -146,36 +151,57 @@ public class ScheduledProgramService {
         ps.setProducerId(producer);
         ps.setPresenterId(presenter);
         ps.setupdatedBy(updateBy);
-        ps.setupdatedOn(new Date(updateOn.getTime()));        
+        ps.setupdatedOn(new Date(updateOn.getTime())); 
         
         try {
             WeeklySchedule ws = spDao.getScheduleForWeek(ps.getYear(), ps.getWeek());
             ps.setweekStartDate(ws.getStartDate());
+            
+            ps.setPresenterName(getUser(ps.getPresenterId()).getName());            
+            ps.setProducerName(getUser(ps.getProducerId()).getName());
         } catch (NotFoundException | SQLException ex) {
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return ps;        
     }
     
-    public boolean validateProgramSlotDetail(ProgramSlot ps) {
-        boolean isPSvalid = ps.valdiate();
-        if (isPSvalid == false) return false;
+    public ValidationResult validateProgramSlotDetail(ProgramSlot ps) {
+        ValidationResult valdiation = ps.valdiate();
+        if (valdiation.result == false)
+        {
+            return valdiation;
+        }
+        String reason = "";
         try {
+            reason = "Radio Program Not Found.";
             rpDao.getObject(ps.getProgramName());
-            //preDao.findPresenter(ps.getPresenterId()).get(0);
-            //proDao.findProducer(ps.getProducerId()).get(0);
-            //userDAO.getObject(ps.getupdatedBy());
-            //boolean isUpdatingTimeValid = ps.getupdatedOn().getTime() < ps.getStartTime().getTime();
-            //return isUpdatingTimeValid;
-            return true;
+            
+            reason = "Presenter Not Found.";
+            Presenter presenter = getPresenter(ps.getPresenterId());
+            
+            reason = "Producer Not Found.";
+            Producer producer = getProducer(ps.getProducerId());
+                    
+            reason = "UpdatedBy User Not Found.";
+            userDAO.getObject(ps.getupdatedBy());
+            reason = "Can not update past scheduled program.";
+            boolean isUpdatingTimeValid = ps.getupdatedOn().getTime() < ps.getStartTime().getTime();
+            if (isUpdatingTimeValid == false) {
+                valdiation = new ValidationResult(false);
+                valdiation.reasons.add(reason);
+            }
+            else 
+                return new ValidationResult(true);
         } catch (NotFoundException | SQLException ex) {
+            valdiation = new ValidationResult(false);
+            valdiation.reasons.add(reason);
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        return valdiation;
     }
     
     private Date getDate(String dateString) {
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); 
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");//SimpleDateFormat("dd/MM/yyyy"); 
         Date date = null;
         try {
             date = df.parse(dateString);
@@ -195,4 +221,37 @@ public class ScheduledProgramService {
         }
         return time;
     }
+    
+    private User getUser(String theID) throws NotFoundException {
+        try {
+            return userDAO.getObject(theID);
+        } catch (SQLException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+    
+    private Presenter getPresenter(String theID) throws NotFoundException {
+        User user = null;
+        try {
+            user = getUser(theID);
+            if (user == null) return null;
+            
+            return preDao.findPresenter(user.getName()).get(0);
+        } catch (Exception ex) {
+            throw new NotFoundException();
+        } 
+    }
+    
+    private Producer getProducer(String theID) throws NotFoundException {
+        User user = null;
+        try {
+            user = getUser(theID);
+            if (user == null) return null;
+            
+            return proDao.findProducer(user.getName()).get(0);
+        } catch (Exception ex) {
+            throw new NotFoundException();
+        } 
+    }
+    
 }

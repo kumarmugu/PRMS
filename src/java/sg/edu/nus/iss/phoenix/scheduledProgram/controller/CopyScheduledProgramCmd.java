@@ -23,32 +23,22 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
  *
  * @author Rong
  */
-@Action("modifysp")
-public class ModifyScheduledProgramCmd implements Perform {
+@Action("copysp")
+public class CopyScheduledProgramCmd implements Perform {
     ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
             
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         
-        ProgramSlot newProgramSlot = null;
-        String msg = "", mode = "modify";
-        try
-        {
-            newProgramSlot = spDelegate.getProgramSlot(req);
-            try {
-            long id = Long.parseLong(req.getParameter("scheduledProgramId"));
-            spDelegate.processModify(id, newProgramSlot);
-            msg = "Successfully updated.";
-            mode = "";
-            } catch (Exception ex) {
-                msg = "Error: " + ex.getMessage();
-                Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-        }catch (Exception ex) {
-            msg = "Error: Fails to construct scheduled program object.";
+        ProgramSlot newProgramSlot = spDelegate.getProgramSlot(req);  
+        String msg = "";
+        try {
+            spDelegate.ProcessCopy(newProgramSlot);
+            msg = "Successfully created.";
+        } catch (Exception ex) {
+            msg = "Error: " + ex.getMessage();
             Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-        }        
+        }
         
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
         WeeklySchedule ws ;//= new WeeklySchedule();
@@ -62,7 +52,7 @@ public class ModifyScheduledProgramCmd implements Perform {
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());
             req.setAttribute("currentYear", ws.getYear());
-            req.setAttribute("mode", mode);
+            req.setAttribute("mode", "copy");
             req.setAttribute("msg", msg);
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(
@@ -74,5 +64,4 @@ public class ModifyScheduledProgramCmd implements Perform {
         
         return "/pages/crudsp.jsp";
     }
-    
 }

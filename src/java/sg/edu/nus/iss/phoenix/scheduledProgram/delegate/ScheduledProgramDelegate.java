@@ -14,6 +14,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ScheduledProgramService;
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  * * @author Mugunthan
@@ -54,7 +55,8 @@ public class ScheduledProgramDelegate {
     public ProgramSlot processModify(long modifyingProgramSlotId, 
                                      ProgramSlot newProgramSlot) throws Exception{
         ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (existingProgramSlot != null) {
+        if (existingProgramSlot != null &&
+            existingProgramSlot.getID() != newProgramSlot.getID()) {
             throw new Exception("A Program already exists in the new timeslot.");
         }
         
@@ -62,14 +64,29 @@ public class ScheduledProgramDelegate {
         if (modifyingProgramSlot == null) {
             throw new NotFoundException("Modifying Program slot can't found.");
         }
-        
-        boolean isValid = service.validateProgramSlotDetail(newProgramSlot);
-        if (!isValid) {
-            throw new Exception("Invalid Program Slot.");
+        ValidationResult validation = service.validateProgramSlotDetail(newProgramSlot);
+        if (!validation.result) {
+            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
         
         service.processModify(modifyingProgramSlot, newProgramSlot);        
         return newProgramSlot;        
+    }
+    
+    public ProgramSlot ProcessCopy(ProgramSlot newProgramSlot) throws Exception
+    {
+        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (existingProgramSlot != null &&
+            existingProgramSlot.getID() != newProgramSlot.getID()) {
+            throw new Exception("A Program already exists in the new timeslot.");
+        }
+        
+        ValidationResult validation = service.validateProgramSlotDetail(newProgramSlot);
+        if (!validation.result) {
+            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
+        }
+        service.PorcessCreate(newProgramSlot);
+        return newProgramSlot;  
     }
     
     public ProgramSlot getProgramSlot(long id) {
