@@ -189,15 +189,36 @@ public class ScheduledProgramService {
             if (isUpdatingTimeValid == false) {
                 valdiation = new ValidationResult(false);
                 valdiation.reasons.add(reason);
+                return valdiation;
             }
-            else 
-                return new ValidationResult(true);
+            valdiation = new ValidationResult(true);
         } catch (NotFoundException | SQLException ex) {
             valdiation = new ValidationResult(false);
             valdiation.reasons.add(reason);
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return valdiation;
+    }
+    
+    public boolean isProgramSlotOverlapping(ProgramSlot newPs, ProgramSlot oldPs) {
+        if (newPs == null) return false;
+        if (oldPs == null) oldPs = newPs;
+        WeeklySchedule ws;
+        
+        try {
+            ws = spDao.getScheduleForWeek(newPs.getYear(), newPs.getWeek());
+            ws = spDao.loadAllScheduleForWeek(ws);
+            for(ProgramSlot eps : ws.getProgramSlots()) {
+                if (eps.getID() != oldPs.getID() && eps.getDay().equals(newPs.getDay())) {
+                    if (newPs.getStartTime().getTime() < eps.getEndTime().getTime() &&
+                        newPs.getEndTime().getTime() > eps.getStartTime().getTime() )
+                        return true;
+                }
+            }
+        } catch (NotFoundException | SQLException ex) {
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false; 
     }
     
     private Date getDate(String dateString) {

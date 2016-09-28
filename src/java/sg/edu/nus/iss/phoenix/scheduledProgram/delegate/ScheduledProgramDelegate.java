@@ -69,6 +69,11 @@ public class ScheduledProgramDelegate {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
         
+        boolean isOverlapping = service.isProgramSlotOverlapping(newProgramSlot, modifyingProgramSlot);
+        if (isOverlapping) {
+            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        }
+        
         service.processModify(modifyingProgramSlot, newProgramSlot);        
         return newProgramSlot;        
     }
