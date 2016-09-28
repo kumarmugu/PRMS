@@ -62,7 +62,7 @@ public class ScheduledProgramDelegate {
         
         ProgramSlot modifyingProgramSlot = getProgramSlot(modifyingProgramSlotId);
         if (modifyingProgramSlot == null) {
-            throw new NotFoundException("Modifying Program slot can't found.");
+            throw new NotFoundException("Modifying Program slot cannot found.");
         }
         ValidationResult validation = service.validateProgramSlotDetail(newProgramSlot);
         if (!validation.result) {

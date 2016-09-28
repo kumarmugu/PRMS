@@ -9,6 +9,7 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -32,11 +33,11 @@ public class ModifyScheduledProgramCmd implements Perform {
         
         ProgramSlot newProgramSlot = null;
         String msg = "", mode = "modify";
+        long id = Long.parseLong(req.getParameter("scheduledProgramId"));
         try
         {
             newProgramSlot = spDelegate.getProgramSlot(req);
-            try {
-            long id = Long.parseLong(req.getParameter("scheduledProgramId"));
+            try {            
             spDelegate.processModify(id, newProgramSlot);
             msg = "Successfully updated.";
             mode = "";
@@ -57,6 +58,8 @@ public class ModifyScheduledProgramCmd implements Perform {
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
+            if ("modify".equals(mode))
+                newProgramSlot.setStartTime(new Date(id));
             req.setAttribute("default", newProgramSlot);
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);

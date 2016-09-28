@@ -307,6 +307,11 @@
             $("#details #week").attr('readonly', true);
             $("#details #day").attr('readonly', true);
             
+            var firstDateOfYear = new Date(selectedScheduledProgram.year, 0, 1);
+            $("#details #date").attr('min', $.datepicker.formatDate('yy-mm-dd', firstDateOfYear));
+            var lastDateOfYear = new Date(selectedScheduledProgram.year, 11, 31);
+            $("#details #date").attr('max', $.datepicker.formatDate('yy-mm-dd', lastDateOfYear));
+            
             if (msg !== "") {
                 $("#details #msg").html(msg);
             }
@@ -365,6 +370,15 @@
             return ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2);
         }
         
+        function dateChange() {
+            var date = new Date($("#details #date").attr('value'));
+            if (date === null) return;
+            $("#details #year").attr('value', date.getFullYear());
+            let onejan = new Date(date.getFullYear(), 0, 1);
+            var week = Math.ceil( (((date - onejan) / 86400000) + onejan.getDay() + 1) / 7 );
+            $("#details #week").attr('value', week);
+            $("#details #day").attr('value', days[date.getDay()]);
+        }
         
         </script>
 
@@ -464,7 +478,7 @@
             <label for="year"><span>Year: </span><input class="input-field" type="text" id="year"  name="year" maxlength="4"  readonly/></label>
             <label for="week"><span>Week: </span><input class="input-field" type="text" id="week"  name="week" maxlength="2" readonly/></label>
             <label for="day"><span>Day: </span><input class="input-field" type="text" id="day"  name="day" maxlength="10" readonly/></label>
-            <label for="date"><span>Date: </span><input class="input-field" type="date" id="date"  name="date" readonly/></label>
+            <label for="date"><span>Date: </span><input class="input-field" type="date" id="date"  name="date" readonly onChange="dateChange()"/></label>
             <label for="startTime"><span>Start Time: </span><input class="input-field" type="time" id="startTime"  name="startTime" readonly/></label>
             <label for="endTime"><span>End Time: </span><input class="input-field" type="time" id="endTime"  name="endTime" readonly/></label>
             
