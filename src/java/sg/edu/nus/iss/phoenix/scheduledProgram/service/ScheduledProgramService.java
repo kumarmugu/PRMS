@@ -107,11 +107,45 @@ public class ScheduledProgramService {
         return true;
     }
     
+    public  void PorcessCopy(ProgramSlot newProgramSlot) throws Exception
+    {
+        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (existingProgramSlot != null &&
+            existingProgramSlot.getID() != newProgramSlot.getID()) {
+            throw new Exception("A Program already exists in the new timeslot.");
+        }
+        
+        ValidationResult validation = validateProgramSlotDetail(newProgramSlot);
+        if (!validation.result) {
+            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
+        }
+        
+        boolean isOverlapping = isProgramSlotOverlapping(newProgramSlot, null);
+        if (isOverlapping) {
+            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        }           
+    }
     
-    public void processModify(ProgramSlot spOld, ProgramSlot spNew) {		
+    public void processModify(ProgramSlot modifyingProgramSlot, ProgramSlot newProgramSlot) throws Exception {	
+        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (existingProgramSlot != null &&
+            existingProgramSlot.getID() != newProgramSlot.getID()) {
+            throw new Exception("A Program already exists in the new timeslot.");
+        }
+        
+        ValidationResult validation = validateProgramSlotDetail(newProgramSlot);
+        if (!validation.result) {
+            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
+        }
+        
+        boolean isOverlapping = isProgramSlotOverlapping(newProgramSlot, modifyingProgramSlot);
+        if (isOverlapping) {
+            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        }
+        
        try {
-                spDao.delete(spOld);
-                spDao.create(spNew);
+                spDao.delete(modifyingProgramSlot);
+                spDao.create(newProgramSlot);
         } catch (NotFoundException | SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -210,11 +244,9 @@ public class ScheduledProgramService {
             for(ProgramSlot eps : ws.getProgramSlots()) {
                 if ((oldPs == null || eps.getID() != oldPs.getID()) && 
                         eps.getDay().equals(newPs.getDay())) {
-                    if ( ( newPs.getStartTime().getTime() >= eps.getStartTime().getTime() && 
-                            newPs.getStartTime().getTime() < eps.getEndTime().getTime() ) ||
-                         ( newPs.getEndTime().getTime() > eps.getStartTime().getTime() && 
-                            newPs.getEndTime().getTime() <= eps.getEndTime().getTime()))
-                        return true;
+                    boolean isNoOverlapping = newPs.getEndTime().getTime() <= eps.getStartTime().getTime() ||
+                                              newPs.getStartTime().getTime() >= eps.getEndTime().getTime();
+                    if (!isNoOverlapping) return true;
                 }
             }
         } catch (NotFoundException | SQLException ex) {

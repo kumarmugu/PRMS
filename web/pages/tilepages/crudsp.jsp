@@ -482,8 +482,8 @@
             <label for="week"><span>Week: </span><input class="input-field" type="text" id="week"  name="week" maxlength="2" readonly/></label>
             <label for="day"><span>Day: </span><input class="input-field" type="text" id="day"  name="day" maxlength="10" readonly/></label>
             <label for="date"><span>Date: </span><input class="input-field" type="date" id="date"  name="date" readonly onChange="dateChange()"/></label>
-            <label for="startTime"><span>Start Time: </span><input class="input-field" type="time" id="startTime"  name="startTime" readonly/></label>
-            <label for="endTime"><span>End Time: </span><input class="input-field" type="time" id="endTime"  name="endTime" readonly/></label>
+            <label for="startTime"><span>Start Time: </span><input class="input-field" type="time" id="startTime"  name="startTime" step="1800" readonly/></label>
+            <label for="endTime"><span>End Time: </span><input class="input-field" type="time" id="endTime"  name="endTime" step="1800" readonly/></label>
             
             <span id="msg" name="msg"></span> <br/>
         </div>

@@ -54,24 +54,9 @@ public class ScheduledProgramDelegate {
     
     public ProgramSlot processModify(long modifyingProgramSlotId, 
                                      ProgramSlot newProgramSlot) throws Exception{
-        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (existingProgramSlot != null &&
-            existingProgramSlot.getID() != newProgramSlot.getID()) {
-            throw new Exception("A Program already exists in the new timeslot.");
-        }
-        
         ProgramSlot modifyingProgramSlot = getProgramSlot(modifyingProgramSlotId);
         if (modifyingProgramSlot == null) {
             throw new NotFoundException("Modifying Program slot cannot found.");
-        }
-        ValidationResult validation = service.validateProgramSlotDetail(newProgramSlot);
-        if (!validation.result) {
-            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
-        }
-        
-        boolean isOverlapping = service.isProgramSlotOverlapping(newProgramSlot, modifyingProgramSlot);
-        if (isOverlapping) {
-            throw new Exception("New time slot is overlapping with existing program slot(s). ");
         }
         
         service.processModify(modifyingProgramSlot, newProgramSlot);        
@@ -80,20 +65,9 @@ public class ScheduledProgramDelegate {
     
     public ProgramSlot ProcessCopy(ProgramSlot newProgramSlot) throws Exception
     {
-        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (existingProgramSlot != null &&
-            existingProgramSlot.getID() != newProgramSlot.getID()) {
-            throw new Exception("A Program already exists in the new timeslot.");
-        }
-        
-        ValidationResult validation = service.validateProgramSlotDetail(newProgramSlot);
-        if (!validation.result) {
-            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
-        }
-        
-        boolean isOverlapping = service.isProgramSlotOverlapping(newProgramSlot, null);
-        if (isOverlapping) {
-            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        ProgramSlot modifyingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (modifyingProgramSlot != null) {
+            throw new NotFoundException("Another Program slot already exists.");
         }
         service.PorcessCreate(newProgramSlot);
         return newProgramSlot;  
