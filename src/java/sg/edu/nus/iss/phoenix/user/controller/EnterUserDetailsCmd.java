@@ -35,27 +35,69 @@ public class EnterUserDetailsCmd implements Perform {
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         UserDelegate del = new UserDelegate();
         User usr = new User();
-        ArrayList<Role> roles = new ArrayList<Role>();
+        ArrayList<Role> userRoles = new ArrayList<Role>();
         
-        String[] strRoles = req.getParameterValues("roleName") ;
-       if( strRoles != null)
+        String strUserRoles = "";
+       
+        String[] arrRoles = req.getParameterValues("roleName") ;
+       if( arrRoles != null)
        {
-           for (int i = 0; i< strRoles.length ;i ++){
-                roles.add(new Role(strRoles[i]));
+           for (int i = 0; i< arrRoles.length ;i ++){
+                userRoles.add(new Role(arrRoles[i]));
+                if (i <= 0) {
+                     strUserRoles += ":";
+                 }
+                 strUserRoles += arrRoles[i];
            }
           
        }        
      
         usr.setName(req.getParameter("name"));
         usr.setId(req.getParameter("id"));
-        usr.setRoles((ArrayList<Role>) roles);
+        usr.setPassword(req.getParameter("password"));
+        usr.setRoles((ArrayList<Role>) userRoles);
         System.out.println(usr.toString());
         
         String insert = (String) req.getParameter("insert");
         Logger.getLogger(getClass().getName()).log(Level.INFO,
                         "Insert Flag: " + insert);
+        
+        
+        
+        
         if (insert.equalsIgnoreCase("true")) {
+            try {
                 del.processCreateUser(usr);
+            } catch (SQLException ex) {
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+                
+                //set error message 
+                req.setAttribute("errMsg", "User Cannot insert because id already exists");
+                //set the page attributes again
+                ArrayList<User> users = new ArrayList<>();
+                ArrayList<Role> roles = new ArrayList<>();
+                try {
+                    users = del.processFindUser("superUser");
+                } catch (SQLException ex1) {
+                    Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+                
+                for (User user : users) {
+                if ( user.getId().equalsIgnoreCase("superUser"))
+                {
+                    for (Role role : user.getRoles()) {
+                        roles.add(role);
+                    }
+                }
+                
+                req.setAttribute("listUserRole", strUserRoles);
+                req.setAttribute("roles", roles);
+                req.setAttribute("name", usr.getName());
+                req.setAttribute("id", usr.getId());
+                req.setAttribute("insert", req.getParameter("insert"));
+                return "/pages/setupuser.jsp";
+                }
+            }
         } else {
             try {
                 del.processModifyUser(usr);

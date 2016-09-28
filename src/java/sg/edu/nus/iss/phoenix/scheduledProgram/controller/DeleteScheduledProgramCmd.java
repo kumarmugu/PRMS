@@ -9,17 +9,17 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
+import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
@@ -29,29 +29,40 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 public class DeleteScheduledProgramCmd implements Perform{
 
     @Override
-    public String perform(String string, HttpServletRequest hsr, HttpServletResponse hsr1) throws IOException, ServletException {
-        ProgramSlot programSlot=new ProgramSlot();
-        programSlot.setProgramName("charity");
-        String expectedPattern = "dd/MM/yyyy HH:mm:ss";
-        SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);       
-        String programStartDateime= "08/09/2016 03:00:00";
-        Date srdStartDate = null;
+    public String perform(String string, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
+        ProgramSlot delProgramSlot = spDelegate.getProgramSlot(req);
+        String msg = "";
         try {
-            srdStartDate = formatter.parse(programStartDateime);
-            System.out.println("srdStartDate: " + srdStartDate);
-        } catch (ParseException ex) {
-            Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        programSlot.setStartTime(srdStartDate);
-        ScheduledProgramDelegate scheduleProgramDel= new ScheduledProgramDelegate();
-        try {
-            scheduleProgramDel.processDelete(programSlot);
-        } catch (NotFoundException ex) {
+            spDelegate.processDelete(delProgramSlot);
+            msg = "Successfully updated.";
+        } catch (NotFoundException | SQLException ex) {
+            msg = "Error in updating.";
             Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
+        WeeklySchedule ws ;//= new WeeklySchedule();
+        String year = req.getParameter("year");
+        String week = req.getParameter("week");
+        try {
+            ws = del.reviewSelectScheduledProgram(year, week);
+            req.setAttribute("events", ws.getProgramSlots());
+            req.setAttribute("default", new ProgramSlot());
+            req.setAttribute("startDate", ws.getStartDate());
+            req.setAttribute("isAnnualScheduleExist", true);
+            req.setAttribute("weekNo", ws.getWeekNo());
+            req.setAttribute("currentYear", ws.getYear());
+            req.setAttribute("mode", "modify");
+            req.setAttribute("msg", msg);
+        } catch (AnnualSchedueNotExistException ex) {
+            Logger.getLogger(
+                    ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            req.setAttribute("isAnnualScheduleExist", false);
         } catch (SQLException ex) {
-            Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "/pages/crudsp.jsp";
     }
     
     public boolean validateFormat()

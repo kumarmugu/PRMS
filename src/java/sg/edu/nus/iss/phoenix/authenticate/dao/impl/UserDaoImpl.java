@@ -116,10 +116,14 @@ public class UserDaoImpl implements UserDao {
 		String sql = "";
 		PreparedStatement stmt = null;
                 String roles = "";
-                
+                int cnt = 0;
                 if (valueObject.getRoles()!=null){
-                    for (Role role:valueObject.getRoles())
-                    roles += role.getRole()+":";
+                    for (Role role:valueObject.getRoles()){
+                    if (cnt > 0) { 
+                        roles += ":" ;
+                         }
+                    roles += role.getRole();
+                    cnt ++;
                 }
 		try {
 			sql = "INSERT INTO user ( id, password, name, "
@@ -144,6 +148,7 @@ public class UserDaoImpl implements UserDao {
 		}
 
 	}
+        }
 
 	/*
 	 * (non-Javadoc)

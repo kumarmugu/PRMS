@@ -340,6 +340,12 @@
                 $("#details #programBrowse").attr('hidden', true);
                 $("#details #presenterBrowse").attr('hidden', true);
                 $("#details #producerBrowse").attr('hidden', true);
+                $("#details #week").attr('readonly', true);
+                $("#details #day").attr('readonly', true);
+                $("#details #startTime").attr('readonly', true);
+                $("#details #endTime").attr('readonly', true);
+                $("#details #year").attr('readonly', true);
+                $("#details #date").attr('readonly', true);
             }
             return $("#details");            
         }
