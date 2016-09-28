@@ -31,10 +31,11 @@ public class CopyScheduledProgramCmd implements Perform {
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         
         ProgramSlot newProgramSlot = spDelegate.getProgramSlot(req);  
-        String msg = "";
+        String msg = "", mode = "copy";
         try {
             spDelegate.ProcessCopy(newProgramSlot);
             msg = "Successfully created.";
+            mode = "";
         } catch (Exception ex) {
             msg = "Error: " + ex.getMessage();
             Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,7 +53,7 @@ public class CopyScheduledProgramCmd implements Perform {
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());
             req.setAttribute("currentYear", ws.getYear());
-            req.setAttribute("mode", "copy");
+            req.setAttribute("mode", mode);
             req.setAttribute("msg", msg);
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(
