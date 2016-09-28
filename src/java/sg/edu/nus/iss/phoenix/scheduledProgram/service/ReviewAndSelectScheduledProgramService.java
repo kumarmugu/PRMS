@@ -11,8 +11,10 @@ import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.TransactionManagement;
+import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -99,7 +101,18 @@ public class ReviewAndSelectScheduledProgramService {
             ws = spdao.loadWeekInfo(ws);
             
             if(as != null)
+            {
                 ws = spdao.loadAllScheduleForWeek(ws);
+                UserDao userDAO = factory.getUserDAO();
+                for( ProgramSlot ps : ws.getProgramSlots()) {                    
+                    try {
+                            ps.setPresenterName(userDAO.getObject(ps.getPresenterId()).getName());
+                            ps.setProducerName(userDAO.getObject(ps.getProducerId()).getName());
+                    } catch (NotFoundException ex) {
+                            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+            }
             else 
                  throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         } catch (SQLException ex) {

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
@@ -61,19 +62,24 @@ public class ProgramSlot {
     private Date endTime;
     private String programName;
     
-    private String producerId;
-    private String presenterId;
+    private String producerId, producerName;
+    private String presenterId, presenterName;
     private Date weekStartDate;
     private Date duration;
     private String updatedBy;
     private Date updatedOn;
     
-    public boolean valdiate() {
+    public ValidationResult valdiate() {
         boolean isTimeValid = startTime.getTime() < endTime.getTime();
         
         //boolean isDurationValid = AddDateTime(startTime, duration).getTime() == endTime.getTime();
-        boolean isProgramNameValid = programName != null;        
-        return isTimeValid  && isProgramNameValid; //&& isDurationValid
+        boolean isProgramNameValid = programName != null; 
+        ValidationResult validation = new ValidationResult(isTimeValid  && isProgramNameValid);
+        if (validation.result == false){
+            if (isTimeValid == false) validation.reasons.add("Invalid Time.");
+            if (isProgramNameValid == false) validation.reasons.add("Invalid Program.");
+        }
+        return validation;
     }
     
     public Date getStartTime() {
@@ -187,5 +193,21 @@ public class ProgramSlot {
         cal1.add(Calendar.SECOND, cal2.get(Calendar.SECOND));
         cal1.add(Calendar.MILLISECOND, cal2.get(Calendar.MILLISECOND));
         return cal1.getTime();
+    }
+
+    public void setPresenterName(String presenterName) {
+        this.presenterName = presenterName;
+    }
+
+    public void setProducerName(String producerName) {
+        this.producerName = producerName;
+    }
+
+    public String getPresenterName() {
+        return presenterName;
+    }
+
+    public String getProducerName() {
+        return producerName;
     }
 }

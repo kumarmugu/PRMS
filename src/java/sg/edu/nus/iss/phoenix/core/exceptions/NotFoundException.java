@@ -19,4 +19,8 @@ public class NotFoundException extends Exception {
 		super(msg);
 	}
 
+    public NotFoundException() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

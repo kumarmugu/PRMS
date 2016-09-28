@@ -28,34 +28,26 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
  *
  * @author Rong
  */
-@Action("modifysp")
-public class ModifyScheduledProgramCmd implements Perform {
+@Action("copysp")
+public class CopyScheduledProgramCmd implements Perform {
     ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
             
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         
-        ProgramSlot newProgramSlot = null;
-        String msg = "", mode = "modify";
-        long id = Long.parseLong(req.getParameter("scheduledProgramId"));
+        ProgramSlot newProgramSlot = null;  
+        String msg = "", mode = "copy";
         if (validateFormat(req))
         {
-            try
-            {
-                newProgramSlot = spDelegate.getProgramSlot(req);
-                try {            
-                spDelegate.processModify(id, newProgramSlot);
-                msg = "Successfully updated.";
+            newProgramSlot = spDelegate.getProgramSlot(req);
+            try {
+                spDelegate.ProcessCopy(newProgramSlot);
+                msg = "Successfully created.";
                 mode = "";
-                } catch (Exception ex) {
-                    msg = "Error: " + ex.getMessage();
-                    Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }catch (Exception ex) {
-                msg = "Error: Fails to construct scheduled program object.";
+            } catch (Exception ex) {
+                msg = "Error: " + ex.getMessage();
                 Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-            }    
+            }
         }
         
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
@@ -65,8 +57,6 @@ public class ModifyScheduledProgramCmd implements Perform {
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
-            if ("modify".equals(mode))
-                newProgramSlot.setStartTime(new Date(id));
             req.setAttribute("default", newProgramSlot);
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);

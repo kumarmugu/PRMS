@@ -14,6 +14,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ScheduledProgramService;
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  * * @author Mugunthan
@@ -53,23 +54,23 @@ public class ScheduledProgramDelegate {
     
     public ProgramSlot processModify(long modifyingProgramSlotId, 
                                      ProgramSlot newProgramSlot) throws Exception{
-        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (existingProgramSlot != null) {
-            throw new Exception("A Program already exists in the new timeslot.");
-        }
-        
         ProgramSlot modifyingProgramSlot = getProgramSlot(modifyingProgramSlotId);
         if (modifyingProgramSlot == null) {
-            throw new NotFoundException("Modifying Program slot can't found.");
-        }
-        
-        boolean isValid = service.validateProgramSlotDetail(newProgramSlot);
-        if (!isValid) {
-            throw new Exception("Invalid Program Slot.");
+            throw new NotFoundException("Modifying Program slot cannot found.");
         }
         
         service.processModify(modifyingProgramSlot, newProgramSlot);        
         return newProgramSlot;        
+    }
+    
+    public ProgramSlot ProcessCopy(ProgramSlot newProgramSlot) throws Exception
+    {
+        ProgramSlot modifyingProgramSlot = getProgramSlot(newProgramSlot.getID());
+        if (modifyingProgramSlot != null) {
+            throw new NotFoundException("Another Program slot already exists.");
+        }
+        service.PorcessCreate(newProgramSlot);
+        return newProgramSlot;  
     }
     
     public ProgramSlot getProgramSlot(long id) {
