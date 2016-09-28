@@ -115,7 +115,7 @@ public class ScheduledProgramService {
             throw new Exception("A Program already exists in the new timeslot.");
         }
         
-        ValidationResult validation = validateProgramSlotDetail(newProgramSlot);
+        ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
         if (!validation.result) {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
@@ -133,7 +133,7 @@ public class ScheduledProgramService {
             throw new Exception("A Program already exists in the new timeslot.");
         }
         
-        ValidationResult validation = validateProgramSlotDetail(newProgramSlot);
+        ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
         if (!validation.result) {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
@@ -162,7 +162,7 @@ public class ScheduledProgramService {
         }
     }
     
-    public ProgramSlot constructProgramSlot(HttpServletRequest req) {
+    public ProgramSlot constructProgramSlot(HttpServletRequest req) throws Exception {
         
         String programName = req.getParameter("program");
         String presenter = req.getParameter("presenterId");
@@ -187,20 +187,25 @@ public class ScheduledProgramService {
         ps.setupdatedBy(updateBy);
         ps.setupdatedOn(new Date(updateOn.getTime())); 
         
+        String reason = "";
         try {
+            reason = "Fail to load weekly schedule.";
             WeeklySchedule ws = spDao.getScheduleForWeek(ps.getYear(), ps.getWeek());
             ps.setweekStartDate(ws.getStartDate());
             
+            reason = "Fail to load presenter detail.";
             ps.setPresenterName(getUser(ps.getPresenterId()).getName());            
+            reason = "Fail to load producer detail.";
             ps.setProducerName(getUser(ps.getProducerId()).getName());
         } catch (NotFoundException | SQLException ex) {
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);            
+            throw new Exception(reason);
         }
         return ps;        
     }
     
     public ValidationResult validateProgramSlotDetail(ProgramSlot ps) {
-        ValidationResult valdiation = ps.valdiate();
+        ValidationResult<Boolean> valdiation = ps.valdiate();
         if (valdiation.result == false)
         {
             return valdiation;

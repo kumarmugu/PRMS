@@ -20,6 +20,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduled
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
@@ -27,47 +28,59 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
  */
 @Action("deletesp")
 public class DeleteScheduledProgramCmd implements Perform{
-
+    /* Thiri, 
+        Zehua made some changes,
+        => validateFormat(req) will throw exception when validation fails
+        => add mode,(delete), so when delete fails can still go back to form
+    */
+    ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
+        
     @Override
     public String perform(String string, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
-        ProgramSlot delProgramSlot = spDelegate.getProgramSlot(req);
-        String msg = "";
+        String msg = "",  mode = "delete";
+        ProgramSlot delProgramSlot = null;
         try {
-            spDelegate.processDelete(delProgramSlot);
-            msg = "Successfully updated.";
-        } catch (NotFoundException | SQLException ex) {
-            msg = "Error in updating.";
+            delProgramSlot = validateFormat(req).result;
+            try {
+                spDelegate.processDelete(delProgramSlot);
+                msg = "Successfully deleted.";
+                mode = "";
+            } catch (NotFoundException | SQLException ex) {
+                msg = "Error: " + ex.getMessage();
+                Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }catch (Exception ex) {
+            msg = "Error: Fails to construct scheduled program object, due to " + ex.getMessage();
             Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
        
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        WeeklySchedule ws ;//= new WeeklySchedule();
+        WeeklySchedule ws ;
         String year = req.getParameter("year");
         String week = req.getParameter("week");
+        if (delProgramSlot == null) delProgramSlot = new ProgramSlot();
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
-            req.setAttribute("default", new ProgramSlot());
+            req.setAttribute("default", delProgramSlot);
             req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
             req.setAttribute("weekNo", ws.getWeekNo());
             req.setAttribute("currentYear", ws.getYear());
-            req.setAttribute("mode", "modify");
+            req.setAttribute("mode", mode);
             req.setAttribute("msg", msg);
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(
-                    ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+                    DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
         } catch (SQLException ex) {
-            Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "/pages/crudsp.jsp";
     }
     
-    public boolean validateFormat()
-    {
-        return true;
+    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
+        return new ValidationResult(spDelegate.getProgramSlot(req));
     }
     
 }

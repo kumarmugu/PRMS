@@ -74,7 +74,7 @@ public class ProgramSlot {
         
         //boolean isDurationValid = AddDateTime(startTime, duration).getTime() == endTime.getTime();
         boolean isProgramNameValid = programName != null; 
-        ValidationResult validation = new ValidationResult(isTimeValid  && isProgramNameValid);
+        ValidationResult<Boolean> validation = new ValidationResult(isTimeValid  && isProgramNameValid);
         if (validation.result == false){
             if (isTimeValid == false) validation.reasons.add("Invalid Time.");
             if (isProgramNameValid == false) validation.reasons.add("Invalid Program.");

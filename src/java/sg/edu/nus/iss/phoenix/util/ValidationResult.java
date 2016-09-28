@@ -12,12 +12,12 @@ import java.util.List;
  *
  * @author Rong
  */
-public class ValidationResult {
-    public final boolean result;
+public class ValidationResult <T>{
+    public final T result;
     public List<String> reasons;
     
-    public ValidationResult(boolean result) {
+    public ValidationResult(T result) {
         this.result = result;
-        this.reasons = new LinkedList<String>();
+        this.reasons = new LinkedList();
     }
 }

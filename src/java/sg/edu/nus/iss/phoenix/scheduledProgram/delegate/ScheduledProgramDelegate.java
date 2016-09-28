@@ -77,7 +77,7 @@ public class ScheduledProgramDelegate {
         return service.getProgramSlot(id);
     }
     
-    public ProgramSlot getProgramSlot(HttpServletRequest req) {
+    public ProgramSlot getProgramSlot(HttpServletRequest req) throws Exception {
         return service.constructProgramSlot(req);
     }
 }
