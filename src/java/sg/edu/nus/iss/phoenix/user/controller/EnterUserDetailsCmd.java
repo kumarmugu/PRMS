@@ -38,7 +38,26 @@ public class EnterUserDetailsCmd implements Perform {
         ArrayList<Role> userRoles = new ArrayList<Role>();
         
         String strUserRoles = "";
-       
+        ArrayList<User> users = new ArrayList<>();
+        ArrayList<Role> roles = new ArrayList<>();
+         try {
+             users = del.processFindUser("superUser");
+         } catch (SQLException ex1) {
+             Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex1);
+         }
+
+         for (User user : users) {
+             if (user.getId().equalsIgnoreCase("superUser")) {
+                 for (Role role : user.getRoles()) {
+                     roles.add(role);
+                 }
+             }
+         }
+
+        usr.setName(req.getParameter("name"));
+        usr.setId(req.getParameter("id"));
+        usr.setPassword(req.getParameter("password"));
+        
         String[] arrRoles = req.getParameterValues("roleName") ;
        if( arrRoles != null)
        {
@@ -49,22 +68,29 @@ public class EnterUserDetailsCmd implements Perform {
                  }
                  strUserRoles += arrRoles[i];
            }
-          
-       }        
+           usr.setRoles((ArrayList<Role>) userRoles);
+       }   
+       
+       else {
+           
+            req.setAttribute("errMsg", "Please select user role.");
+                //set the page attributes again
+               
+                req.setAttribute("listUserRole", strUserRoles);
+                req.setAttribute("roles", roles);
+                req.setAttribute("name", usr.getName());
+                req.setAttribute("id", usr.getId());
+                req.setAttribute("insert", req.getParameter("insert"));
+                return "/pages/setupuser.jsp";
+       }
      
-        usr.setName(req.getParameter("name"));
-        usr.setId(req.getParameter("id"));
-        usr.setPassword(req.getParameter("password"));
-        usr.setRoles((ArrayList<Role>) userRoles);
+       
         System.out.println(usr.toString());
         
         String insert = (String) req.getParameter("insert");
         Logger.getLogger(getClass().getName()).log(Level.INFO,
                         "Insert Flag: " + insert);
-        
-        
-        
-        
+       
         if (insert.equalsIgnoreCase("true")) {
             try {
                 del.processCreateUser(usr);
@@ -74,21 +100,6 @@ public class EnterUserDetailsCmd implements Perform {
                 //set error message 
                 req.setAttribute("errMsg", "User Cannot insert because id already exists");
                 //set the page attributes again
-                ArrayList<User> users = new ArrayList<>();
-                ArrayList<Role> roles = new ArrayList<>();
-                try {
-                    users = del.processFindUser("superUser");
-                } catch (SQLException ex1) {
-                    Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-                
-                for (User user : users) {
-                if ( user.getId().equalsIgnoreCase("superUser"))
-                {
-                    for (Role role : user.getRoles()) {
-                        roles.add(role);
-                    }
-                }
                 
                 req.setAttribute("listUserRole", strUserRoles);
                 req.setAttribute("roles", roles);
@@ -97,7 +108,7 @@ public class EnterUserDetailsCmd implements Perform {
                 req.setAttribute("insert", req.getParameter("insert"));
                 return "/pages/setupuser.jsp";
                 }
-            }
+            
         } else {
             try {
                 del.processModifyUser(usr);
@@ -108,8 +119,7 @@ public class EnterUserDetailsCmd implements Perform {
             }
         }
         
-       // ReviewSelectProgramDelegate rsdel = new ReviewSelectProgramDelegate();
-        //List<RadioProgram> data = rsdel.reviewSelectRadioProgram();
+      
         
         List<User> data= new ArrayList<User>();
          try {

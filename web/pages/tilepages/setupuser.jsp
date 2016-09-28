@@ -20,88 +20,69 @@
          <h6>${errMsg}</h6>
          <h6>"name" ${name}</h6>
           <h6>"insert:"${insert}</h6>
+          
 	<form action="${pageContext.request.contextPath}/nocturne/enteruser" method=post>
 		<center>
 			<table cellpadding=4 cellspacing=2 border=0>
                             <tr>
-					
-				</tr>
-				<tr>
-                                    
-					<td><fmt:message key="label.cruduser.id" /></td>
-					
-                                        <c:if test="${insert == 'true'}">
-                                                <td><input type="text" name="id" value="${id}" size=15
-                                                           maxlength=20></td>
+				<td><fmt:message key="label.cruduser.id" /></td>
+                                    <c:if test="${insert == 'true'}">
+                                        <td><input type="text" name="id" value="${id}" size=15 maxlength=20></td>
                                         <tr>
-                                                <td><fmt:message key="label.cruduser.password" /></td>
-                                                <td><input type="password" name="password" value="" size=15
-                                                           maxlength=20></td>
-                                        </tr>        
-                                                    <input type="hidden" name="insert" value="true" />  
-
-                                               
-                                        </c:if> 
-                                        <c:if test="${insert=='false'}">
-                                                <td> <input type="text" name="id" value="${id}" size=15
-                                                            maxlength=20 readonly="readonly"></td>
+                                            <td><fmt:message key="label.cruduser.password" /></td>
+                                            <td><input type="password" name="password" value="" size=15 maxlength=20></td>
+                                        </tr>
+                                            <input type="hidden" name="insert" value="true" /> 
+  
+                                    </c:if> 
+                                    <c:if test="${insert=='false'}">
+                                        
+                                                <td> <input type="text" name="id" value="${id}" size=15 maxlength=20 readonly="readonly"></td>
                                                 <input type="hidden" name="insert" value="false" />
                                                 
-                                        </c:if>
-                                       
-                                      
-				</tr>
-				<tr>
-					<td><fmt:message key="label.cruduser.name" /></td>
-					<td><input type="text" name="name"
-						value="${name}" size=45 maxlength=20></td>
-				</tr>
+                                    </c:if>
+                            </tr>
+		
+                            <tr>
+				<td><fmt:message key="label.cruduser.name" /></td>
+				<td><input type="text" name="name" value="${name}" size=45 maxlength=20></td>
+                            </tr>
                                 <tr>
                                     <td><fmt:message key="label.cruduser.roles" /></td>
-					
-                                    <td>   <table>
+                                    <td>   
+                                        <table>
                                              
                                             <c:forEach var="role" items="${roles}">
                                                     <tr>
-                                                        
-                                                   <c:forEach var="roleName" items="${role.role}">
-                                                            <c:out value="${role.role}"></c:out> 
-                                                    <c:out value="ListUserRole:${listUserRole}" ></c:out>
-                                                            
-                                                        <c:out value="${ fn:contains(listUserRole, role.role)}" > </c:out>  
-                                                        
-                                                    <c:choose>
-                                                        <c:when test="${ fn:contains(listUserRole, role.role)}">
-                                                            
-                                                             <td><input type="checkbox"  checked="false" name="roleName"  value=${role.role} >  ${role.role}</td>
-                                                        </c:when>    
-                                                        <c:otherwise>
-                                                          
-                                                              <td><input type="checkbox" checked="true" name="roleName"  value=${role.role} >  ${role.role}</td>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                            
-                                                            
-                                                   </c:forEach> 
-                                                     
-                                                      
-                                                      
-                                                       
 
-                                                    
-                                                      
-                                                    
-                                                        
+                                                        <c:forEach var="roleName" items="${role.role}">
+                                                            <!-- <c:out value="role.role:=>${role.role}"></c:out> !-->
+                                                            
+                                                            <c:choose>
+                                                                <c:when test="${ fn:contains(listUserRole, role.role)}">
+
+                                                                     <td><input type="checkbox"  checked="checked" name="roleName"  value=${role.role} >  ${role.role}</td>
+                                                                
+                                                                </c:when>    
+                                                                <c:otherwise>
+
+                                                                      <td><input type="checkbox"  name="roleName"  value=${role.role} >  ${role.role}</td>
+                                                                
+                                                                </c:otherwise>
+                                                            </c:choose>
+
+
+                                                        </c:forEach> 
+
                                                     </tr>
-                                            </c:forEach>
+                                                </c:forEach>
                                         </table>
                                     </td>
                                 </tr>
 				
 			</table>
 		</center>
-		<input type="submit" value="Submit"> <input type="reset"
-			value="Reset">
+		<input type="submit" value="Submit"> <input type="reset" value="Reset">
 	</form>
 
 </body>

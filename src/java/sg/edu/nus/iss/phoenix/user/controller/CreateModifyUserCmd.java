@@ -46,6 +46,7 @@ public class CreateModifyUserCmd implements Perform{
         List<Role> roles = new ArrayList();
         List<Role> userRoles = new ArrayList();
         List<String> listUserRole = new ArrayList<String>();
+        
         if (req.getParameter("roles") != null) {
              listUserRole = Arrays.asList(req.getParameter("roles").split(":"));
             for (String strUserRole : listUserRole) {
