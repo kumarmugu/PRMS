@@ -52,25 +52,14 @@ public class ModifyScheduledProgramCmd implements Perform {
             Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        WeeklySchedule ws;
+        WeeklySchedule ws = null;
         String year = req.getParameter("year");
         String week = req.getParameter("week");
-        if (newProgramSlot == null) {
-            newProgramSlot = new ProgramSlot();
-        }
+        
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
-            req.setAttribute("events", ws.getProgramSlots());
-            if ("modify".equals(mode)) {
-                newProgramSlot.setStartTime(new Date(id));
-            }
-            req.setAttribute("default", newProgramSlot);
-            req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
-            req.setAttribute("weekNo", ws.getWeekNo());
-            req.setAttribute("currentYear", ws.getYear());
-            req.setAttribute("mode", mode);
-            req.setAttribute("msg", msg);
+            
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(
                     ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,7 +67,24 @@ public class ModifyScheduledProgramCmd implements Perform {
         } catch (SQLException ex) {
             Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        if (newProgramSlot == null) {
+            newProgramSlot = new ProgramSlot();
+        }
+        if ("modify".equals(mode)) {
+            newProgramSlot.setStartTime(new Date(id));
+        }
+        if (ws == null) {
+            ws = new WeeklySchedule();
+        }
+        
+        req.setAttribute("events", ws.getProgramSlots());
+        req.setAttribute("default", newProgramSlot);
+        req.setAttribute("startDate", ws.getStartDate());
+        req.setAttribute("weekNo", ws.getWeekNo());
+        req.setAttribute("currentYear", ws.getYear());
+        req.setAttribute("mode", mode);
+        req.setAttribute("msg", msg);
         return "/pages/crudsp.jsp";
     }
 

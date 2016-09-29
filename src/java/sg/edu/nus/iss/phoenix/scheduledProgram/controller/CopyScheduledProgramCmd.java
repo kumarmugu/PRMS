@@ -52,22 +52,13 @@ public class CopyScheduledProgramCmd implements Perform {
         }
 
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        WeeklySchedule ws;
+        WeeklySchedule ws = null;
         String year = req.getParameter("year");
         String week = req.getParameter("week");
-        if (newProgramSlot == null) {
-            newProgramSlot = new ProgramSlot();
-        }
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
-            req.setAttribute("events", ws.getProgramSlots());
-            req.setAttribute("default", newProgramSlot);
-            req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
-            req.setAttribute("weekNo", ws.getWeekNo());
-            req.setAttribute("currentYear", ws.getYear());
-            req.setAttribute("mode", mode);
-            req.setAttribute("msg", msg);
+            
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(
                     CopyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
@@ -75,7 +66,20 @@ public class CopyScheduledProgramCmd implements Perform {
         } catch (SQLException ex) {
             Logger.getLogger(CopyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        if (newProgramSlot == null) {
+            newProgramSlot = new ProgramSlot();
+        }
+        if (ws == null) {
+            ws = new WeeklySchedule();
+        }
+        req.setAttribute("events", ws.getProgramSlots());
+        req.setAttribute("default", newProgramSlot);
+        req.setAttribute("startDate", ws.getStartDate());
+        req.setAttribute("weekNo", ws.getWeekNo());
+        req.setAttribute("currentYear", ws.getYear());
+        req.setAttribute("mode", mode);
+        req.setAttribute("msg", msg);
         return "/pages/crudsp.jsp";
     }
 
