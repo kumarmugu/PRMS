@@ -22,41 +22,41 @@
 
         <script type='text/javascript'>
             var scheduledPrograms = [];
-            var selectedScheduledProgram = {    
-                'id': ${default.getID()},
+            var selectedScheduledProgram = {
+                'id': (${default.getID()}) ? ${default.getID()} : 0,
                 'title': '${default.programName}',
                 'producerID': '${default.producerId}',
-                'presenterID': '${default.presenterId}',                
+                'presenterID': '${default.presenterId}',
                 'producerName': '${default.producerName}',
-                'presenterName': '${default.presenterName}',                
-                'year' : ${default.getYear()},
-                'week' : ${default.getWeek()},
-                'day' : '${default.getDay()}',
+                'presenterName': '${default.presenterName}',
+                'year': ${default.getYear()},
+                'week': ${default.getWeek()},
+                'day': '${default.getDay()}',
                 'start': new Date(${default.startTime.getTime()}),
                 'end': new Date(${default.endTime.getTime()})
             };
-            
+
             var mode = '${mode}';
             var msg = '${msg}';
-            
+
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             <c:forEach items="${events}" var="item">
             scheduledPrograms.push({
                 'id': ${item.getID()},
                 'title': '${item.programName}',
                 'producerID': '${item.producerId}',
-                'presenterID': '${item.presenterId}',  
+                'presenterID': '${item.presenterId}',
                 'producerName': '${item.producerName}',
-                'presenterName': '${item.presenterName}',   
-                'year' : ${item.getYear()},
-                'week' : ${item.getWeek()},
-                'day' : '${item.getDay()}',
+                'presenterName': '${item.presenterName}',
+                'year': ${item.getYear()},
+                'week': ${item.getWeek()},
+                'day': '${item.getDay()}',
                 'start': new Date(${item.startTime.getTime()}),
-                'end': new Date(${item.endTime.getTime()}) ,
-                'updatedBy' : 'you'
+                'end': new Date(${item.endTime.getTime()}),
+                'updatedBy': 'you'
             });
             </c:forEach>
-            
+
             console.log(scheduledPrograms);
 
             var eventData = {
@@ -66,14 +66,14 @@
                 },
                 events: scheduledPrograms
             };
-            
+
             $(document).ready(function () {
                 hideAllButtons();
                 hideAllScreens();
                 hideAllDialogs();
 
                 $("#copyButton").click(function () {
-                    clearMsg();            
+                    clearMsg();
                     loadScreen("copy")
                 });
 
@@ -86,23 +86,23 @@
                     loadScreen("delete");
                 });
                 /*// Post submission, this click event may not works
-                $("#programBrowse").click(function () {
-                    $.get( "managerp?submittype=loadall&source=schedule", function( data ) {
-                        //alert(data);
-                        loadDialog("program", data);
-                    });
-                });
+                 $("#programBrowse").click(function () {
+                 $.get( "managerp?submittype=loadall&source=schedule", function( data ) {
+                 //alert(data);
+                 loadDialog("program", data);
+                 });
+                 });
                  
-                $("#presenterBrowse").click(function () {
-                    $.get( "managepp?submittype=loadall&type=presenter", function( data ) {
-                        loadDialog("presenter", data);
-                    });
-                });
-                $("#producerBrowse").click(function () {
-                    $.get( "managepp?submittype=loadall&type=producer", function( data ) {
-                        loadDialog("producer", data);
-                    });
-                });*/
+                 $("#presenterBrowse").click(function () {
+                 $.get( "managepp?submittype=loadall&type=presenter", function( data ) {
+                 loadDialog("presenter", data);
+                 });
+                 });
+                 $("#producerBrowse").click(function () {
+                 $.get( "managepp?submittype=loadall&type=producer", function( data ) {
+                 loadDialog("producer", data);
+                 });
+                 });*/
 
                 $('[id^="program-tr-"]').click(function () {
                     var programId = $(this).attr('id').replace("tr", "td");
@@ -115,7 +115,7 @@
                     //    pointer-events: none;
                     var $calendar = $('#calendar').weekCalendar({
                         date: new Date(${startDate.getTime()}),
-                        businessHours : false,
+                        businessHours: false,
                         data: eventData,
                         timeslotsPerHour: 2,
                         scrollToHourMillis: 0,
@@ -129,6 +129,7 @@
                             //console.log(calEvent);
                             if (!calEvent.id) {
                                 console.log(calEvent.start);
+                                clearMsg();
                                 showAllButtons();
                                 hideAllScreens();
                                 createScheduleProgram(calEvent);
@@ -149,240 +150,236 @@
                             $('#sYear').val($('#year').val());
                             $('#sWeek').val($('#week').val());
                             //$('#sDay').val(calEvent.start.get);
+                            clearMsg();
                             showAllButtons();
                             hideAllScreens();
                         }
                     });
                 } else {
-                        var jscurrentYear=new Date().getFullYear() ;
-                        var userInputYear= parseInt($('#year').val()) ;
-                        var DiffYear= userInputYear-jscurrentYear;
+                    var jscurrentYear = new Date().getFullYear();
+                    var userInputYear = parseInt($('#year').val());
+                    var DiffYear = userInputYear - jscurrentYear;
 
-                        var createscheduleflag=document.getElementById("txtcreateAnnualSchedule").value;
+                    var createscheduleflag = document.getElementById("txtcreateAnnualSchedule").value;
 
-                        if( $('#year').val()<jscurrentYear)
+                    if ($('#year').val() < jscurrentYear)
+                    {
+                        alert("No Annual Schedule found for selected Year!!!");
+                    } else if ((userInputYear > jscurrentYear || userInputYear == jscurrentYear))
+                    {
+                        if (DiffYear < 4 && createscheduleflag == "0")
                         {
-                             alert ("No Annual Schedule found for selected Year!!!");
-                        }
-                        else if (( userInputYear > jscurrentYear ||userInputYear == jscurrentYear) )
-                        {  
-                            if(DiffYear<4 && createscheduleflag =="0" )
-                            { 
-                              var r = confirm("Annual schedule not exist. Do you want to create Annual Schedule for the Year : ("+ userInputYear +" ) Current Year :"+ jscurrentYear);
-                              if(r==true)
-                              {
+                            var r = confirm("Annual schedule not exist. Do you want to create Annual Schedule for the Year : (" + userInputYear + " ) Current Year :" + jscurrentYear);
+                            if (r == true)
+                            {
                                 document.getElementById("txtcreateAnnualSchedule").value = "1";
-                                 alert(document.getElementById("txtcreateAnnualSchedule").value); 
-                                document.getElementById("searchScheduleform").submit();                          
-                              }
-
+                                alert(document.getElementById("txtcreateAnnualSchedule").value);
+                                document.getElementById("searchScheduleform").submit();
                             }
-                         else
-                             alert ("No Annual Schedule found for Year("+ userInputYear +" !!) New annual schdeule allow to create only for upcoming 3 Years!!!"); 
-                      }
+
+                        } else
+                            alert("No Annual Schedule found for Year(" + userInputYear + " !!) New annual schdeule allow to create only for upcoming 3 Years!!!");
+                    }
                 }
 
                 //Re-initialised page
                 if (mode !== "") {
                     loadScreen(mode);
-                }
-                else if (msg !== "") {
+                } else if (msg !== "") {
                     displayMsg();
                 }
             }
-        );
-        
-        function popUpProgramDialog() {
-            $.get( "managerp?submittype=loadall&source=schedule", function( data ) {
-                       //alert(data);
-                        loadDialog("program", data);
-                    });
-        }
-        
-        function popUpPresenterDialog() {
-            $.get( "managepp?submittype=loadall&type=presenter", function( data ) {
-                        loadDialog("presenter", data);
-                    });
-        }
-        
-        function popUpProducerDialog() {
-            $.get( "managepp?submittype=loadall&type=producer", function( data ) {
-                        loadDialog("producer", data);
-                    });
-        }
-         
-         function presenterProducerClicked(id, type, hdid){
-            $('#' + type + 'Dialog').dialog('close');
-            $('#' + type ).val($("#" + id).html());
-            $('#' + type + "Id").val(document.getElementById(hdid).value);
-            //$('#' + type + 'Createid').val(document.getElementById(hdid).value);
-           
-         }
-         function programClicked(id){
-            $('#programDialog').dialog('close');
-            $('#program').val($("#" + id).html());
-         }         
-         
-        function searchProducerPresenter(type){
-            var searchtext = $('#searchText'+ type).val();
-            $.get('managepp?submittype=search&searchtype=' + type + '&inputname='+ searchtext, function( data ) {
-                $('#' + type + 'Dialog').html(data);
-            });
-        }
-        
-        function loadDialog(name, data) {
-            hideAllDialogs();
-            $("#"+ name +"Dialog").html(data);
-            $("#"+ name +"Dialog").dialog({
-                width: 600,
-                height: 600
-            });            
-        }
-        function hideAllDialogs() {
-            $('#programDialog').dialog('close');
-            $('#producerDialog').dialog('close');
-            $('#presenterDialog').dialog('close');            
-        }
-        
-        function loadScreen(name) {
-            hideAllScreens();
-            $("#" + name + "Screen").show();
-            loadScheduledProgram(name);
-            $('#' + name + 'Screen #body').html( $("#details") );
-            $("#details").show();
+            );
 
-            location.hash = '#' + name + 'Screen';
-        }
-        
-        function hideAllScreens(){
-            $("#createScreen").hide();
-            $("#modifyScreen").hide();
-            $("#copyScreen").hide();
-            $("#deleteScreen").hide();
-        }
-        
-        function showAllButtons() {
-            $('#copyButton').show();
-            $('#modifyButton').show();
-            $('#deleteButton').show();
-            $('#createButton').hide();
-        }
-        function hideAllButtons() {
-            $('#copyButton').hide();
-            $('#modifyButton').hide();
-            $('#deleteButton').hide();
-            $('#createButton').hide();
-        }
-        
-        
-        function createScheduleProgram(calEvent) {
-            selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
-            selectedScheduledProgram.start = new Date(calEvent.start.getTime());
-            selectedScheduledProgram.end = new Date(calEvent.end.getTime());
-        }        
-        
-        function loadScheduledProgram(mode) {
-            $("#scheduledProgramId").val(selectedScheduledProgram.id);                
-            $("#program").val(selectedScheduledProgram.title);
-            $("#presenter").val(selectedScheduledProgram.presenterName);
-            $("#producer").val(selectedScheduledProgram.producerName);
-            $("#presenterId").val(selectedScheduledProgram.presenterID);
-            $("#producerId").val(selectedScheduledProgram.producerID);
-            $("#details #year").val(selectedScheduledProgram.year);
-            $("#details #week").val(selectedScheduledProgram.week);
-            $("#details #day").val(selectedScheduledProgram.day);
-            $("#details #date").attr('value',$.datepicker.formatDate('yy-mm-dd', selectedScheduledProgram.start));
-            //$("#details #date").val($.datepicker.formatDate('dd/mm/yyyy', selectedScheduledProgram.start));
-            $("#details #startTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.start));
-            $("#details #endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
-            $("#updatedBy").val(selectedScheduledProgram.updatedBy);
+            function popUpProgramDialog() {
+                $.get("managerp?submittype=loadall&source=schedule", function (data) {
+                    //alert(data);
+                    loadDialog("program", data);
+                });
+            }
 
-            $("#details #programBrowse").attr('hidden', false);
-            $("#details #presenterBrowse").attr('hidden', false);
-            $("#details #producerBrowse").attr('hidden', false);
-            $("#program").attr('readonly', true);
-            $("#presenter").attr('readonly', true);
-            $("#producer").attr('readonly', true);
-            $("#details #year").attr('readonly', true);
-            $("#details #week").attr('readonly', true);
-            $("#details #day").attr('readonly', true);
-            
-            var firstDateOfYear = new Date(selectedScheduledProgram.year, 0, 1);
-            $("#details #date").attr('min', $.datepicker.formatDate('yy-mm-dd', firstDateOfYear));
-            var lastDateOfYear = new Date(selectedScheduledProgram.year, 11, 31);
-            $("#details #date").attr('max', $.datepicker.formatDate('yy-mm-dd', lastDateOfYear));
-            
-            if (msg !== "") {
-                $("#details #msg").html(msg);
+            function popUpPresenterDialog() {
+                $.get("managepp?submittype=loadall&type=presenter", function (data) {
+                    loadDialog("presenter", data);
+                });
             }
-               
-            if (mode === "create") {   
-                $("#program").val("");
-                $("#presenter").val("");
-                $("#producer").val("");
-                
-                $("#details #startTime").attr('readonly', true);
-                $("#details #endTime").attr('readonly', true);
-            }
-            else if(mode === "modify") {                
-                $("#details #date").attr('readonly', false);
-                $("#details #startTime").attr('readonly', false);
-                $("#details #endTime").attr('readonly', false);
-            }
-            else if( mode === "copy") {
-                $("#scheduledProgramId").val(0);          
-                if (msg === "")
-                {
-                    var nextWeek = new Date(selectedScheduledProgram.start);
-                    nextWeek.setDate(nextWeek.getDate() + 7);
 
-                    $("#details #date").attr('value',$.datepicker.formatDate('yy-mm-dd', nextWeek));
-                    dateChange();
-                }               
-                $("#details #date").attr('readonly', false);
-                $("#details #startTime").attr('readonly', false);
-                $("#details #endTime").attr('readonly', false);
+            function popUpProducerDialog() {
+                $.get("managepp?submittype=loadall&type=producer", function (data) {
+                    loadDialog("producer", data);
+                });
             }
-            else if (mode === "delete")
-            {
-                $("#details #programBrowse").attr('hidden', true);
-                $("#details #presenterBrowse").attr('hidden', true);
-                $("#details #producerBrowse").attr('hidden', true);
+
+            function presenterProducerClicked(id, type, hdid) {
+                $('#' + type + 'Dialog').dialog('close');
+                $('#' + type).val($("#" + id).html());
+                $('#' + type + "Id").val(document.getElementById(hdid).value);
+                //$('#' + type + 'Createid').val(document.getElementById(hdid).value);
+
+            }
+            function programClicked(id) {
+                $('#programDialog').dialog('close');
+                $('#program').val($("#" + id).html());
+            }
+
+            function searchProducerPresenter(type) {
+                var searchtext = $('#searchText' + type).val();
+                $.get('managepp?submittype=search&searchtype=' + type + '&inputname=' + searchtext, function (data) {
+                    $('#' + type + 'Dialog').html(data);
+                });
+            }
+
+            function loadDialog(name, data) {
+                hideAllDialogs();
+                $("#" + name + "Dialog").html(data);
+                $("#" + name + "Dialog").dialog({
+                    width: 600,
+                    height: 600
+                });
+            }
+            function hideAllDialogs() {
+                $('#programDialog').dialog('close');
+                $('#producerDialog').dialog('close');
+                $('#presenterDialog').dialog('close');
+            }
+
+            function loadScreen(name) {
+                hideAllScreens();
+                $("#" + name + "Screen").show();
+                loadScheduledProgram(name);
+                $('#' + name + 'Screen #body').html($("#details"));
+                $("#details").show();
+
+                location.hash = '#' + name + 'Screen';
+            }
+
+            function hideAllScreens() {
+                $("#createScreen").hide();
+                $("#modifyScreen").hide();
+                $("#copyScreen").hide();
+                $("#deleteScreen").hide();
+            }
+
+            function showAllButtons() {
+                $('#copyButton').show();
+                $('#modifyButton').show();
+                $('#deleteButton').show();
+                $('#createButton').hide();
+            }
+            function hideAllButtons() {
+                $('#copyButton').hide();
+                $('#modifyButton').hide();
+                $('#deleteButton').hide();
+                $('#createButton').hide();
+            }
+
+
+            function createScheduleProgram(calEvent) {
+                selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
+                selectedScheduledProgram.start = new Date(calEvent.start.getTime());
+                selectedScheduledProgram.end = new Date(calEvent.end.getTime());
+            }
+
+            function loadScheduledProgram(mode) {
+                $("#scheduledProgramId").val(selectedScheduledProgram.id);
+                $("#program").val(selectedScheduledProgram.title);
+                $("#presenter").val(selectedScheduledProgram.presenterName);
+                $("#producer").val(selectedScheduledProgram.producerName);
+                $("#presenterId").val(selectedScheduledProgram.presenterID);
+                $("#producerId").val(selectedScheduledProgram.producerID);
+                $("#details #year").val(selectedScheduledProgram.year);
+                $("#details #week").val(selectedScheduledProgram.week);
+                $("#details #day").val(selectedScheduledProgram.day);
+                $("#details #date").attr('value', $.datepicker.formatDate('yy-mm-dd', selectedScheduledProgram.start));
+                //$("#details #date").val($.datepicker.formatDate('dd/mm/yyyy', selectedScheduledProgram.start));
+                $("#details #startTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.start));
+                $("#details #endTime").val(getFormatedTimeStringHHMM(selectedScheduledProgram.end));
+                $("#updatedBy").val(selectedScheduledProgram.updatedBy);
+
+                $("#details #programBrowse").attr('hidden', false);
+                $("#details #presenterBrowse").attr('hidden', false);
+                $("#details #producerBrowse").attr('hidden', false);
+                $("#program").attr('readonly', true);
+                $("#presenter").attr('readonly', true);
+                $("#producer").attr('readonly', true);
+                $("#details #year").attr('readonly', true);
                 $("#details #week").attr('readonly', true);
                 $("#details #day").attr('readonly', true);
-                $("#details #startTime").attr('readonly', true);
-                $("#details #endTime").attr('readonly', true);
-                $("#details #year").attr('readonly', true);
-                $("#details #date").attr('readonly', true);
+
+                var firstDateOfYear = new Date(selectedScheduledProgram.year, 0, 1);
+                $("#details #date").attr('min', $.datepicker.formatDate('yy-mm-dd', firstDateOfYear));
+                var lastDateOfYear = new Date(selectedScheduledProgram.year, 11, 31);
+                $("#details #date").attr('max', $.datepicker.formatDate('yy-mm-dd', lastDateOfYear));
+
+                if (msg !== "") {
+                    $("#details #msg").html(msg);
+                }
+
+                if (mode === "create") {
+                    $("#program").val("");
+                    $("#presenter").val("");
+                    $("#producer").val("");
+
+                    $("#details #startTime").attr('readonly', true);
+                    $("#details #endTime").attr('readonly', true);
+                } else if (mode === "modify") {
+                    $("#details #date").attr('readonly', false);
+                    $("#details #startTime").attr('readonly', false);
+                    $("#details #endTime").attr('readonly', false);
+                } else if (mode === "copy") {
+                    $("#scheduledProgramId").val(0);
+                    if (msg === "")
+                    {
+                        var nextWeek = new Date(selectedScheduledProgram.start);
+                        nextWeek.setDate(nextWeek.getDate() + 7);
+
+                        $("#details #date").attr('value', $.datepicker.formatDate('yy-mm-dd', nextWeek));
+                        dateChange();
+                    }
+                    $("#details #date").attr('readonly', false);
+                    $("#details #startTime").attr('readonly', false);
+                    $("#details #endTime").attr('readonly', false);
+                } else if (mode === "delete")
+                {
+                    $("#details #programBrowse").attr('hidden', true);
+                    $("#details #presenterBrowse").attr('hidden', true);
+                    $("#details #producerBrowse").attr('hidden', true);
+                    $("#details #week").attr('readonly', true);
+                    $("#details #day").attr('readonly', true);
+                    $("#details #startTime").attr('readonly', true);
+                    $("#details #endTime").attr('readonly', true);
+                    $("#details #year").attr('readonly', true);
+                    $("#details #date").attr('readonly', true);
+                }
+                return $("#details");
             }
-            return $("#details");            
-        }
-        
-        function displayMsg() {
-            if (mode !== "")
-                $('#msg').html(msg);
-            else
-                $('#msgSuccess').html(msg);
-        }
-        function clearMsg() { 
-            msg = "";
-            $('#msgSuccess').html("");
-            $('#msg').html("");
-        }
-        function getFormatedTimeStringHHMM(time) {
-            return ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2);
-        }
-        
-        function dateChange() {
-            var date = new Date($("#details #date").attr('value'));
-            if (date === null) return;
-            $("#details #year").attr('value', date.getFullYear());
-            let onejan = new Date(date.getFullYear(), 0, 1);
-            var week = Math.ceil( (((date - onejan) / 86400000) + onejan.getDay() + 1) / 7 );
-            $("#details #week").attr('value', week);
-            $("#details #day").attr('value', days[date.getDay()]);
-        }
-        
+
+            function displayMsg() {
+                if (mode !== "")
+                    $('#msg').html(msg);
+                else
+                    $('#msgSuccess').html(msg);
+            }
+            function clearMsg() {
+                msg = "";
+                $('#msgSuccess').html("");
+                $('#msg').html("");
+            }
+            function getFormatedTimeStringHHMM(time) {
+                return ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2);
+            }
+
+            function dateChange() {
+                var date = new Date($("#details #date").attr('value'));
+                if (date === null)
+                    return;
+                $("#details #year").attr('value', date.getFullYear());
+                let onejan = new Date(date.getFullYear(), 0, 1);
+                var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+                $("#details #week").attr('value', week);
+                $("#details #day").attr('value', days[date.getDay()]);
+            }
+
         </script>
 
     </head>
@@ -430,20 +427,20 @@
         <input type="hidden" name="sDay" id="sDay"/>
         <input type="hidden" name="sStartTime" id="sStartTime"/>
         <input type="hidden" name="sEndTime" id="sEndTime"/>
-        
 
-                
+
+
         <div id="createScreen" class="form-style-2" style="diplay:none;">
-        <div class="form-style-2-heading">Create New Schedule</div>
-        
+            <div class="form-style-2-heading">Create New Schedule</div>
+
             <form action="${pageContext.request.contextPath}/nocturne/addsp" method="post">
                 <div id="body"> </div>              
-                
+
                 <label><span>&nbsp;</span><input type="submit" value="Create Schedule" /></label>
             </form>
         </div>
-        
-        
+
+
         <div id="modifyScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Modify Schedule</div>
             <form action="${pageContext.request.contextPath}/nocturne/modifysp" method="post">
@@ -458,33 +455,33 @@
                 <label><span>&nbsp;</span><input type="submit" value="Copy Schedule" /></label>
             </form>
         </div>
-        
-        
+
+
         <div id="deleteScreen"  class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Delete Schedule</div>
             <form action="${pageContext.request.contextPath}/nocturne/deletesp" method="post">
-                 <div id="body"> </div>
+                <div id="body"> </div>
                 <label><span>&nbsp;</span><input type="submit" value="Delete Schedule" /></label>
             </form>
         </div>
-                
+
         <div id="details" style="diplay:none;" hidden>
             <input class="input-field" type="hidden" id="scheduledProgramId"  name="scheduledProgramId" hidden/>
             <input type="hidden" name="presenterId" id="presenterId" value=""/>
             <input type="hidden" name="producerId" id="producerId" value=""/>
             <input type="hidden" name="updateBy" id="updateBy" value=""/>
-            
+
             <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program"  name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." onClick="popUpProgramDialog()"/></label>
             <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." onClick="popUpPresenterDialog()"/></label>
             <label for="producer"><span>Producer: </span><input type="text" class="input-field" id="producer" name="producer" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." onClick="popUpProducerDialog()" /></label>
-            
+
             <label for="year"><span>Year: </span><input class="input-field" type="text" id="year"  name="year" maxlength="4"  readonly/></label>
             <label for="week"><span>Week: </span><input class="input-field" type="text" id="week"  name="week" maxlength="2" readonly/></label>
             <label for="day"><span>Day: </span><input class="input-field" type="text" id="day"  name="day" maxlength="10" readonly/></label>
             <label for="date"><span>Date: </span><input class="input-field" type="date" id="date"  name="date" readonly onChange="dateChange()"/></label>
             <label for="startTime"><span>Start Time: </span><input class="input-field" type="time" id="startTime"  name="startTime" step="1800" readonly/></label>
             <label for="endTime"><span>End Time: </span><input class="input-field" type="time" id="endTime"  name="endTime" step="1800" readonly/></label>
-            
+
             <span id="msg" name="msg"></span> <br/>
         </div>
     </body>

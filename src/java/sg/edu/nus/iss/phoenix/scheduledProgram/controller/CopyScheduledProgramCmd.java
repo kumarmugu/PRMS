@@ -20,21 +20,23 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 import sg.edu.nus.iss.phoenix.util.ValidationResult;
+
 /**
  *
  * @author Rong
  */
 @Action("copysp")
 public class CopyScheduledProgramCmd implements Perform {
+
     ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
-            
+
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        
-        ProgramSlot newProgramSlot = null;  
+
+        ProgramSlot newProgramSlot = null;
         String msg = "", mode = "copy";
         try {
-            
+
             newProgramSlot = validateFormat(req).result;
             try {
                 spDelegate.ProcessCopy(newProgramSlot);
@@ -44,16 +46,18 @@ public class CopyScheduledProgramCmd implements Perform {
                 msg = "Error: " + ex.getMessage();
                 Logger.getLogger(CopyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             msg = "Error: Fails to construct scheduled program object, due to " + ex.getMessage();
             Logger.getLogger(CopyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        WeeklySchedule ws ;
+        WeeklySchedule ws;
         String year = req.getParameter("year");
         String week = req.getParameter("week");
-        if (newProgramSlot == null) newProgramSlot = new ProgramSlot();
+        if (newProgramSlot == null) {
+            newProgramSlot = new ProgramSlot();
+        }
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
             req.setAttribute("events", ws.getProgramSlots());
@@ -71,11 +75,10 @@ public class CopyScheduledProgramCmd implements Perform {
         } catch (SQLException ex) {
             Logger.getLogger(CopyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return "/pages/crudsp.jsp";
     }
-    
-    
+
     private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
         return new ValidationResult(spDelegate.getProgramSlot(req));
     }

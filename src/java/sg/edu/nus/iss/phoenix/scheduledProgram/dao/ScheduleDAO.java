@@ -20,32 +20,42 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 public interface ScheduleDAO {
 
     public abstract ProgramSlot createValueObject();
-    
-    public abstract void create (ProgramSlot ValueObject);
+
+    public abstract boolean create(ProgramSlot ValueObject)
+            throws SQLException;
+
+    public abstract void delete(ProgramSlot valueObject)
+            throws NotFoundException, SQLException;
+
+    public abstract void update(ProgramSlot valueObject)
+            throws NotFoundException, SQLException;
 
     /**
-     * 
-     * loadAllScheduleForWeek-method. This will read all scheduled programs from database table for a particular week and
-     * assign the list of programSlot to Weekly Schedule. 
-     * of data.
+     *
+     * loadAllScheduleForWeek-method. This will read all scheduled programs from
+     * database table for a particular week and assign the list of programSlot
+     * to Weekly Schedule. of data.
+     *
      * @param ws
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public abstract WeeklySchedule loadAllScheduleForWeek(WeeklySchedule ws) throws SQLException;
-    
+
     public abstract AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException;
-    
+
     public abstract WeeklySchedule loadWeekInfo(WeeklySchedule ws) throws SQLException;
-    
+
     public abstract Boolean processCreateAnnualSchedule(AnnualSchedule as, ArrayList<WeeklySchedule> wsList) throws SQLException;
-    public abstract void delete(ProgramSlot valueObject)
-			throws NotFoundException, SQLException;  
-  
-    public abstract void save(ProgramSlot valueObject)
-			throws NotFoundException, SQLException;
-    
+
     public ProgramSlot getProgramSlot(Date theStartTime) throws NotFoundException, SQLException;
+
     public WeeklySchedule getScheduleForWeek(int year, int weekNo) throws NotFoundException, SQLException;
-    
+
+    public void setManualCommitRequired(boolean manual) throws SQLException;
+
+    public boolean getManualCommitRequired() throws SQLException;
+
+    public void create(WeeklySchedule valueObject)
+            throws SQLException;
 }

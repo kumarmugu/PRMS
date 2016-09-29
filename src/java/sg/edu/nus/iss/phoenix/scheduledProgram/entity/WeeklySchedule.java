@@ -8,6 +8,7 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -22,19 +23,20 @@ public class WeeklySchedule {
     ArrayList<ProgramSlot> programSlots = new ArrayList<ProgramSlot>();
 
     /**
-     * 
+     *
      */
     public WeeklySchedule() {
     }
 
     /**
-     * 
+     *
      * @param year
-     * @param weekNo 
+     * @param weekNo
      */
     public WeeklySchedule(int year, int weekNo) {
         this.year = year;
         this.weekNo = weekNo;
+        this.startDate = DateUtil.getStartDateOfWeek(year, weekNo);
     }
 
     public Date getStartDate() {
@@ -94,12 +96,10 @@ public class WeeklySchedule {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "WeeklySchedule{" + "startDate=" + startDate + ", year=" + year + ", weekNo=" + weekNo + ", programSlots=" + programSlots + '}';
     }
-    
-    
 
 }

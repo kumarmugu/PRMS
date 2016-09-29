@@ -12,10 +12,11 @@ import java.util.List;
  *
  * @author Rong
  */
-public class ValidationResult <T>{
+public class ValidationResult<T> {
+
     public final T result;
     public List<String> reasons;
-    
+
     public ValidationResult(T result) {
         this.result = result;
         this.reasons = new LinkedList();

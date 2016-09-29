@@ -65,11 +65,7 @@ public class ScheduledProgramDelegate {
     
     public ProgramSlot ProcessCopy(ProgramSlot newProgramSlot) throws Exception
     {
-        ProgramSlot modifyingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (modifyingProgramSlot != null) {
-            throw new NotFoundException("Another Program slot already exists.");
-        }
-        service.PorcessCreate(newProgramSlot);
+        service.PorcessCopy(newProgramSlot);
         return newProgramSlot;  
     }
     

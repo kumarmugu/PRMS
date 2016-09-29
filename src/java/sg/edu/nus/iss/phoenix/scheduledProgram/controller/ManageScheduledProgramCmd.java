@@ -22,7 +22,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
-/**  
+/**
  *
  * @author Mugunthan
  */
@@ -32,52 +32,47 @@ public class ManageScheduledProgramCmd implements Perform {
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
-        ScheduledProgramDelegate pdel= new ScheduledProgramDelegate();
-        
-         String useraction = req.getParameter("txtcreateAnnualSchedule");
-       String year = req.getParameter("year");
-       String week = req.getParameter("week");
-       
-        User user= (User) req.getSession().getAttribute("user");
-               
-        System.out.println("Session Userid : "+user.getId());
-        System.out.println("++++++++ useraction : "+useraction);         
-       
+        ScheduledProgramDelegate pdel = new ScheduledProgramDelegate();
+
+        String useraction = req.getParameter("txtcreateAnnualSchedule");
+        String year = req.getParameter("year");
+        String week = req.getParameter("week");
+
+        User user = (User) req.getSession().getAttribute("user");
+
+        System.out.println("Session Userid : " + user.getId());
+        System.out.println("++++++++ useraction : " + useraction);
+
         WeeklySchedule ws = new WeeklySchedule();
-         AnnualSchedule as ;
-         
-       if(useraction !=  null  )
-          { if ( useraction.equals("1"))
-            {
+        AnnualSchedule as;
+
+        if (useraction != null) {
+            if (useraction.equals("1")) {
                 as = new AnnualSchedule(Integer.parseInt(year), user.getId());
-                System.out.println("+++++++User Slection to create annual schedule"+ useraction);
+                System.out.println("+++++++User Slection to create annual schedule" + useraction);
                 pdel.PorcessCreateAnnualSchedule(as);
-             
+
             }
-           
-          }
-       
-       
-        
+
+        }
+
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
-            req.setAttribute("events", ws.getProgramSlots());
-            req.setAttribute("default", new ProgramSlot());            
-            req.setAttribute("startDate", ws.getStartDate());
             req.setAttribute("isAnnualScheduleExist", true);
-            req.setAttribute("weekNo", ws.getWeekNo());
-            req.setAttribute("currentYear", ws.getYear());
-            
         } catch (AnnualSchedueNotExistException ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             req.setAttribute("isAnnualScheduleExist", false);
         } catch (SQLException ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         catch (Exception ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-         
+
         }
+        req.setAttribute("events", ws.getProgramSlots());
+        req.setAttribute("default", new ProgramSlot());
+        req.setAttribute("startDate", ws.getStartDate());
+        req.setAttribute("weekNo", ws.getWeekNo());
+        req.setAttribute("currentYear", ws.getYear());
         return "/pages/crudsp.jsp";
     }
 }
