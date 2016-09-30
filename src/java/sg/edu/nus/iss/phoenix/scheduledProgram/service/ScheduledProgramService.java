@@ -283,9 +283,9 @@ public class ScheduledProgramService {
             for (ProgramSlot eps : ws.getProgramSlots()) {
                 if ((oldPs == null || eps.getID() != oldPs.getID())
                         && day.equals(eps.getDay())) {
-                    boolean isNoOverlapping = newPs.getEndTime().getTime() <= eps.getStartTime().getTime()
+                    boolean isNotOverlapping = newPs.getEndTime().getTime() <= eps.getStartTime().getTime()
                             || newPs.getStartTime().getTime() >= eps.getEndTime().getTime();
-                    if (!isNoOverlapping) {
+                    if (!isNotOverlapping) {
                         return true;
                     }
                 }
@@ -309,7 +309,7 @@ public class ScheduledProgramService {
         try {
             user = getUser(theID);
             if (user == null) {
-                return null;
+                throw new NotFoundException("Presenter ID " + theID + " not found.");
             }
 
             return preDao.findPresenter(user.getName()).get(0);
@@ -323,7 +323,7 @@ public class ScheduledProgramService {
         try {
             user = getUser(theID);
             if (user == null) {
-                return null;
+                throw new NotFoundException("Producer ID " + theID + " not found.");
             }
             return proDao.findProducer(user.getName()).get(0);
         } catch (Exception ex) {
