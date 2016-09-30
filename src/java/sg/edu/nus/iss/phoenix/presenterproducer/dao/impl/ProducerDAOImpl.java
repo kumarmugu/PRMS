@@ -94,9 +94,12 @@ public class ProducerDAOImpl implements ProducerDAO {
     }
 
     
+       @Override
     public List<Producer> findProducer(String producerName) throws SQLException {
          openConnection();
-		String sql = "SELECT * FROM phoenix.`user` where role='producer' and name like '%" + producerName +"%' ORDER BY `ID` ASC;";
+		//String sql = "SELECT * FROM phoenix.`user` where role='producer' and name like '%" + producerName +"%' ORDER BY `ID` ASC;";
+		// Zehua modified, to support finding producer, when this user has multiple roles
+                String sql = "SELECT * FROM phoenix.`user` where role like '%producer%' and name = '" + producerName +"' ORDER BY `ID` ASC;";
 		List<Producer> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();

@@ -99,7 +99,9 @@ public class PresenterDAOImpl implements PresenterDAO{
     @Override
     public List<Presenter> findPresenter(String presenterName) throws SQLException {
          openConnection();
-		String sql = "SELECT * FROM phoenix.`user` where role='presenter' and name like '%" + presenterName +"%' ORDER BY `ID` ASC;";
+		//String sql = "SELECT * FROM phoenix.`user` where role='presenter' and name like '%" + presenterName +"%' ORDER BY `ID` ASC;";
+                // Zehua modified, to support finding presenter, when this user has multiple roles
+                String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' and name = '" + presenterName +"' ORDER BY `ID` ASC;";
 		List<Presenter> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();

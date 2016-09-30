@@ -5,11 +5,8 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 
-import java.util.Calendar;
 import java.sql.Time;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import sg.edu.nus.iss.phoenix.util.DateUtil;
 import sg.edu.nus.iss.phoenix.util.ValidationResult;
@@ -21,41 +18,17 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
 //Note:: This class does not include all the parameters
 public class ProgramSlot {
 
-    private static final Map<Integer, String> myDayMap = new HashMap<Integer, String>() {
-        {
-            put(0, "Unknown");
-            put(1, "Sunday");
-            put(2, "Monday");
-            put(3, "Tuesday");
-            put(4, "Wednesday");
-            put(5, "Thursday");
-            put(6, "Friday");
-            put(6, "Saturday");
-        }
-    };
-
     public ProgramSlot() {
         this.startTime = new Date();
         this.duration = new Time(3600000);
         this.endTime = DateUtil.AddDateTime(startTime, duration);// new Date( startTime.getTime() + duration.getTime() );
     }
-
-    ;
     
     public ProgramSlot(Date startTime, Date endTime, String programName) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.programName = programName;
-        long timeMs = getDateDiff(startTime, endTime, TimeUnit.SECONDS);
-        Calendar cal = Calendar.getInstance();
-        cal.set(0, 0, 0, (int) timeMs / 3600, (int) timeMs % 3600 / 60, (int) timeMs % 60);
-        //cal.setTimeInMillis(timeMs);
-        this.duration = cal.getTime();
-    }
-
-    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        this.duration = DateUtil.getDateDiff(startTime, endTime);
     }
 
     private Date startTime;
@@ -135,15 +108,11 @@ public class ProgramSlot {
     }
 
     public int getYear() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startTime);
-        return cal.get(Calendar.YEAR);
+        return DateUtil.getYear(startTime);
     }
 
     public int getWeek() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startTime);
-        return cal.get(Calendar.WEEK_OF_YEAR);
+        return DateUtil.getWeekOfYear(startTime);
     }
 
     public Date getduration() {
@@ -155,9 +124,7 @@ public class ProgramSlot {
     }
 
     public String getDay() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startTime);
-        return myDayMap.get(cal.get(Calendar.DAY_OF_WEEK));
+        return DateUtil.getDayOfWeek(startTime);
     }
 
     public String getupdatedBy() {

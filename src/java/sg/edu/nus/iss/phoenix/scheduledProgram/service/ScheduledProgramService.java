@@ -206,6 +206,9 @@ public class ScheduledProgramService {
         //Date duration = new Date(endDateTime.getTime() - startDateTime.getTime());
 
         User user = (User) req.getSession().getAttribute("user");
+        if (user == null) {
+            throw new Exception("User Session not found.");
+        }
         String updateBy = user.getId();//req.getParameter("updateBy");
         Date updateOn = new Date();
 
@@ -276,9 +279,10 @@ public class ScheduledProgramService {
         try {
             ws = spDao.getScheduleForWeek(newPs.getYear(), newPs.getWeek());
             ws = spDao.loadAllScheduleForWeek(ws);
+            String day = newPs.getDay();
             for (ProgramSlot eps : ws.getProgramSlots()) {
                 if ((oldPs == null || eps.getID() != oldPs.getID())
-                        && eps.getDay().equals(newPs.getDay())) {
+                        && day.equals(eps.getDay())) {
                     boolean isNoOverlapping = newPs.getEndTime().getTime() <= eps.getStartTime().getTime()
                             || newPs.getStartTime().getTime() >= eps.getEndTime().getTime();
                     if (!isNoOverlapping) {
@@ -310,7 +314,7 @@ public class ScheduledProgramService {
 
             return preDao.findPresenter(user.getName()).get(0);
         } catch (Exception ex) {
-            throw new NotFoundException();
+            throw new NotFoundException("Presenter " + user.getName() + " not found.");
         }
     }
 
@@ -323,7 +327,7 @@ public class ScheduledProgramService {
             }
             return proDao.findProducer(user.getName()).get(0);
         } catch (Exception ex) {
-            throw new NotFoundException();
+            throw new NotFoundException("Producer " + user.getName() + " not found.");
         }
     }
 

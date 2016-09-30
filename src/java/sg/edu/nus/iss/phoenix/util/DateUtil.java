@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,6 +21,18 @@ import java.util.concurrent.TimeUnit;
  * @author Mugunthan
  */
 public class DateUtil {
+        private static final Map<Integer, String> myDayMap = new HashMap<Integer, String>() {
+        {
+            put(0, "Unknown");
+            put(1, "Sunday");
+            put(2, "Monday");
+            put(3, "Tuesday");
+            put(4, "Wednesday");
+            put(5, "Thursday");
+            put(6, "Friday");
+            put(7, "Saturday");
+        }
+    };
     // private static Timestamp Timestamp;
 
     public static Date getStartDateOfWeek(String year, String week) {
@@ -97,7 +111,14 @@ public class DateUtil {
 
         return timediff;
     }
-
+    public static Date getDateDiff(Date date1, Date date2) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        long timeDif = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        Calendar cal = Calendar.getInstance();
+        cal.set(0, 0, 0, (int) timeDif / 3600, (int) timeDif % 3600 / 60, (int) timeDif % 60);
+        return cal.getTime();        
+    }
+    
     public static Timestamp getTimestamp(Date date) {
         return date == null ? null : new java.sql.Timestamp(date.getTime());
     }
@@ -137,6 +158,24 @@ public class DateUtil {
         cal1.add(Calendar.SECOND, cal2.get(Calendar.SECOND));
         cal1.add(Calendar.MILLISECOND, cal2.get(Calendar.MILLISECOND));
         return cal1.getTime();
+    }
+    
+    public static String getDayOfWeek(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return myDayMap.get(cal.get(Calendar.DAY_OF_WEEK));
+    }
+    
+    public static int getWeekOfYear(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.WEEK_OF_YEAR);
+    }
+    
+    public static int getYear(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR);
     }
 
     public static void main(String args[]) throws ParseException {
