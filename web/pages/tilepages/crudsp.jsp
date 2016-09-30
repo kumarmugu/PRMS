@@ -25,7 +25,7 @@
             var selectedScheduledProgram = {
                 'id': (${default.getID()}) ? ${default.getID()} : 0,
                 'title': '${default.programName}',
-                'programName': '${item.programName}',
+                'programName': '${default.programName}',
                 'producerID': '${default.producerId}',
                 'presenterID': '${default.presenterId}',
                 'producerName': '${default.producerName}',
