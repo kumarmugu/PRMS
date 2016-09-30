@@ -170,10 +170,7 @@
                             clearMsg();
                             hideAllButtons();
                             hideAllScreens();
-                            var today = new Date();
-                            if (calEvent.start >= today) {
-                                showAllButtons();
-                            }
+                            showAllButtons(calEvent.start);
                             calEvent.title = "[" + selectedScheduledProgram.programName + "] by " + selectedScheduledProgram.presenterName + " and " + selectedScheduledProgram.producerName;
                             $("#calendar").weekCalendar("updateEvent", calEvent); 
                         },
@@ -283,11 +280,18 @@
                 $("#deleteScreen").hide();
             }
 
-            function showAllButtons() {
-                $('#copyButton').show();
-                $('#modifyButton').show();
-                $('#deleteButton').show();
+            function showAllButtons(date) {
+                $('#copyButton').show();                
                 $('#createButton').hide();
+                var today = new Date();
+                if (date <= today) {
+                    $('#modifyButton').hide();
+                    $('#deleteButton').hide();
+                }   
+                else {
+                    $('#modifyButton').show();
+                    $('#deleteButton').show();
+                }
             }
             function hideAllButtons() {
                 $('#copyButton').hide();
