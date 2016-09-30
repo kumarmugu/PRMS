@@ -265,6 +265,8 @@ public class ScheduledProgramService {
         } catch (NotFoundException | SQLException ex) {
             valdiation = new ValidationResult(false);
             valdiation.reasons.add(reason);
+            if (ex.getMessage()!= null && !ex.getMessage().isEmpty())
+                valdiation.reasons.add(ex.getMessage());
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return valdiation;
