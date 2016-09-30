@@ -25,6 +25,7 @@
             var selectedScheduledProgram = {
                 'id': (${default.getID()}) ? ${default.getID()} : 0,
                 'title': '${default.programName}',
+                'programName': '${item.programName}',
                 'producerID': '${default.producerId}',
                 'presenterID': '${default.presenterId}',
                 'producerName': '${default.producerName}',
@@ -44,6 +45,7 @@
             scheduledPrograms.push({
                 'id': ${item.getID()},
                 'title': '${item.programName}',
+                'programName': '${item.programName}',
                 'producerID': '${item.producerId}',
                 'presenterID': '${item.presenterId}',
                 'producerName': '${item.producerName}',
@@ -115,32 +117,47 @@
                     //    pointer-events: none;
                     var $calendar = $('#calendar').weekCalendar({
                         date: new Date(${startDate.getTime()}),
+                        dateFormat: 'M d, Y',
+                        alwaysDisplayTimeMinutes: true,
+                        use24Hour: false,
+                        daysToShow: 7,
                         businessHours: false,
                         data: eventData,
                         timeslotsPerHour: 2,
                         scrollToHourMillis: 0,
                         allowCalEventOverlap: false, // Enable conflicting events
                         overlapEventsSeparate: false, // Separate conflicting events
+                        totalEventsWidthPercentInOneColumn : 48,
                         height: function ($calendar) {
                             return $(window).height() / 2 - $('h1').outerHeight(true);
                         },
                         eventRender: function (calEvent, $event) {
+                            
                             $('#create').css('display', 'inline');
                             //console.log(calEvent);
                             if (!calEvent.id) {
                                 console.log(calEvent.start);
                                 clearMsg();
-                                showAllButtons();
+                                var today = new Date();
+                                hideAllButtons();
                                 hideAllScreens();
-                                createScheduleProgram(calEvent);
-                                loadScreen("create");
+                                if (calEvent.start >= today) {
+                                    createScheduleProgram(calEvent);
+                                    loadScreen("create");
+                                }
                             }
+                            
                         },
                         beforeEventNew: function ($event, ui) {
                             $event.stopPropagation();
                             return false;
                         },
                         eventClick: function (calEvent, $event) {
+                            if(selectedScheduledProgram != null)
+                            {
+                                selectedScheduledProgram.title = selectedScheduledProgram.programName;
+                                $("#calendar").weekCalendar("updateEvent", selectedScheduledProgram);
+                            }
                             selectedScheduledProgram = calEvent;
                             $('.wc-cal-event').css('backgroundColor', '#68a1e5');
                             $event.css('backgroundColor', '#F09E73');
@@ -151,9 +168,15 @@
                             $('#sWeek').val($('#week').val());
                             //$('#sDay').val(calEvent.start.get);
                             clearMsg();
-                            showAllButtons();
+                            hideAllButtons();
                             hideAllScreens();
-                        }
+                            var today = new Date();
+                            if (calEvent.start >= today) {
+                                showAllButtons();
+                            }
+                            calEvent.title = "[" + selectedScheduledProgram.programName + "] by " + selectedScheduledProgram.presenterName + " and " + selectedScheduledProgram.producerName;
+                            $("#calendar").weekCalendar("updateEvent", calEvent); 
+                        },
                     });
                 } else {
                     var jscurrentYear = new Date().getFullYear();
@@ -282,7 +305,7 @@
 
             function loadScheduledProgram(mode) {
                 $("#scheduledProgramId").val(selectedScheduledProgram.id);
-                $("#program").val(selectedScheduledProgram.title);
+                $("#program").val(selectedScheduledProgram.programName);
                 $("#presenter").val(selectedScheduledProgram.presenterName);
                 $("#producer").val(selectedScheduledProgram.producerName);
                 $("#presenterId").val(selectedScheduledProgram.presenterID);
@@ -418,7 +441,7 @@
             <span style="width:50px;">&nbsp;</span>     
             <input type="button" id="createButton" value="Create Schedule" style="display:none;">
             <br/>
-            <span id="msgSuccess" name="msgSuccess"></span>
+            <span id="msgSuccess" name="msgSuccess" style="color:green"></span>
         </div>
         <br/>
 
@@ -482,7 +505,7 @@
             <label for="startTime"><span>Start Time: </span><input class="input-field" type="time" id="startTime"  name="startTime" step="1800" readonly/></label>
             <label for="endTime"><span>End Time: </span><input class="input-field" type="time" id="endTime"  name="endTime" step="1800" readonly/></label>
 
-            <span id="msg" name="msg"></span> <br/>
+            <br/><span id="msg" name="msg" style="color:red"></span> <br/><br/>
         </div>
     </body>
 </html>
