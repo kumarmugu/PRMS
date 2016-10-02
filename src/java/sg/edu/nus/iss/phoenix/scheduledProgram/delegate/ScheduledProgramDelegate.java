@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 
@@ -50,7 +51,7 @@ public class ScheduledProgramDelegate {
         service.PorcessCreate(prd);
     }
 
-    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
+    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException,ScheduledProgramNotDeletableException {
         service.processDelete(programSlot);
     }
     

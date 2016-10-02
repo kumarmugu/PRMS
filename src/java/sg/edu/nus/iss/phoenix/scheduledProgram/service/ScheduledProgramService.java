@@ -19,6 +19,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableException;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
@@ -61,10 +62,16 @@ public class ScheduledProgramService {
      *
      *
      */
-    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
+    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException, ScheduledProgramNotDeletableException{
         if (IsProgramSlotDeletable(programSlot)) {
             spDao.delete(programSlot);
             spDao.complete();
+        }
+        else
+        {
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, "Not Allow to delete the scheduled program in past !");
+            throw new ScheduledProgramNotDeletableException("Not Allow to delete the scheduled program in past !");
+         
         }
     }
 
@@ -108,7 +115,15 @@ public class ScheduledProgramService {
     }
 
     private boolean IsProgramSlotDeletable(ProgramSlot programSlot) {
-        return true;
+         Date currentTime = new Date();
+         System.out.println("Program end time " + programSlot.getEndTime().getTime() + " - CurrentTime " +  currentTime.getTime()+
+                 programSlot);
+         if( programSlot.getEndTime().getTime() > currentTime.getTime()){
+             System.out.println("Program end time is less than currentTime");
+             return true;
+         }
+         return false;
+         
     }
 
     public void PorcessCopy(ProgramSlot newProgramSlot) throws Exception {
