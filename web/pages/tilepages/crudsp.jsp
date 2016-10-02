@@ -159,8 +159,10 @@
 
                     if ($('#year').val() < jscurrentYear)
                     {
+                        document.getElementById("year").select();
                         alert("Annual Schedule Not Found for selected Year: ("+ userInputYear + ")  \n\n"+
-                              "Reason: New annual schdeule Not allow to create for past Year!!!");
+                              "Reason: New annual schdeule Not allow to create for past Year!!! \n\n"+
+                              "Please Choose Valid Year.....");
                     } else if ((userInputYear > jscurrentYear || userInputYear == jscurrentYear))
                     {
                         if (DiffYear < 6 && createscheduleflag == "0")
@@ -174,8 +176,13 @@
                             }
 
                         } else
+                        { 
+                            document.getElementById("year").select();
                             alert("Annual Schedule Not Found for selected Year: (" + userInputYear + " !!) \n\n"+
-                                  "Reason: New annual schdeule allow to create only for upcoming 5 Years!!!");
+                                  "Reason: New annual schdeule allow to create only for upcoming 5 Years!!!\n\n"+
+                                  "Please Choose Valid Year.....");
+                        }
+                   
                     }
                 }
 
