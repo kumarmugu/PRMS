@@ -44,8 +44,6 @@ public interface ScheduleDAO {
 
     public abstract AnnualSchedule getAnnualSchedule(WeeklySchedule ws) throws SQLException;
 
-    public abstract WeeklySchedule loadWeekInfo(WeeklySchedule ws) throws SQLException;
-
     public abstract Boolean processCreateAnnualSchedule(AnnualSchedule as, ArrayList<WeeklySchedule> wsList) throws SQLException;
 
     public ProgramSlot getProgramSlot(Date theStartTime) throws NotFoundException, SQLException;

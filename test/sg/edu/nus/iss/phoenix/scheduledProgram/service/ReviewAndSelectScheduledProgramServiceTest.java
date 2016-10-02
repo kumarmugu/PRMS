@@ -69,8 +69,8 @@ public class ReviewAndSelectScheduledProgramServiceTest {
 
         WeeklySchedule ws1 = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
         when(spdao.getAnnualSchedule(ws1)).thenReturn(new AnnualSchedule(cal.get(Calendar.YEAR), "user1"));
-        ws1.setStartDate(new Date());
-        when(spdao.loadWeekInfo(ws1)).thenReturn(ws1);
+//        ws1.setStartDate(new Date());
+//        when(spdao.loadWeekInfo(ws1)).thenReturn(ws1);
         ArrayList<ProgramSlot> programSlots1 = new ArrayList<ProgramSlot>();
         for (int i = 0; i < 5; i++) {
             programSlots1.add(new ProgramSlot());
@@ -80,7 +80,7 @@ public class ReviewAndSelectScheduledProgramServiceTest {
 
         WeeklySchedule ws2 = new WeeklySchedule(2017, 12);
         when(spdao.getAnnualSchedule(ws2)).thenReturn(new AnnualSchedule(2017, "user2"));
-        when(spdao.loadWeekInfo(ws2)).thenReturn(ws2);
+//        when(spdao.loadWeekInfo(ws2)).thenReturn(ws2);
         when(spdao.loadAllScheduleForWeek(ws2)).thenReturn(ws2);
 //
         WeeklySchedule ws3 = new WeeklySchedule(2018, 10);
@@ -90,7 +90,7 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         WeeklySchedule ws4 = new WeeklySchedule(2016, 10);
         ws3.setProgramSlots(programSlots2);
         when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
-        when(spdao.loadWeekInfo(ws4)).thenThrow(SQLException.class);
+        when(spdao.loadAllScheduleForWeek(ws4)).thenThrow(SQLException.class);
     }
 
     @After

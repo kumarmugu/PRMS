@@ -109,30 +109,6 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     @Override
-    public WeeklySchedule loadWeekInfo(WeeklySchedule ws) throws SQLException {
-        ResultSet result = null;
-        PreparedStatement stmt = null;
-        String sql = "SELECT startDate FROM `weekly-schedule` where year = ? and weekNo = ?; ";
-        stmt = dbUtil.prepareStatement(sql);
-        stmt.setInt(1, ws.getYear());
-        stmt.setInt(2, ws.getWeekNo());
-        try {
-            result = stmt.executeQuery();
-            while (result.next()) {
-                ws.setStartDate((Date) result.getDate("startDate"));
-            }
-        } finally {
-            if (result != null) {
-                result.close();
-            }
-            if (stmt != null) {
-                stmt.close();
-            }
-        }
-        return ws;
-    }
-
-    @Override
     public WeeklySchedule getScheduleForWeek(int year, int weekNo) throws NotFoundException, SQLException {
         PreparedStatement stmt = null;
         String sql = "select startDate from `weekly-schedule` where year=? and weekNo= ?; ";
