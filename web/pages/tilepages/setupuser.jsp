@@ -14,16 +14,19 @@
 <title><fmt:message key="title.cruduser" /></title>
 </head>
 <body>
-    <c:if test="${errMsg  != ''}" >
-        <h6>${errMsg}</h6>
-    </c:if>
-         <h6>${errMsg}</h6>
          <h6>"name" ${name}</h6>
           <h6>"insert:"${insert}</h6>
           
 	<form action="${pageContext.request.contextPath}/nocturne/enteruser" method=post>
 		<center>
 			<table cellpadding=4 cellspacing=2 border=0>
+                            <tr>
+                                <td><c:if test="${errMsg != ''}">
+                                    <div class="error-box">${errMsg}</div>
+                                </c:if>
+                                </td>
+                                <td></td>
+                            </tr>
                             <tr>
 				<td><fmt:message key="label.cruduser.id" /></td>
                                     <c:if test="${insert == 'true'}">
@@ -42,7 +45,6 @@
                                                 
                                     </c:if>
                             </tr>
-		
                             <tr>
 				<td><fmt:message key="label.cruduser.name" /></td>
 				<td><input type="text" name="name" value="${name}" size=45 maxlength=20></td>

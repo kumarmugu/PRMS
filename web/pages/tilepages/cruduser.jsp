@@ -34,10 +34,10 @@
 
 	</form>
         <br/>
-        <c:if test="${deleteErrMsg != null}">
-            <div class="error-box">${deleteErrMsg}</div>
-        </c:if>
         <br/>
+        <c:if test="${deleteErrMsg != null}">
+            <div class="error-box" style="text-align: center;">${deleteErrMsg}</div>
+        </c:if>
         <table class="borderAll">
             <tr>
                 <th><fmt:message key="label.cruduser.id"/></th>

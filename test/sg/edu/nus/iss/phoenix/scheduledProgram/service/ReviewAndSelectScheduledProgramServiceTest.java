@@ -105,6 +105,8 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         ws3.setProgramSlots(programSlots2);
         when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
         when(spdao.loadAllScheduleForWeek(ws4)).thenThrow(SQLException.class);
+        
+        
     }
 
     @After
