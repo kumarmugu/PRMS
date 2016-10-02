@@ -29,6 +29,7 @@ public class ReviewAndSelectScheduledProgramService {
 
     DAOFactoryImpl factory;
     ScheduleDAO spdao;
+    UserDao userDAO;
 
     /**
      * 
@@ -37,6 +38,7 @@ public class ReviewAndSelectScheduledProgramService {
         super();
         factory = new DAOFactoryImpl();
         spdao = factory.getScheduleDAO();
+        userDAO = factory.getUserDAO();
     }
 
     /**
@@ -104,7 +106,6 @@ public class ReviewAndSelectScheduledProgramService {
             if(as != null)
             {
                 ws = spdao.loadAllScheduleForWeek(ws);
-                UserDao userDAO = factory.getUserDAO();
                 for( ProgramSlot ps : ws.getProgramSlots()) {                    
                     try {
                             ps.setPresenterName(userDAO.getObject(ps.getPresenterId()).getName());

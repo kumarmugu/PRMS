@@ -381,7 +381,7 @@
                 if (date === null)
                     return;
                 $("#details #year").attr('value', date.getFullYear());
-                let onejan = new Date(date.getFullYear(), 0, 1);
+                var onejan = new Date(date.getFullYear(), 0, 1);
                 var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
                 $("#details #week").attr('value', week);
                 $("#details #day").attr('value', days[date.getDay()]);
