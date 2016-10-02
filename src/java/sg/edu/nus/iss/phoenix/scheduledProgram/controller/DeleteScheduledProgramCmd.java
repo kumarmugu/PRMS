@@ -82,11 +82,4 @@ public class DeleteScheduledProgramCmd implements Perform{
         return "/pages/crudsp.jsp";
     }
     
-    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
-        
-        Map<String, String[]> params = req.getParameterMap();
-        User u = (User) req.getSession().getAttribute("user");
-        return new ValidationResult(spDelegate.getProgramSlot(params, u));
-    }
-    
 }
