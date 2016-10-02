@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 import sg.edu.nus.iss.phoenix.user.service.UserManagementService;
 
 /**
@@ -47,11 +48,11 @@ public class UserDelegate {
         usrservice.processCreateUser(user);
     }
     
-     public void processModifyUser(User user) throws NotFoundException, SQLException{
+     public void processModifyUser(User user) throws NotFoundException, SQLException, UserProgramConstraintsException{
          usrservice.processsModifyUser(user);
     }
      
-    public void processDeleteUser(String userId){
+    public void processDeleteUser(String userId) throws UserProgramConstraintsException{
         try {
             usrservice.processDeletUser(userId);
         } catch (NotFoundException ex) {

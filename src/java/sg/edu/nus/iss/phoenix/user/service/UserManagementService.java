@@ -6,17 +6,19 @@
 package sg.edu.nus.iss.phoenix.user.service;
 
 import java.sql.SQLException;
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
-import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 
 /**
  *
@@ -65,21 +67,56 @@ public class UserManagementService {
         return alluser;
     }
 
-    public void processsModifyUser(User user) throws NotFoundException, SQLException {
+    public void processsModifyUser(User user) throws NotFoundException, SQLException, UserProgramConstraintsException {
         System.out.println("porcessmodifyuser");
-        usrdao.save(user);
+        boolean isRoleContainsPresenter = false;
+        boolean isRoleContainsProcedure = false;
+        List<Role> userRoles = new ArrayList<>();
+        
+        if ( user.getRoles() != null ){
+            userRoles = user.getRoles();
+                   
+        }
+        // check if user roles in clude procedure/presenter
+        if ( userRoles.size() >= 1){
+            for (Role role : userRoles) {
+                if(role.getRole().equalsIgnoreCase("presenter") ){
+                    isRoleContainsPresenter = true;
+                }else if(role.getRole().equalsIgnoreCase("producer")){
+                    isRoleContainsProcedure = true;
+            }
+            
+        }
+        
+        if(! isRoleContainsProcedure ){
+             
+            if (usrdao.isUserAssignedAsProcedure(user.getId())){
+                    throw new UserProgramConstraintsException("User is assigned in shceduled program as Procedure!");
+                }
+        }
+        if (!isRoleContainsPresenter){
+                  if (usrdao.isUserAssignedAsPresenter(user.getId())){
+                    throw new UserProgramConstraintsException("User is assigned in shceduled program as Presenter!");
+                }
+        }
+        
+       
+        usrdao.save(user,false);
         
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    }
     /**
      *
      * @param userId
      * @throws NotFoundException
      */
-    public void processDeletUser(String userId)throws NotFoundException, SQLException  {
+    public void processDeletUser(String userId)throws NotFoundException, SQLException, UserProgramConstraintsException {
         User user;
         user = new User(userId);
+        if ( usrdao.isUserDeletable(userId) != true){
+            throw new UserProgramConstraintsException("User is assigned in scheduled program!");
+        }
         usrdao.delete(user);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

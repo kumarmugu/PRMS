@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.delegate.ReviewSelectProgramDelegate;
 import sg.edu.nus.iss.phoenix.radioprogram.entity.RadioProgram;
@@ -34,53 +35,46 @@ public class EnterUserDetailsCmd implements Perform {
      @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         UserDelegate del = new UserDelegate();
+        ArrayList<Role> userRoles = new ArrayList<>();
         User usr = new User();
-        ArrayList<Role> userRoles = new ArrayList<Role>();
         
         String strUserRoles = "";
         ArrayList<Role> roles = new ArrayList<>();
        
-        /*
-        ArrayList<User> users = new ArrayList<>();
-        
-         try {
-             users = del.processFindUser("superUser");
-         } catch (SQLException ex1) {
-             Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex1);
-         }
-
-         for (User user : users) {
-             if (user.getId().equalsIgnoreCase("superUser")) {
-                 for (Role role : user.getRoles()) {
-                     roles.add(role);
-                 }
-             }
-         }
-
-*/     
          try {
              roles  = del.processLoadAllRoles();
          } catch (SQLException ex) {
              Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
          }
-
+        
+        String insert = (String) req.getParameter("insert");  
         usr.setName(req.getParameter("name"));
         usr.setId(req.getParameter("id"));
         usr.setPassword(req.getParameter("password"));
+        String[] arrRoles = req.getParameterValues("roleName") ;
         
-        if ( usr.getName().equalsIgnoreCase("") || usr.getPassword().equalsIgnoreCase("") 
-                || usr.getId().equalsIgnoreCase("")){
-            req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
+        Logger.getLogger(getClass().getName()).log(Level.INFO,"Insert Flag: " + insert);
+        
+        
+        if ( req.getParameter("name").equalsIgnoreCase("") ||  req.getParameter("id").equalsIgnoreCase("")){
+            if (req.getParameter("insert") == "true" && req.getParameter("password").equalsIgnoreCase("") ) {
+                
+                req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
+                
+            }else if (req.getParameter("insert") == "false"){
+                req.setAttribute("errMsg", "User Name cannot be empty ");
+            }
+            
             //set the page attributes again      
             req.setAttribute("listUserRole", strUserRoles);
             req.setAttribute("roles", roles);
-            req.setAttribute("name", usr.getName());
-            req.setAttribute("id", usr.getId());
+            req.setAttribute("name" , req.getParameter("name"));
+            req.setAttribute("id", req.getParameter("id"));
             req.setAttribute("insert", req.getParameter("insert"));
             return "/pages/setupuser.jsp";
         }
         
-        String[] arrRoles = req.getParameterValues("roleName") ;
+        
        if( arrRoles != null)
        {
            for (int i = 0; i< arrRoles.length ;i ++){
@@ -106,10 +100,7 @@ public class EnterUserDetailsCmd implements Perform {
        }
      
        
-        String insert = (String) req.getParameter("insert");
-        Logger.getLogger(getClass().getName()).log(Level.INFO,
-                        "Insert Flag: " + insert);
-       
+      
         if (insert.equalsIgnoreCase("true")) {
             try {
                 del.processCreateUser(usr);
@@ -119,7 +110,6 @@ public class EnterUserDetailsCmd implements Perform {
                 //set error message 
                 req.setAttribute("errMsg", "User Cannot insert because id already exists");
                 //set the page attributes again
-                
                 req.setAttribute("listUserRole", strUserRoles);
                 req.setAttribute("roles", roles);
                 req.setAttribute("name", usr.getName());
@@ -129,13 +119,26 @@ public class EnterUserDetailsCmd implements Perform {
                 }
             
         } else {
+                
             try {
                 del.processModifyUser(usr);
             } catch (NotFoundException ex) {
                 Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
+                req.setAttribute("deleteable", ex);
                 Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }catch(UserProgramConstraintsException ex){
+                req.setAttribute("errMsg", ex.getMessage());
+                Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+                req.setAttribute("listUserRole", strUserRoles);
+                req.setAttribute("roles", roles);
+                req.setAttribute("name", usr.getName());
+                req.setAttribute("id", usr.getId());
+                req.setAttribute("insert", req.getParameter("insert"));
+                return "/pages/setupuser.jsp";
             }
+                
+           
         }
         
       

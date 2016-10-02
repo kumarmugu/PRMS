@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 import sg.edu.nus.iss.phoenix.user.delegate.UserDelegate;
 
 /**
@@ -29,15 +30,20 @@ public class DeleteUserCmd implements Perform{
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         UserDelegate del = new UserDelegate();
         String id = req.getParameter("id");
-        del.processDeleteUser(id);
-
+        
+        
        
         List<User> data = new ArrayList<>()  ;
         try {
             data = del.processLoadAllUser();
         } catch (NotFoundException ex) {
             Logger.getLogger(DeleteUserCmd.class.getName()).log(Level.SEVERE, null, ex);
+            req.setAttribute("deleteErrMsg", "User cannot be deleted!");
+            req.setAttribute("users", data);
+            return "/pages/cruduser.jsp";
+           
         }
+        req.setAttribute("deleteErrMsg", "User cannot be deleted!");
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }
