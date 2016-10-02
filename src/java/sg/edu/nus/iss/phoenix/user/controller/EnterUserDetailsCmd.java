@@ -68,6 +68,18 @@ public class EnterUserDetailsCmd implements Perform {
         usr.setId(req.getParameter("id"));
         usr.setPassword(req.getParameter("password"));
         
+        if ( usr.getName().equalsIgnoreCase("") || usr.getPassword().equalsIgnoreCase("") 
+                || usr.getId().equalsIgnoreCase("")){
+            req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
+            //set the page attributes again      
+            req.setAttribute("listUserRole", strUserRoles);
+            req.setAttribute("roles", roles);
+            req.setAttribute("name", usr.getName());
+            req.setAttribute("id", usr.getId());
+            req.setAttribute("insert", req.getParameter("insert"));
+            return "/pages/setupuser.jsp";
+        }
+        
         String[] arrRoles = req.getParameterValues("roleName") ;
        if( arrRoles != null)
        {
