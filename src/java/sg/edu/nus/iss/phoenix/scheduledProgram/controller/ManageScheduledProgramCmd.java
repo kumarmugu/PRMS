@@ -9,6 +9,7 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -69,7 +71,8 @@ public class ManageScheduledProgramCmd implements Perform {
 
         }
         req.setAttribute("events", ws.getProgramSlots());
-        req.setAttribute("default", new ProgramSlot());
+        Date startDate = DateUtil.getStartDateOfWeek(year, week);
+        req.setAttribute("default", new ProgramSlot(startDate, startDate, ""));
         req.setAttribute("startDate", ws.getStartDate());
         req.setAttribute("weekNo", ws.getWeekNo());
         req.setAttribute("currentYear", ws.getYear());

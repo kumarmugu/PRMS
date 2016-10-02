@@ -284,8 +284,15 @@
                 selectedScheduledProgram.presenterID = "";
                 selectedScheduledProgram.producerID = "";
                 selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
-                selectedScheduledProgram.start = new Date(calEvent.start.getTime());
+                var date = new Date(calEvent.start.getTime());                
+                var onejan = new Date(selectedScheduledProgram.start.getFullYear(), 0, 1);
+                var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+                
+                selectedScheduledProgram.start = date;
                 selectedScheduledProgram.end = new Date(calEvent.end.getTime());
+                selectedScheduledProgram.year = date.getFullYear();
+                selectedScheduledProgram.week = week;
+                selectedScheduledProgram.day = days[date.getDay()];
             }
 
             function loadScheduledProgram(mode) {
@@ -313,6 +320,7 @@
                 $("#details #year").attr('readonly', true);
                 $("#details #week").attr('readonly', true);
                 $("#details #day").attr('readonly', true);
+                $("#details #date").attr('readonly', true);                    
 
                 var firstDateOfYear = new Date(selectedScheduledProgram.year, 0, 1);
                 $("#details #date").attr('min', $.datepicker.formatDate('yy-mm-dd', firstDateOfYear));
