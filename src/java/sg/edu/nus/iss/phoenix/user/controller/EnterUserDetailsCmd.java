@@ -38,8 +38,11 @@ public class EnterUserDetailsCmd implements Perform {
         ArrayList<Role> userRoles = new ArrayList<Role>();
         
         String strUserRoles = "";
-        ArrayList<User> users = new ArrayList<>();
         ArrayList<Role> roles = new ArrayList<>();
+       
+        /*
+        ArrayList<User> users = new ArrayList<>();
+        
          try {
              users = del.processFindUser("superUser");
          } catch (SQLException ex1) {
@@ -54,9 +57,28 @@ public class EnterUserDetailsCmd implements Perform {
              }
          }
 
+*/     
+         try {
+             roles  = del.processLoadAllRoles();
+         } catch (SQLException ex) {
+             Logger.getLogger(EnterUserDetailsCmd.class.getName()).log(Level.SEVERE, null, ex);
+         }
+
         usr.setName(req.getParameter("name"));
         usr.setId(req.getParameter("id"));
         usr.setPassword(req.getParameter("password"));
+        
+        if ( usr.getName().equalsIgnoreCase("") || usr.getPassword().equalsIgnoreCase("") 
+                || usr.getId().equalsIgnoreCase("")){
+            req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
+            //set the page attributes again      
+            req.setAttribute("listUserRole", strUserRoles);
+            req.setAttribute("roles", roles);
+            req.setAttribute("name", usr.getName());
+            req.setAttribute("id", usr.getId());
+            req.setAttribute("insert", req.getParameter("insert"));
+            return "/pages/setupuser.jsp";
+        }
         
         String[] arrRoles = req.getParameterValues("roleName") ;
        if( arrRoles != null)
@@ -74,19 +96,16 @@ public class EnterUserDetailsCmd implements Perform {
        else {
            
             req.setAttribute("errMsg", "Please select user role.");
-                //set the page attributes again
-               
-                req.setAttribute("listUserRole", strUserRoles);
-                req.setAttribute("roles", roles);
-                req.setAttribute("name", usr.getName());
-                req.setAttribute("id", usr.getId());
-                req.setAttribute("insert", req.getParameter("insert"));
-                return "/pages/setupuser.jsp";
+            //set the page attributes again      
+            req.setAttribute("listUserRole", strUserRoles);
+            req.setAttribute("roles", roles);
+            req.setAttribute("name", usr.getName());
+            req.setAttribute("id", usr.getId());
+            req.setAttribute("insert", req.getParameter("insert"));
+            return "/pages/setupuser.jsp";
        }
      
        
-        System.out.println(usr.toString());
-        
         String insert = (String) req.getParameter("insert");
         Logger.getLogger(getClass().getName()).log(Level.INFO,
                         "Insert Flag: " + insert);

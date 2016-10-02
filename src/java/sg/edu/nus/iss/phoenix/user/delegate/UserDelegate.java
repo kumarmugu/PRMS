@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.user.service.UserManagementService;
@@ -31,6 +32,10 @@ public class UserDelegate {
     
     public ArrayList<User> processLoadAllUser() throws NotFoundException{
         return usrservice.processLoadAllUser();
+    }
+    
+    public ArrayList<Role> processLoadAllRoles() throws SQLException {
+        return usrservice.processLoadAllRoles();
     }
     
      

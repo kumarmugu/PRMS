@@ -14,6 +14,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 
@@ -25,6 +26,7 @@ public class UserManagementService {
     DAOFactoryImpl factory;
     UserDao usrdao;
     RoleDao roledao;
+    
 
    
 
@@ -36,6 +38,16 @@ public class UserManagementService {
 		roledao = factory.getRoleDAO();
     }
     
+    public ArrayList<Role> processLoadAllRoles(){
+        ArrayList<Role> roles = new ArrayList<>();
+        try {
+            roles = (ArrayList<Role>) roledao.loadAll();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return roles;
+    }
     
     public ArrayList<User> processLoadAllUser() throws NotFoundException{
         ArrayList<User> alluser = new ArrayList<>();
