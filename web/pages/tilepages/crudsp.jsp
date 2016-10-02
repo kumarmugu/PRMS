@@ -87,31 +87,12 @@
                     clearMsg();
                     loadScreen("delete");
                 });
-                /*// Post submission, this click event may not works
-                 $("#programBrowse").click(function () {
-                 $.get( "managerp?submittype=loadall&source=schedule", function( data ) {
-                 //alert(data);
-                 loadDialog("program", data);
-                 });
-                 });
-                 
-                 $("#presenterBrowse").click(function () {
-                 $.get( "managepp?submittype=loadall&type=presenter", function( data ) {
-                 loadDialog("presenter", data);
-                 });
-                 });
-                 $("#producerBrowse").click(function () {
-                 $.get( "managepp?submittype=loadall&type=producer", function( data ) {
-                 loadDialog("producer", data);
-                 });
-                 });*/
 
                 $('[id^="program-tr-"]').click(function () {
                     var programId = $(this).attr('id').replace("tr", "td");
                     $('#programDialog').dialog('close');
                     $("#program").val($("#" + programId).html());
                 });
-
 
                 if (${isAnnualScheduleExist}) {
                     //    pointer-events: none;
@@ -145,19 +126,13 @@
                                     createScheduleProgram(calEvent);
                                     loadScreen("create");
                                 }
-                            }
-                            
+                            }                            
                         },
                         beforeEventNew: function ($event, ui) {
                             $event.stopPropagation();
                             return false;
                         },
                         eventClick: function (calEvent, $event) {
-                            if(selectedScheduledProgram != null)
-                            {
-                                selectedScheduledProgram.title = selectedScheduledProgram.programName;
-                                $("#calendar").weekCalendar("updateEvent", selectedScheduledProgram);
-                            }
                             selectedScheduledProgram = calEvent;
                             $('.wc-cal-event').css('backgroundColor', '#68a1e5');
                             $event.css('backgroundColor', '#F09E73');
@@ -171,8 +146,7 @@
                             hideAllButtons();
                             hideAllScreens();
                             showAllButtons(calEvent.start);
-                            calEvent.title = "[" + selectedScheduledProgram.programName + "] by " + selectedScheduledProgram.presenterName + " and " + selectedScheduledProgram.producerName;
-                            $("#calendar").weekCalendar("updateEvent", calEvent); 
+                            //calEvent.title = "[" + selectedScheduledProgram.programName + "] by " + selectedScheduledProgram.presenterName + " and " + selectedScheduledProgram.producerName;
                         },
                     });
                 } else {
@@ -274,6 +248,7 @@
             }
 
             function hideAllScreens() {
+                $("#detailScreen").hide();
                 $("#createScreen").hide();
                 $("#modifyScreen").hide();
                 $("#copyScreen").hide();
@@ -292,6 +267,7 @@
                     $('#modifyButton').show();
                     $('#deleteButton').show();
                 }
+                loadScreen("detail");
             }
             function hideAllButtons() {
                 $('#copyButton').hide();
@@ -299,9 +275,14 @@
                 $('#deleteButton').hide();
                 $('#createButton').hide();
             }
-
-
+            
             function createScheduleProgram(calEvent) {
+                selectedScheduledProgram.title = "";
+                selectedScheduledProgram.programName = "";
+                selectedScheduledProgram.presenterName = "";
+                selectedScheduledProgram.producerName = "";
+                selectedScheduledProgram.presenterID = "";
+                selectedScheduledProgram.producerID = "";
                 selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
                 selectedScheduledProgram.start = new Date(calEvent.start.getTime());
                 selectedScheduledProgram.end = new Date(calEvent.end.getTime());
@@ -341,7 +322,6 @@
                 if (msg !== "") {
                     $("#details #msg").html(msg);
                 }
-
                 if (mode === "create") {
                     $("#program").val("");
                     $("#presenter").val("");
@@ -366,7 +346,7 @@
                     $("#details #date").attr('readonly', false);
                     $("#details #startTime").attr('readonly', false);
                     $("#details #endTime").attr('readonly', false);
-                } else if (mode === "delete")
+                } else if (mode === "delete" || mode === "detail")
                 {
                     $("#details #programBrowse").attr('hidden', true);
                     $("#details #presenterBrowse").attr('hidden', true);
@@ -401,7 +381,7 @@
                 if (date === null)
                     return;
                 $("#details #year").attr('value', date.getFullYear());
-                let onejan = new Date(date.getFullYear(), 0, 1);
+                var onejan = new Date(date.getFullYear(), 0, 1);
                 var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
                 $("#details #week").attr('value', week);
                 $("#details #day").attr('value', days[date.getDay()]);
@@ -446,6 +426,7 @@
             <input type="button" id="createButton" value="Create Schedule" style="display:none;">
             <br/>
             <span id="msgSuccess" name="msgSuccess" style="color:green"></span>
+            
         </div>
         <br/>
 
@@ -455,7 +436,13 @@
         <input type="hidden" name="sStartTime" id="sStartTime"/>
         <input type="hidden" name="sEndTime" id="sEndTime"/>
 
+        <div id="detailScreen"  class="form-style-2" style="diplay:none;">
+             <div class="form-style-2-heading">View Schedule</div>
 
+            <form action="${pageContext.request.contextPath}/nocturne/nosp" method="post">
+                <div id="body"> </div>
+            </form>
+        </div>
 
         <div id="createScreen" class="form-style-2" style="diplay:none;">
             <div class="form-style-2-heading">Create New Schedule</div>

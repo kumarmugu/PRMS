@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.TransactionManagement;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
@@ -29,6 +28,7 @@ public class ReviewAndSelectScheduledProgramService {
 
     DAOFactoryImpl factory;
     ScheduleDAO spdao;
+    UserDao userDAO;
 
     /**
      * 
@@ -37,6 +37,7 @@ public class ReviewAndSelectScheduledProgramService {
         super();
         factory = new DAOFactoryImpl();
         spdao = factory.getScheduleDAO();
+        userDAO = factory.getUserDAO();
     }
 
     /**
@@ -104,7 +105,6 @@ public class ReviewAndSelectScheduledProgramService {
             if(as != null)
             {
                 ws = spdao.loadAllScheduleForWeek(ws);
-                UserDao userDAO = factory.getUserDAO();
                 for( ProgramSlot ps : ws.getProgramSlots()) {                    
                     try {
                             ps.setPresenterName(userDAO.getObject(ps.getPresenterId()).getName());
