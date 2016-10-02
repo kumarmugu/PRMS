@@ -238,6 +238,7 @@ public class ScheduledProgramService {
         ps.setProducerId(producer);
         ps.setPresenterId(presenter);
         ps.setupdatedBy(updateBy);
+        ps.setProgramName(programName);
         ps.setupdatedOn(new Date(updateOn.getTime()));
 
         String reason = "";
@@ -245,10 +246,15 @@ public class ScheduledProgramService {
             reason = "Fail to load weekly schedule.";
             WeeklySchedule ws = spDao.getScheduleForWeek(ps.getYear(), ps.getWeek());
             ps.setweekStartDate(ws.getStartDate());
-
-            reason = "Fail to load presenter detail.";
+            
+            reason="Program Name is Empty";
+            
+            if(ps.getProgramName() == null || ps.getProgramName().equals("")){
+                 throw new NotFoundException(reason);
+            }
+            reason = "Presenter Name is Empty.";
             ps.setPresenterName(getUser(ps.getPresenterId()).getName());
-            reason = "Fail to load producer detail.";
+            reason = "Producer Name is Empty.";
             ps.setProducerName(getUser(ps.getProducerId()).getName());
         } catch (NotFoundException | SQLException ex) {
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);

@@ -56,7 +56,7 @@ public class AddScheduledProgramCmd implements Perform {
                 msg = "Successfully created.";
             } catch (Exception ex) {
                 msg = "Error: " + ex.getMessage();
-                Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             }            
         } catch (Exception ex) {
             msg = "Fail to construct Program Slot.";            
