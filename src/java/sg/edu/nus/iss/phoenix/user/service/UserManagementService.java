@@ -57,8 +57,8 @@ public class UserManagementService {
     }
     
     /**
-     * 
-     * @return
+     * This method will Load All the existing users
+     * @return ArrayList<User>
      * @throws NotFoundException 
      */
     public ArrayList<User> processLoadAllUser() throws NotFoundException{
@@ -76,7 +76,15 @@ public class UserManagementService {
         
         return alluser;
     }
-
+    
+    /**
+     * This method will modify user
+     * Exceptions will throws 
+     * @param user
+     * @throws NotFoundException
+     * @throws SQLException
+     * @throws UserProgramConstraintsException 
+     */
     public void processsModifyUser(User user) throws NotFoundException, SQLException, UserProgramConstraintsException {
         System.out.println("porcessmodifyuser");
         boolean isRoleContainsPresenter = false;

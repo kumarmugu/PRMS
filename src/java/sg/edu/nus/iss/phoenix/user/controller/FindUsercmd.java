@@ -39,7 +39,7 @@ public class FindUsercmd implements Perform {
         } catch (SQLException ex) {
             Logger.getLogger(FindUsercmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+        req.setAttribute("findString", req.getParameter("userid"));
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }

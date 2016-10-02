@@ -34,7 +34,7 @@ public class DeleteUserCmd implements Perform{
         try {
             del.processDeleteUser(id);
         } catch (UserProgramConstraintsException ex) {
-            req.setAttribute("deleteErrMsg", "User cannot be deleted!");
+            req.setAttribute("deleteErrMsg", "User:'" + id + "' can not delete.User is assigned in scheduled program!");
             Logger.getLogger(DeleteUserCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
        

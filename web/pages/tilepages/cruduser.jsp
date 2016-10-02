@@ -25,9 +25,8 @@
 				
 				<tr>
 					<td><fmt:message key="label.cruduser.findbyid" /></td>
-					<td><input type="text" name="userid" size=45 maxlength=45></td>
-                                        <td colspan="2" align="center"><input type="submit" value="Submit"> <input
-						type="reset" value="Reset"></td>
+                                        <td><input type="text" name="userid" size=45 maxlength=45 value="${findString}"></td>
+                                        <td colspan="2" align="center"><input type="submit" value="Find">
                                 </tr>
 			</table>
 		</center>

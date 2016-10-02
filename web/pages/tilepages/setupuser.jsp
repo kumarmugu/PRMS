@@ -14,8 +14,8 @@
 <title><fmt:message key="title.cruduser" /></title>
 </head>
 <body>
-         <h6>"name" ${name}</h6>
-          <h6>"insert:"${insert}</h6>
+        <!-- <h6>"name" ${name}</h6> -->
+        <!--  <h6>"insert:"${insert}</h6> -->
           
 	<form action="${pageContext.request.contextPath}/nocturne/enteruser" method=post>
 		<center>
