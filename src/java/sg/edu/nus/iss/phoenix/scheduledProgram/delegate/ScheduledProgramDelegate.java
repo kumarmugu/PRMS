@@ -46,7 +46,7 @@ public class ScheduledProgramDelegate {
             service.processCreateAnnualSchedule(as);
     }
     
-    public void ProcessCreate(ProgramSlot prd)
+    public void ProcessCreate(ProgramSlot prd) throws Exception
     {
         service.PorcessCreate(prd);
     }
