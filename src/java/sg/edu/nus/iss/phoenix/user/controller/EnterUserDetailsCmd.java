@@ -57,12 +57,14 @@ public class EnterUserDetailsCmd implements Perform {
         
         
         if ( req.getParameter("name").equalsIgnoreCase("") ||  req.getParameter("id").equalsIgnoreCase("")){
-            if (req.getParameter("insert") == "true" && req.getParameter("password").equalsIgnoreCase("") ) {
+            if (req.getParameter("insert").equalsIgnoreCase("true") && req.getParameter("password").equalsIgnoreCase("") ) {
                 
                 req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
                 
-            }else if (req.getParameter("insert") == "false"){
+            }else if (req.getParameter("insert").equalsIgnoreCase("false")){
                 req.setAttribute("errMsg", "User Name cannot be empty ");
+            }else{
+                req.setAttribute("errMsg", "User Name, User Id and Password cannot be empty ");
             }
             
             //set the page attributes again      

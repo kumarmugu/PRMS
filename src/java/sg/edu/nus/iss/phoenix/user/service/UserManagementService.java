@@ -31,7 +31,9 @@ public class UserManagementService {
     
 
    
-
+    /**
+     * 
+     */
     public UserManagementService() {
           super();
 		// TODO Auto-generated constructor stub
@@ -39,7 +41,10 @@ public class UserManagementService {
 		usrdao = factory.getUserDAO();
 		roledao = factory.getRoleDAO();
     }
-    
+    /**
+     * This method will Load all the User Roles
+     * @return ArrayList<Role>
+     */
     public ArrayList<Role> processLoadAllRoles(){
         ArrayList<Role> roles = new ArrayList<>();
         try {
@@ -51,6 +56,11 @@ public class UserManagementService {
         return roles;
     }
     
+    /**
+     * 
+     * @return
+     * @throws NotFoundException 
+     */
     public ArrayList<User> processLoadAllUser() throws NotFoundException{
         ArrayList<User> alluser = new ArrayList<>();
         try {
