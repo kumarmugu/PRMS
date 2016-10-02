@@ -9,11 +9,13 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
@@ -83,7 +85,9 @@ public class CopyScheduledProgramCmd implements Perform {
         return "/pages/crudsp.jsp";
     }
 
-    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
-        return new ValidationResult(spDelegate.getProgramSlot(req));
+    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {        
+        Map<String, String[]> params = req.getParameterMap();
+        User u = (User) req.getSession().getAttribute("user");
+        return new ValidationResult(spDelegate.getProgramSlot(params, u));
     }
 }

@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -196,21 +197,21 @@ public class ScheduledProgramService {
         }
     }
 
-    public ProgramSlot constructProgramSlot(HttpServletRequest req) throws Exception {
+    public ProgramSlot constructProgramSlot(Map<String, String[]> params, User user) throws Exception {
 
-        String programName = req.getParameter("program");
-        String presenter = req.getParameter("presenterId");
-        String producer = req.getParameter("producerId");
+        String programName = params.get("program")[0];//req.getParameter("program");
+        String presenter = params.get("presenterId")[0]; //req.getParameter("presenterId");
+        String producer = params.get("producerId")[0];//req.getParameter("producerId");
 
-        Date startDate = DateUtil.getDate(req.getParameter("date"), "yyyy-MM-dd");
-        Date startTime = DateUtil.getTime(req.getParameter("startTime"), "HH:mm");
-        Date endTime = DateUtil.getTime(req.getParameter("endTime"), "HH:mm");
+        Date startDate = DateUtil.getDate(params.get("date")[0], "yyyy-MM-dd");
+        Date startTime = DateUtil.getTime(params.get("startTime")[0], "HH:mm");
+        Date endTime = DateUtil.getTime(params.get("endTime")[0], "HH:mm");
 
         Date startDateTime = DateUtil.AddDateTime(startDate, startTime);
         Date endDateTime = DateUtil.AddDateTime(startDate, endTime);
         //Date duration = new Date(endDateTime.getTime() - startDateTime.getTime());
 
-        User user = (User) req.getSession().getAttribute("user");
+        //User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             throw new Exception("User Session not found.");
         }

@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -38,6 +39,7 @@ public class AddScheduledProgramCmd implements Perform {
        
        String year = req.getParameter("year");
        String week = req.getParameter("week");
+       User u = (User) req.getSession().getAttribute("user");
        /*       
        String useraction = req.getParameter("txtcreateAnnualSchedule");
        
@@ -89,7 +91,8 @@ public class AddScheduledProgramCmd implements Perform {
         ProgramSlot  srd = null;
         String mode = "create", msg;
         try {
-            srd = srddel.getProgramSlot(req);
+            Map<String, String[]> params = req.getParameterMap();
+            srd = srddel.getProgramSlot(params, u);
             srddel.ProcessCreate(srd);
             mode = "";
             msg = "Successfully created.";            

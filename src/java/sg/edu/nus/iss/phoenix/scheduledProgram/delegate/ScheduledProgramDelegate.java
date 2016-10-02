@@ -7,7 +7,9 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.delegate;
 
 
 import java.sql.SQLException;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
@@ -73,7 +75,7 @@ public class ScheduledProgramDelegate {
         return service.getProgramSlot(id);
     }
     
-    public ProgramSlot getProgramSlot(HttpServletRequest req) throws Exception {
-        return service.constructProgramSlot(req);
+    public ProgramSlot getProgramSlot(Map<String, String[]>  params, User u) throws Exception {
+        return service.constructProgramSlot(params, u);
     }
 }
