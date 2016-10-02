@@ -196,5 +196,10 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
         fail();
     }
+    
+    @Test
+    public void testPorcessCreateAnnualSchedule(){
+        
+    }
 
 }
