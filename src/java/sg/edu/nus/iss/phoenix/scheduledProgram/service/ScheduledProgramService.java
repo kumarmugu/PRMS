@@ -87,7 +87,7 @@ public class ScheduledProgramService {
                 if (i == 1) {
                     ws.setStartDate(DateUtil.getFirstDayOfYear(as.getYear()));
                 } else {
-                    ws.setStartDate(DateUtil.getStartDateOfWeek(String.valueOf(as.getYear()), String.valueOf(i)));
+                    ws.setStartDate(DateUtil.getStartDateOfWeek(as.getYear(), i));
                 }
                 ws.setWeekNo(i);
                 ws.setYear(as.getYear());

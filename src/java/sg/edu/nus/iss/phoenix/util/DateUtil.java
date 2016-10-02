@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableException;
 
 /**
  *
@@ -36,6 +37,8 @@ public class DateUtil {
     // private static Timestamp Timestamp;
 
     public static Date getStartDateOfWeek(String year, String week) {
+       
+       
         int y;
         int w;
         if (year != null && year.length() == 4 && year.matches("^-?\\d+$") && week != null && week.matches("^-?\\d+$")) {
@@ -53,6 +56,9 @@ public class DateUtil {
     }
 
     public static Date getStartDateOfWeek(int y, int w) {
+       
+        Date date =null;
+        
         Calendar calendar = Calendar.getInstance();          
         calendar.setFirstDayOfWeek(1);
         calendar.setMinimalDaysInFirstWeek(1);
@@ -60,25 +66,25 @@ public class DateUtil {
         calendar.clear();
         calendar.set(Calendar.WEEK_OF_YEAR, w);
         calendar.set(Calendar.YEAR, y);
-        // Now get the first day of week.
-        Date date = calendar.getTime();
+        date = calendar.getTime();
+      
         return date;
     }
 
-    public static int getNoOfWeeks(int year) {
-
-        Calendar cal = Calendar.getInstance();          
-        cal.setFirstDayOfWeek(1);
-        cal.setMinimalDaysInFirstWeek(1);
-
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, Calendar.DECEMBER);
-        cal.set(Calendar.DAY_OF_MONTH, 31);
-        int ordinalDay = cal.get(Calendar.DAY_OF_YEAR);
-        int weekDay = cal.get(Calendar.DAY_OF_WEEK) - 1; // Sunday = 0
-        int numberOfWeeks = (ordinalDay - weekDay + 10) / 7;
-        return numberOfWeeks;
-    }
+//    public static int getNoOfWeeks(int year) {
+//
+//        Calendar cal = Calendar.getInstance();          
+//        cal.setFirstDayOfWeek(1);
+//        cal.setMinimalDaysInFirstWeek(1);
+//
+//        cal.set(Calendar.YEAR, year);
+//        cal.set(Calendar.MONTH, Calendar.DECEMBER);
+//        cal.set(Calendar.DAY_OF_MONTH, 31);
+//        int ordinalDay = cal.get(Calendar.DAY_OF_YEAR);
+//        int weekDay = cal.get(Calendar.DAY_OF_WEEK) - 1; // Sunday = 0
+//        int numberOfWeeks = (ordinalDay - weekDay + 10) / 7;
+//        return numberOfWeeks;
+//    }
 
     public static Date getFirstDayOfYear(int year) {
 

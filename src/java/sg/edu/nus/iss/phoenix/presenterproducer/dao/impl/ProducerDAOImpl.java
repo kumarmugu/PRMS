@@ -102,7 +102,7 @@ public class ProducerDAOImpl implements ProducerDAO {
 		// Zehua modified, to support finding producer, when this user has multiple roles
                 //String sql = "SELECT * FROM phoenix.`user` where role like '%producer%' and name = '" + producerName +"' ORDER BY `ID` ASC;";
                 // Thiri modified , to support List<Producer>
-                String sql = "SELECT * FROM phoenix.`user` where role like '%producer%' and name = '%" + producerName +"%' ORDER BY `ID` ASC;";
+                String sql = "SELECT * FROM phoenix.`user` where role like '%producer%' and name like '%" + producerName +"%' ORDER BY `ID` ASC;";
 		List<Producer> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();
