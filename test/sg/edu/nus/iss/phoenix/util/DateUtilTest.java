@@ -67,7 +67,7 @@ public class DateUtilTest {
      * 2nd Oct 2016 This method  return value expect
      * @param year 0
      * @param week 41
-     * @return 2nd Oct 2016
+     * @return AssertionError
      *
      */
      @Test(expected = AssertionError.class)
@@ -81,7 +81,9 @@ public class DateUtilTest {
  
     }
    
-     /**
+   
+   
+    /**
      * This is the
      * testgetStartDateOfWeekwithInvalidIntegerParam Return AssertionError test case
      * method for getStartDateOfWeek method in
@@ -102,27 +104,29 @@ public class DateUtilTest {
  
     }
     
-    //getFirstDayOfYear
-   
     /**
      * This is the
-     * testgetStartDateOfWeekwithInvalidIntegerParam Return AssertionError test case
+     * testgetDateDiffwithInvalidParam Return AssertionError test case
      * method for getStartDateOfWeek method in
      * 2nd Oct 2016 This method  return value expect
-     * @param year 0
-     * @param week 41
-     * @return 2nd Oct 2016
+     * @param year 0    
+     * @return AssertionError
      *
      */
-//     @Test(expected = AssertionError.class)
-//    public void testgetStartDateOfWeekwithInvalidStringParam() throws ParseException {
-//           
-//       java.lang.AssertionError expectedErr = new AssertionError();
-//        String year = null;
-//       
-//        Date startDate = DateUtil.getStartDateOfWeek(year, "41");
-//        Assert.assertEquals(expectedErr, startDate);
-// 
-//    }
-
+     @Test(expected = AssertionError.class)
+    public void testgetDateDiffwithInvalidParam() throws ParseException {
+       
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");      
+       
+        Date startdatetime =  sdf.parse(sdf.format("2016-10-04 18:30:00"));
+        Date enddatetime =  sdf.parse(sdf.format("2016-10-04 19:30:00"));
+        Date expectedSDate =  sdf.parse(sdf.format("2016-10-04 01:00:00"));
+        
+       java.lang.AssertionError expectedErr = new AssertionError();      
+       Date resultDate = DateUtil.getDateDiff(enddatetime,startdatetime);
+       Assert.assertEquals(expectedSDate, resultDate);
+ 
+    }
+    
+     
 }
