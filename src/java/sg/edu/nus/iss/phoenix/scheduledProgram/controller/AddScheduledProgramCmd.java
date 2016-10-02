@@ -19,7 +19,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduled
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
-
+import sg.edu.nus.iss.phoenix.util.ValidationResult;
 /**
  *
  * @author Mugunthan
@@ -27,26 +27,48 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 @Action("addsp")
 public class AddScheduledProgramCmd implements Perform {
 
+    ScheduledProgramDelegate srddel= new ScheduledProgramDelegate();
+    
     @Override
     public String perform(String path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
        
        String year = req.getParameter("year");
        String week = req.getParameter("week");
-     
-                
-        ScheduledProgramDelegate srddel= new ScheduledProgramDelegate();
-        ProgramSlot  srd = null;
-        String mode = "create", msg;
+       ProgramSlot  srd = null;
+       String mode = "create", msg;
         try {
+            
+            srd = validateFormat(req).result;
+            try{
             srd = srddel.getProgramSlot(req);
             srddel.ProcessCreate(srd);
             mode = "";
-            msg = "Successfully created.";            
+            msg = "Successfully created.";     
+            
+            } catch (Exception ex) {
+                msg = "Error: " + ex.getMessage();
+                Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (Exception ex) {
             msg = "Fail to construct Program Slot.";            
             Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        
+       /*  try {
+            newProgramSlot = validateFormat(req).result;
+            try {
+                spDelegate.processModify(id, newProgramSlot);
+                msg = "Successfully updated.";
+                mode = "";
+            } catch (Exception ex) {
+                msg = "Error: " + ex.getMessage();
+                Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (Exception ex) {
+            msg = "Error: Fails to construct scheduled program object, due to " + ex.getMessage();
+            Logger.getLogger(ModifyScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
          
         ReviewAndSelectScheduledProgramDelegate del = new ReviewAndSelectScheduledProgramDelegate();
              
@@ -82,5 +104,9 @@ public class AddScheduledProgramCmd implements Perform {
         req.setAttribute("mode", mode);
         req.setAttribute("msg", msg);    
         return "/pages/crudsp.jsp";
+    }
+    
+    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
+        return new ValidationResult(srddel.getProgramSlot(req));
     }
 }
