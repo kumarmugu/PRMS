@@ -165,6 +165,7 @@ public interface UserDao {
 	public abstract List<User> searchById(String uid)
 			throws SQLException;
         
-        
+        public abstract boolean isUserDeletable(String uid)
+			throws SQLException;
         
 }

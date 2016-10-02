@@ -492,4 +492,32 @@ public class UserDaoImpl implements UserDao {
 		}
 		return conn;
 	}
+
+    @Override
+    public boolean isUserDeletable(String uid) throws SQLException {
+
+		String sql = "SELECT * FROM `program-slot` WHERE (producer_id = ? OR presenter_id = ? ) AND  (programStartDateTime + duration) >= now()";
+		PreparedStatement stmt = null;
+                ResultSet result =null;
+
+		try {
+			stmt = this.connection.prepareStatement(sql);
+			stmt.setString(1, uid);
+			stmt.setString(2, uid);
+
+                        result = stmt.executeQuery();
+
+			if (result.next()) {
+                            return false;
+			} else {
+                            return true;
+			}
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+                        if(result!= null)
+                            result.close();
+		}
+    }
 }
