@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.core.dao.DBConstants;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
 
@@ -28,6 +29,15 @@ public class PresenterDAOImpl implements PresenterDAO{
 		return new Presenter();
 	}
     
+        @Override
+	public Presenter getObject(String id) throws NotFoundException, SQLException {
+
+		Presenter valueObject = createValueObject();
+		valueObject.setId(id);
+		//load(valueObject);
+		return valueObject;
+	}
+        
     @Override
     public  List<Presenter> loadAll() throws SQLException{
         openConnection();

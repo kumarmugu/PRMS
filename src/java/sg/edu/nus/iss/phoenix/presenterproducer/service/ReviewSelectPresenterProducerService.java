@@ -22,21 +22,21 @@ import sg.edu.nus.iss.phoenix.presenterproducer.entity.Producer;
 public class ReviewSelectPresenterProducerService {
       
             DAOFactoryImpl factory;
-            PresenterDAO rpdao;
+            PresenterDAO presenterdao;
             ProducerDAO prodao;
 	
 	public ReviewSelectPresenterProducerService() {
 		super();
 		// TODO Auto-generated constructor stub
 		factory = new DAOFactoryImpl();
-		rpdao = factory.getPresenterDAO();
+		presenterdao = factory.getPresenterDAO();
                 prodao= factory.getProducerDAO();
 	}
 
         public List<Presenter> reviewSelectPresenter(){
             List<Presenter> data=null;
             try {
-                data = rpdao.loadAll();
+                data = presenterdao.loadAll();
             } catch (SQLException ex) {
                 Logger.getLogger(ReviewSelectPresenterProducerService.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -56,7 +56,7 @@ public class ReviewSelectPresenterProducerService {
         public List<Presenter> reviewSelectPresenter(String presenterName){
             List<Presenter> data=null;
             try {
-                data = rpdao.findPresenter(presenterName);
+                data = presenterdao.findPresenter(presenterName);
             } catch (SQLException ex) {
                 Logger.getLogger(ReviewSelectPresenterProducerService.class.getName()).log(Level.SEVERE, null, ex);
             }

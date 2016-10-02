@@ -24,9 +24,9 @@ public class Presenter implements Cloneable, Serializable {
 
     }
 
-    public Presenter (String nameIn,String Name,String desc) {
+    public Presenter (String id,String Name,String desc) {
 
-          this.id = nameIn;
+          this.id = id;
           this.name=Name;
           this.Description=desc;
     }

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.core.dao.DBConstants;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.entity.Producer;
 
@@ -105,6 +106,14 @@ public class ProducerDAOImpl implements ProducerDAO {
 		closeConnection();
 		System.out.println("record size"+searchResults.size());
 		return searchResults;
+    }
+
+    @Override
+    public Producer getObject(String id) throws NotFoundException, SQLException {
+                Producer valueObject = createValueObject();
+                valueObject.setId(id);
+		//load(valueObject);
+		return valueObject;
     }
 
 }

@@ -16,6 +16,11 @@ public class Producer implements Cloneable, Serializable  {
     private String name;
     
     public Producer(){}
+    
+    public Producer( String id,String name){
+        this.id=id;
+        this.name=name;
+    }
 
     /**
      * @return the id
