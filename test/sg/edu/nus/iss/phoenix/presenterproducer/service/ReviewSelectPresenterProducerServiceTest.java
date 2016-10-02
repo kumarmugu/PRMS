@@ -16,6 +16,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -87,7 +88,7 @@ public class ReviewSelectPresenterProducerServiceTest {
         producer3.setName("ISS_MeeZaw_Producer");
         Producer producer4 = new Producer("David","David");
         producer4.setName("David");
-        Producer producer5 = new Producer("Alice","Alic");
+        Producer producer5 = new Producer("Alice","Alice");
         producer5.setName("Alice");
         
         when(presenterDAO.getObject("Swarnalatha")).thenReturn(presenter1);
@@ -120,6 +121,7 @@ public class ReviewSelectPresenterProducerServiceTest {
         when(presenterDAO.loadAll()).thenReturn(presenterList);
         when(producerDAO.loadAll()).thenReturn(producerList);
         when(producerDAO.findProducer("ISS")).thenReturn(producerSearchList);
+        Mockito.doThrow(new SQLException()).when(presenterDAO).findPresenter("Alice");
         
     }
 
@@ -164,5 +166,10 @@ public class ReviewSelectPresenterProducerServiceTest {
          
     }
     
+    @Test
+    public void testreviewSelectPresenterwithNulls() throws SQLException {
+        List<Presenter> presenter = reviewSelectPresenterProducerService.reviewSelectPresenter("Alice");
+        assertNull(presenter);
+    }
 }
 
