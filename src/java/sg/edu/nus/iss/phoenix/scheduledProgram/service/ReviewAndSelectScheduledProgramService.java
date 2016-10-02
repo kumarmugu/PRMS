@@ -89,16 +89,17 @@ public class ReviewAndSelectScheduledProgramService {
     
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException, SQLException {
         WeeklySchedule ws = null;
+        Calendar cal = Calendar.getInstance();
+        int yearToSearch = cal.get(Calendar.YEAR);
+        int weekToSearch  = cal.get(Calendar.WEEK_OF_YEAR);
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
-                ws = new WeeklySchedule(Integer.parseInt(year), Integer.parseInt(week));
-            } else {
-                Calendar cal = Calendar.getInstance();
-                ws = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR) );
+                yearToSearch = Integer.parseInt(year);
+                weekToSearch = Integer.parseInt(week);
             }
+            ws = new WeeklySchedule(yearToSearch, weekToSearch);
+            ws.setStartDate(DateUtil.getStartDateOfWeek(yearToSearch, weekToSearch));
             AnnualSchedule as = spdao.getAnnualSchedule(ws);
-            
-            ws = spdao.loadWeekInfo(ws);
             
             if(as != null)
             {
