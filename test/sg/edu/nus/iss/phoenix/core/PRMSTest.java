@@ -14,13 +14,15 @@ import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewAndSelectScheduledProgramServiceTest;
+import sg.edu.nus.iss.phoenix.presenterproducer.service.ReviewSelectPresenterProducerServiceTest;
 
 /**
  *
  * @author Mugunthan
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ReviewAndSelectScheduledProgramServiceTest.class})
+@Suite.SuiteClasses({ReviewAndSelectScheduledProgramServiceTest.class, 
+                      ReviewSelectPresenterProducerServiceTest.class});
 public class PRMSTest {
 
 }

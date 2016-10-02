@@ -10,7 +10,6 @@
 <title> <fmt:message key="title.cruduser"/> </title>
 </head>
 <body>
-        <h6>${deleteErrMsg}</h6>
         <h1><fmt:message key="label.cruduser"/></h1>
         <c:url var="url" scope="page" value="/nocturne/createmodifyuser">
         		<c:param name="id" value=""/>
@@ -34,7 +33,11 @@
 		</center>
 
 	</form>
-        <br/><br/>
+        <br/>
+        <c:if test="${deleteErrMsg != null}">
+            <div class="error-box">${deleteErrMsg}</div>
+        </c:if>
+        <br/>
         <table class="borderAll">
             <tr>
                 <th><fmt:message key="label.cruduser.id"/></th>
