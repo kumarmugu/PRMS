@@ -55,6 +55,8 @@ public interface ScheduleDAO {
     public void setManualCommitRequired(boolean manual) throws SQLException;
 
     public boolean getManualCommitRequired() throws SQLException;
+    
+    public void complete() throws SQLException;
 
     public void create(WeeklySchedule valueObject)
             throws SQLException;
