@@ -7,6 +7,7 @@ package sg.edu.nus.iss.phoenix.presenterproducer.dao;
 
 import java.sql.SQLException;
 import java.util.List;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
 
 /**
@@ -16,6 +17,8 @@ import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
 public interface PresenterDAO {
     
     public abstract Presenter createValueObject();
+    public abstract Presenter getObject(String id)
+			throws NotFoundException, SQLException;
     public abstract List<Presenter> loadAll() throws SQLException;
-     public abstract List<Presenter> findPresenter(String presenterName) throws SQLException;
+    public abstract List<Presenter> findPresenter(String presenterName) throws SQLException;
 }

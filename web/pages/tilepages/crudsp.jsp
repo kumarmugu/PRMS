@@ -502,8 +502,8 @@
             <input type="hidden" name="producerId" id="producerId" value=""/>
             <input type="hidden" name="updateBy" id="updateBy" value=""/>
 
-            <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program"  name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." onClick="popUpProgramDialog()"/></label>
-            <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." onClick="popUpPresenterDialog()"/></label>
+            <label for="program"><span>Program Name: </span><input type="text" class="input-field" id="program" name="program" readonly />&nbsp;<input type="button" id="programBrowse" value="..." onClick="popUpProgramDialog()"/></label>
+            <label for="presenter"><span>Presenter: </span><input type="text" class="input-field" id="presenter"  value="${producer}" name="presenter" readonly/>&nbsp;<input type="button" id="presenterBrowse" value="..." onClick="popUpPresenterDialog()"/></label>
             <label for="producer"><span>Producer: </span><input type="text" class="input-field" id="producer" name="producer" readonly/>&nbsp;<input type="button" id="producerBrowse" value="..." onClick="popUpProducerDialog()" /></label>
 
             <label for="year"><span>Year: </span><input class="input-field" type="text" id="year"  name="year" maxlength="4"  readonly/></label>
