@@ -111,9 +111,9 @@ public class PresenterDAOImpl implements PresenterDAO{
          openConnection();
 		//String sql = "SELECT * FROM phoenix.`user` where role='presenter' and name like '%" + presenterName +"%' ORDER BY `ID` ASC;";
                 // Zehua modified, to support finding presenter, when this user has multiple roles
-                // String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' and name = '" + presenterName +"' ORDER BY `ID` ASC;";
+                 String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' and name = '" + presenterName +"' ORDER BY `ID` ASC;";
                 // Thiri modifed again to supporting finding List of presenter
-                String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' and name = '%" + presenterName +"%' ORDER BY `ID` ASC;";
+                //String sql = "SELECT * FROM phoenix.`user` where role like '%presenter%' and name = '%" + presenterName +"%' ORDER BY `ID` ASC;";
 		List<Presenter> searchResults = listQuery(connection
 				.prepareStatement(sql));
 		closeConnection();
