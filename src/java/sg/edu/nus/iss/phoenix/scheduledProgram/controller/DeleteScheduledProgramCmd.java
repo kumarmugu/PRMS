@@ -9,13 +9,17 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ReviewAndSelectScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -28,24 +32,23 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
  */
 @Action("deletesp")
 public class DeleteScheduledProgramCmd implements Perform{
-    /* Thiri, 
-        Zehua made some changes,
-        => validateFormat(req) will throw exception when validation fails
-        => add mode,(delete), so when delete fails can still go back to form
-    */
-    ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
         
+    ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
+       
     @Override
     public String perform(String string, HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        User u = (User) req.getSession().getAttribute("user");
+        ScheduledProgramDelegate spDelegate = new ScheduledProgramDelegate();
         String msg = "",  mode = "delete";
         ProgramSlot delProgramSlot = null;
         try {
-            delProgramSlot = validateFormat(req).result;
+            Map<String, String[]> params = req.getParameterMap();
+            delProgramSlot = spDelegate.getProgramSlot(params, u);
             try {
                 spDelegate.processDelete(delProgramSlot);
                 msg = "Successfully deleted.";
                 mode = "";
-            } catch (NotFoundException | SQLException ex) {
+            } catch (NotFoundException | SQLException |ScheduledProgramNotDeletableException ex) {
                 msg = "Error: " + ex.getMessage();
                 Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -77,10 +80,6 @@ public class DeleteScheduledProgramCmd implements Perform{
             Logger.getLogger(DeleteScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "/pages/crudsp.jsp";
-    }
-    
-    private ValidationResult<ProgramSlot> validateFormat(HttpServletRequest req) throws Exception {
-        return new ValidationResult(spDelegate.getProgramSlot(req));
     }
     
 }
