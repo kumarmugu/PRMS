@@ -20,9 +20,8 @@ import sg.edu.nus.iss.phoenix.presenterproducer.service.ReviewSelectPresenterPro
  *
  * @author Mugunthan
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ReviewAndSelectScheduledProgramServiceTest.class, 
-                      ReviewSelectPresenterProducerServiceTest.class});
+@RunWith(Suite.class)@Suite.SuiteClasses({ReviewSelectPresenterProducerServiceTest.class,
+					 ReviewSelectPresenterProducerServiceTest.class})
 public class PRMSTest {
 
 }

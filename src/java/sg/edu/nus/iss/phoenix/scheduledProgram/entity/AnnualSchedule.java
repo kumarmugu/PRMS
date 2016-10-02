@@ -5,6 +5,8 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 
+import java.util.Objects;
+
 /**
  *
  * @author Mugunthan
@@ -38,6 +40,31 @@ public class AnnualSchedule {
     public void setAssignedBy(String assignedBy) {
         this.assignedBy = assignedBy;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AnnualSchedule other = (AnnualSchedule) obj;
+        if (this.year != other.year) {
+            return false;
+        }
+        if (!Objects.equals(this.assignedBy, other.assignedBy)) {
+            return false;
+        }
+        return true;
+    }
+    
     
     
 }

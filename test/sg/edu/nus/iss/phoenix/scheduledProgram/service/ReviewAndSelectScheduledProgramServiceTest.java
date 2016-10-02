@@ -106,7 +106,7 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
         when(spdao.loadAllScheduleForWeek(ws4)).thenThrow(SQLException.class);
         
-        
+        when(spdao.processCreateAnnualSchedule(new AnnualSchedule(2016, "user2"), new ArrayList<WeeklySchedule>())).thenThrow(SQLException.class);
     }
 
     @After
@@ -197,11 +197,6 @@ public class ReviewAndSelectScheduledProgramServiceTest {
     public void testReviewSelectScheduledProgramThrowSQLException() throws AnnualSchedueNotExistException, SQLException {
         WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
         fail();
-    }
-    
-    @Test
-    public void testPorcessCreateAnnualSchedule(){
-        
     }
 
 }
