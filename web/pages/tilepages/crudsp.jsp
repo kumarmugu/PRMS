@@ -117,7 +117,6 @@
                             $('#create').css('display', 'inline');
                             //console.log(calEvent);
                             if (!calEvent.id) {
-                            $('.wc-cal-event').css('backgroundColor', 'green');
                                 console.log(calEvent.start);
                                 clearMsg();
                                 var today = new Date();
