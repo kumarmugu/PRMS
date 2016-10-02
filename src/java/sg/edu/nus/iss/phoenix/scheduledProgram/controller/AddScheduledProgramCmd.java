@@ -42,6 +42,12 @@ public class AddScheduledProgramCmd implements Perform {
        
        String year = req.getParameter("year");
        String week = req.getParameter("week");
+       String program= req.getParameter("program");
+       String programid=req.getParameter("scheduledProgramId");
+       String producer=req.getParameter("producer");
+       String producerid=req.getParameter("producerId");
+       String presenter=req.getParameter("presenter");
+       String presetnerid= req.getParameter("presenterId");
        User u = (User) req.getSession().getAttribute("user");
        
                 
@@ -55,6 +61,7 @@ public class AddScheduledProgramCmd implements Perform {
                 mode = "";
                 msg = "Successfully created.";
             } catch (Exception ex) {
+                    
                 msg = "Error: " + ex.getMessage();
                 Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
             }            
@@ -90,11 +97,22 @@ public class AddScheduledProgramCmd implements Perform {
         if (ws == null) {
             ws = new WeeklySchedule();
         }
+        
+        
+        req.setAttribute("program",program);
+        req.setAttribute("scheduledProgramId", programid);
+        req.setAttribute("producer", "ZZZZZZZZZZZZZZZZZZZZZZZ");
+        req.setAttribute("producerId", producerid);
+        req.setAttribute("presenter", presenter);
+        req.setAttribute("presenterId",presetnerid);
+       
+        
+        
         req.setAttribute("events", ws.getProgramSlots());
         req.setAttribute("default", srd);
         req.setAttribute("startDate", ws.getStartDate());
         req.setAttribute("weekNo", ws.getWeekNo());
-        req.setAttribute("currentYear", ws.getYear());
+        req.setAttribute("currentYear", ws.getYear());        
         req.setAttribute("mode", mode);
         req.setAttribute("msg", msg);    
         return "/pages/crudsp.jsp";
