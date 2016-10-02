@@ -184,21 +184,23 @@
 
                     if ($('#year').val() < jscurrentYear)
                     {
-                        alert("No Annual Schedule found for selected Year!!!");
+                        alert("Annual Schedule Not Found for selected Year: ("+ userInputYear + ")  \n\n"+
+                              "Reason: New annual schdeule Not allow to create for past Year!!!");
                     } else if ((userInputYear > jscurrentYear || userInputYear == jscurrentYear))
                     {
-                        if (DiffYear < 4 && createscheduleflag == "0")
+                        if (DiffYear < 6 && createscheduleflag == "0")
                         {
-                            var r = confirm("Annual schedule not exist. Do you want to create Annual Schedule for the Year : (" + userInputYear + " ) Current Year :" + jscurrentYear);
+                            var r = confirm("Annual Schedule Not Found for selected Year: ("+ userInputYear + ")  \n\n"+
+                                    "Do you want to create Annual Schedule for the Year :(" + userInputYear + " ) ?" );
                             if (r == true)
                             {
-                                document.getElementById("txtcreateAnnualSchedule").value = "1";
-                                alert(document.getElementById("txtcreateAnnualSchedule").value);
+                                document.getElementById("txtcreateAnnualSchedule").value = "1";                                
                                 document.getElementById("searchScheduleform").submit();
                             }
 
                         } else
-                            alert("No Annual Schedule found for Year(" + userInputYear + " !!) New annual schdeule allow to create only for upcoming 3 Years!!!");
+                            alert("Annual Schedule Not Found for selected Year: (" + userInputYear + " !!) \n\n"+
+                                  "Reason: New annual schdeule allow to create only for upcoming 5 Years!!!");
                     }
                 }
 
