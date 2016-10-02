@@ -117,8 +117,19 @@ public class UserManagementServiceTest {
         }
         ws1.setProgramSlots(programSlots1);
         when(userdao.isUserAssignedAsPresenter(createTestUser1.getId())).thenReturn(Boolean.TRUE);
-        
+        when(userdao.isUserAssignedAsProcedure(createTestUser1.getId())).thenReturn(Boolean.TRUE);
+        when(userdao.isUserAssigned(createTestUser1.getId())).thenReturn(Boolean.TRUE);
         Mockito.doThrow(new UserProgramConstraintsException("User ProgramConstraints Exception")).when(userdao).delete(createTestUser1);
+        
+        
+        //Test find users with id
+        ArrayList<User> users = new ArrayList<>();
+        users.add(new User("finduser1"));
+        users.add(new User("finduser2"));
+        users.add(new User("finduser3"));
+        users.add(new User("finduser4"));
+        
+        when(userdao.searchById("finduser")).thenReturn(users);
         
     }
     
@@ -167,8 +178,20 @@ public class UserManagementServiceTest {
         fail();
     }
     
-    
-    
+    /**
+     * This method to test FindusersbyUserId and
+     * expected to get the list of Users that matched with given userId
+     * @throws SQLException 
+     */
+    @Test
+    public void testFindUsersByUserId() throws SQLException{
+        ArrayList<User> resultUsers = new ArrayList<>();
+        resultUsers = usermanagmentService.processFindUser("finduser");
+        if( resultUsers.size() != 4){
+             fail();
+        }
+       
+    }
    
     
     
