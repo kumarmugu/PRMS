@@ -50,7 +50,16 @@ public class ManageScheduledProgramCmd implements Perform {
             if (useraction.equals("1")) {
                 as = new AnnualSchedule(Integer.parseInt(year), user.getId());
                 System.out.println("+++++++User Slection to create annual schedule" + useraction);
-                pdel.PorcessCreateAnnualSchedule(as);
+               try
+               {
+                   
+                    pdel.PorcessCreateAnnualSchedule(as);
+                    //req.setAttribute("msgSuccess", as);
+               }catch (Exception ex) {
+                // msg = "Fail to construct Program Slot.";            
+                 Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+               }
+               
 
             }
 
