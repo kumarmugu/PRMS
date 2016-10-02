@@ -42,7 +42,9 @@ public class DateUtil {
             y = Integer.parseInt(year);
             w = Integer.parseInt(week);
         } else {
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();            
+            calendar.setFirstDayOfWeek(1);
+            calendar.setMinimalDaysInFirstWeek(1);
 
             y = calendar.get(Calendar.YEAR);
             w = calendar.get(Calendar.WEEK_OF_YEAR);
@@ -51,7 +53,9 @@ public class DateUtil {
     }
 
     public static Date getStartDateOfWeek(int y, int w) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();          
+        calendar.setFirstDayOfWeek(1);
+        calendar.setMinimalDaysInFirstWeek(1);
 
         calendar.clear();
         calendar.set(Calendar.WEEK_OF_YEAR, w);
@@ -63,7 +67,9 @@ public class DateUtil {
 
     public static int getNoOfWeeks(int year) {
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();          
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
 
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -76,7 +82,10 @@ public class DateUtil {
 
     public static Date getFirstDayOfYear(int year) {
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();                  
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
+        
         Date date = null;
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, Calendar.JANUARY);
@@ -114,7 +123,9 @@ public class DateUtil {
     public static Date getDateDiff(Date date1, Date date2) {
         long diffInMillies = date2.getTime() - date1.getTime();
         long timeDif = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();                
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
         cal.set(0, 0, 0, (int) timeDif / 3600, (int) timeDif % 3600 / 60, (int) timeDif % 60);
         return cal.getTime();        
     }
@@ -146,9 +157,13 @@ public class DateUtil {
     }
 
     public static Date AddDateTime(Date d1, Date durationLessThan1Day) {
-        Calendar cal1 = Calendar.getInstance();
+        Calendar cal1 = Calendar.getInstance();                
+        cal1.setFirstDayOfWeek(1);
+        cal1.setMinimalDaysInFirstWeek(1);
         cal1.setTime(d1);
-        Calendar cal2 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();              
+        cal2.setFirstDayOfWeek(1);
+        cal2.setMinimalDaysInFirstWeek(1);
         cal2.setTime(durationLessThan1Day);
         //cal1.add(Calendar.YEAR, cal2.get(Calendar.YEAR) - 1970);
         // cal1.add(Calendar.MONTH, cal2.get(Calendar.MONTH));
@@ -161,19 +176,25 @@ public class DateUtil {
     }
     
     public static String getDayOfWeek(Date date) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();             
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
         cal.setTime(date);
         return myDayMap.get(cal.get(Calendar.DAY_OF_WEEK));
     }
     
     public static int getWeekOfYear(Date date) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();            
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
         cal.setTime(date);
         return cal.get(Calendar.WEEK_OF_YEAR);
     }
     
     public static int getYear(Date date) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();            
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
         cal.setTime(date);
         return cal.get(Calendar.YEAR);
     }

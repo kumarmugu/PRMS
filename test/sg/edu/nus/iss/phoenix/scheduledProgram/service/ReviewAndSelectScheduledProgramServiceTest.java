@@ -77,7 +77,9 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         when(userdao.getObject("presenter1")).thenReturn(producer);
         when(userdao.getObject("producer1")).thenReturn(producer);
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();        
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
 
         WeeklySchedule ws1 = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
         when(spdao.getAnnualSchedule(ws1)).thenReturn(new AnnualSchedule(cal.get(Calendar.YEAR), "user1"));

@@ -91,6 +91,8 @@ public class ReviewAndSelectScheduledProgramService {
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException, SQLException {
         WeeklySchedule ws = null;
         Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(1);
+        cal.setMinimalDaysInFirstWeek(1);
         int yearToSearch = cal.get(Calendar.YEAR);
         int weekToSearch  = cal.get(Calendar.WEEK_OF_YEAR);
         try {
