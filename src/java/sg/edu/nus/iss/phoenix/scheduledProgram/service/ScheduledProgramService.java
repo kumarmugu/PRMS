@@ -103,13 +103,31 @@ public class ScheduledProgramService {
 
     }
 
-    public void PorcessCreate(ProgramSlot srp) {
+    public void PorcessCreate(ProgramSlot srp)throws Exception  {
+        
+           ProgramSlot existingProgramSlot = getProgramSlot(srp.getID());
+        if (existingProgramSlot != null
+                && existingProgramSlot.getID() != srp.getID()) {
+            throw new Exception("A Program already exists in the new timeslot.");
+        }
+
+        ValidationResult<Boolean> validation = validateProgramSlotDetail(srp);
+        if (!validation.result) {
+            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
+        }
+
+        boolean isOverlapping = isProgramSlotOverlapping(srp, null);
+        if (isOverlapping) {
+            throw new Exception("New time slot is overlapping with existing program slot(s). ");
+        }
+
         try {
+            
             spDao.create(srp);
             spDao.complete();
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
             // TODO Auto-generated catch block
-             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
+            e.printStackTrace();
         }
 
     }
