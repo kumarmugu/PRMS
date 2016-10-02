@@ -107,9 +107,9 @@ public class ScheduledProgramService {
         try {
             spDao.create(srp);
             spDao.complete();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
