@@ -31,7 +31,12 @@ public class DeleteUserCmd implements Perform{
         UserDelegate del = new UserDelegate();
         String id = req.getParameter("id");
         
-        
+        try {
+            del.processDeleteUser(id);
+        } catch (UserProgramConstraintsException ex) {
+            req.setAttribute("deleteErrMsg", "User cannot be deleted!");
+            Logger.getLogger(DeleteUserCmd.class.getName()).log(Level.SEVERE, null, ex);
+        }
        
         List<User> data = new ArrayList<>()  ;
         try {
@@ -43,7 +48,7 @@ public class DeleteUserCmd implements Perform{
             return "/pages/cruduser.jsp";
            
         }
-        req.setAttribute("deleteErrMsg", "User cannot be deleted!");
+        
         req.setAttribute("users", data);
         return "/pages/cruduser.jsp";
     }
