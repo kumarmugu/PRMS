@@ -63,6 +63,7 @@ public class ScheduledProgramService {
     public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
         if (IsProgramSlotDeletable(programSlot)) {
             spDao.delete(programSlot);
+            spDao.complete();
         }
     }
 
@@ -86,6 +87,7 @@ public class ScheduledProgramService {
             }
 
             spDao.processCreateAnnualSchedule(as, wsList);
+            spDao.complete();
 
         } catch (SQLException ex) {
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
@@ -96,6 +98,7 @@ public class ScheduledProgramService {
     public void PorcessCreate(ProgramSlot srp) {
         try {
             spDao.create(srp);
+            spDao.complete();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -136,6 +139,7 @@ public class ScheduledProgramService {
                 spDao.create(newProgramSlot);
                 spDao.setManualCommitRequired(false);  */
             spDao.create(newProgramSlot);
+            spDao.complete();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -162,6 +166,7 @@ public class ScheduledProgramService {
         try {
             if (modifyingProgramSlot.getID() == newProgramSlot.getID()) {
                 spDao.update(newProgramSlot);
+                spDao.complete();
             } else {
                 spDao.setManualCommitRequired(true);
                 spDao.delete(modifyingProgramSlot);
@@ -174,7 +179,7 @@ public class ScheduledProgramService {
                 }     
                  */
                 spDao.create(newProgramSlot);
-                spDao.setManualCommitRequired(false);
+                spDao.complete();
             }
 
         } catch (NotFoundException | SQLException e) {

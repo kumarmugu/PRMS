@@ -51,6 +51,13 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     public boolean getManualCommitRequired() throws SQLException {
         return !dbUtil.isAutoCommit();
     }
+    
+    public void complete() throws SQLException  {
+        if (getManualCommitRequired()) {
+            dbUtil.commit();
+        }
+        dbUtil.closeConnection();
+    }
 
     /**
      *
