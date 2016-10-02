@@ -21,8 +21,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
+import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.AnnualSchedueNotExistException;
+import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduledProgram.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
@@ -58,7 +60,7 @@ public class ReviewAndSelectScheduledProgramServiceTest {
      * @throws SQLException
      */
     @Before
-    public void setUp() throws SQLException {
+    public void setUp() throws SQLException, NotFoundException {
         spdao = mock(ScheduleDAO.class);
         userdao = mock(UserDao.class);
         factory = mock(DAOFactoryImpl.class);
@@ -66,6 +68,14 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         reviewSelectScheduledService = new ReviewAndSelectScheduledProgramService();
         reviewSelectScheduledService.factory = factory;
         reviewSelectScheduledService.spdao = spdao;
+        reviewSelectScheduledService.userDAO = userdao;
+        
+        User presenter = new User("presenter1");
+        presenter.setName("presenter1");
+        User producer = new User("producer1");
+        presenter.setName("producer1");
+        when(userdao.getObject("presenter1")).thenReturn(producer);
+        when(userdao.getObject("producer1")).thenReturn(producer);
 
         Calendar cal = Calendar.getInstance();
 
@@ -73,7 +83,10 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         when(spdao.getAnnualSchedule(ws1)).thenReturn(new AnnualSchedule(cal.get(Calendar.YEAR), "user1"));
         ArrayList<ProgramSlot> programSlots1 = new ArrayList<ProgramSlot>();
         for (int i = 0; i < 5; i++) {
-            programSlots1.add(new ProgramSlot());
+            ProgramSlot ps = new ProgramSlot();
+            ps.setProducerId("presenter1");
+            ps.setPresenterId("producer1");
+            programSlots1.add(ps);
         }
         ws1.setProgramSlots(programSlots1);
         when(spdao.loadAllScheduleForWeek(ws1)).thenReturn(ws1);
@@ -122,13 +135,13 @@ public class ReviewAndSelectScheduledProgramServiceTest {
      * @throws AnnualSchedueNotExistException
      * @throws SQLException
      */
-//    @Test
-//    public void testReviewSelectScheduledProgramNoProgramSlots() throws AnnualSchedueNotExistException, SQLException {
-//
-//        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2017", "12");
-//        assertEquals(0, wx.getProgramSlots().size());
-//
-//    }
+    @Test
+    public void testReviewSelectScheduledProgramNoProgramSlots() throws AnnualSchedueNotExistException, SQLException {
+
+        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2017", "12");
+        assertEquals(0, wx.getProgramSlots().size());
+
+    }
 
     /**
      * This is the
@@ -141,12 +154,12 @@ public class ReviewAndSelectScheduledProgramServiceTest {
      * @throws AnnualSchedueNotExistException
      * @throws SQLException
      */
-//    @Test(expected = AnnualSchedueNotExistException.class)
-//    public void testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException() throws AnnualSchedueNotExistException, SQLException {
-//
-//        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2018", "10");
-//
-//    }
+    @Test(expected = AnnualSchedueNotExistException.class)
+    public void testReviewSelectScheduledProgramThrowAnnualSchedueNotExistException() throws AnnualSchedueNotExistException, SQLException {
+
+        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2018", "10");
+
+    }
 
     /**
      * This is the
@@ -158,13 +171,13 @@ public class ReviewAndSelectScheduledProgramServiceTest {
      * @throws AnnualSchedueNotExistException
      * @throws SQLException
      */
-//    @Test
-//    public void testReviewSelectScheduledProgramWithWrongInput() throws AnnualSchedueNotExistException, SQLException {
-//
-//        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("abc", "aa");
-//        assertEquals(5, wx.getProgramSlots().size());
-//
-//    }
+    @Test
+    public void testReviewSelectScheduledProgramWithWrongInput() throws AnnualSchedueNotExistException, SQLException {
+
+        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("abc", "aa");
+        assertEquals(5, wx.getProgramSlots().size());
+
+    }
 
     /**
      * This is the
@@ -176,10 +189,10 @@ public class ReviewAndSelectScheduledProgramServiceTest {
      * @throws AnnualSchedueNotExistException
      * @throws SQLException
      */
-//    @Test(expected = SQLException.class)
-//    public void testReviewSelectScheduledProgramThrowSQLException() throws AnnualSchedueNotExistException, SQLException {
-//        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
-//        fail();
-//    }
+    @Test(expected = SQLException.class)
+    public void testReviewSelectScheduledProgramThrowSQLException() throws AnnualSchedueNotExistException, SQLException {
+        WeeklySchedule wx = reviewSelectScheduledService.reviewSelectScheduledProgram("2016", "10");
+        fail();
+    }
 
 }
