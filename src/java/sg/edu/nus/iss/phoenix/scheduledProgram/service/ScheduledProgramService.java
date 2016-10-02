@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableException;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.PresenterDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.dao.ProducerDAO;
 import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
@@ -60,10 +62,16 @@ public class ScheduledProgramService {
      *
      *
      */
-    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException {
+    public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException, ScheduledProgramNotDeletableException{
         if (IsProgramSlotDeletable(programSlot)) {
             spDao.delete(programSlot);
             spDao.complete();
+        }
+        else
+        {
+            Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, "Not Allow to delete the scheduled program in past !");
+            throw new ScheduledProgramNotDeletableException("Not Allow to delete the scheduled program in past !");
+         
         }
     }
 
@@ -99,15 +107,23 @@ public class ScheduledProgramService {
         try {
             spDao.create(srp);
             spDao.complete();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
     private boolean IsProgramSlotDeletable(ProgramSlot programSlot) {
-        return true;
+         Date currentTime = new Date();
+         System.out.println("Program end time " + programSlot.getEndTime().getTime() + " - CurrentTime " +  currentTime.getTime()+
+                 programSlot);
+         if( programSlot.getEndTime().getTime() > currentTime.getTime()){
+             System.out.println("Program end time is less than currentTime");
+             return true;
+         }
+         return false;
+         
     }
 
     public void PorcessCopy(ProgramSlot newProgramSlot) throws Exception {
@@ -196,21 +212,21 @@ public class ScheduledProgramService {
         }
     }
 
-    public ProgramSlot constructProgramSlot(HttpServletRequest req) throws Exception {
+    public ProgramSlot constructProgramSlot(Map<String, String[]> params, User user) throws Exception {
 
-        String programName = req.getParameter("program");
-        String presenter = req.getParameter("presenterId");
-        String producer = req.getParameter("producerId");
+        String programName = params.get("program")[0];//req.getParameter("program");
+        String presenter = params.get("presenterId")[0]; //req.getParameter("presenterId");
+        String producer = params.get("producerId")[0];//req.getParameter("producerId");
 
-        Date startDate = DateUtil.getDate(req.getParameter("date"), "yyyy-MM-dd");
-        Date startTime = DateUtil.getTime(req.getParameter("startTime"), "HH:mm");
-        Date endTime = DateUtil.getTime(req.getParameter("endTime"), "HH:mm");
+        Date startDate = DateUtil.getDate(params.get("date")[0], "yyyy-MM-dd");
+        Date startTime = DateUtil.getTime(params.get("startTime")[0], "HH:mm");
+        Date endTime = DateUtil.getTime(params.get("endTime")[0], "HH:mm");
 
         Date startDateTime = DateUtil.AddDateTime(startDate, startTime);
         Date endDateTime = DateUtil.AddDateTime(startDate, endTime);
         //Date duration = new Date(endDateTime.getTime() - startDateTime.getTime());
 
-        User user = (User) req.getSession().getAttribute("user");
+        //User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             throw new Exception("User Session not found.");
         }
@@ -222,6 +238,7 @@ public class ScheduledProgramService {
         ps.setProducerId(producer);
         ps.setPresenterId(presenter);
         ps.setupdatedBy(updateBy);
+        ps.setProgramName(programName);
         ps.setupdatedOn(new Date(updateOn.getTime()));
 
         String reason = "";
@@ -229,10 +246,15 @@ public class ScheduledProgramService {
             reason = "Fail to load weekly schedule.";
             WeeklySchedule ws = spDao.getScheduleForWeek(ps.getYear(), ps.getWeek());
             ps.setweekStartDate(ws.getStartDate());
-
-            reason = "Fail to load presenter detail.";
+            
+            reason="Program Name is Empty";
+            
+            if(ps.getProgramName() == null || ps.getProgramName().equals("")){
+                 throw new NotFoundException(reason);
+            }
+            reason = "Presenter Name is Empty.";
             ps.setPresenterName(getUser(ps.getPresenterId()).getName());
-            reason = "Fail to load producer detail.";
+            reason = "Producer Name is Empty.";
             ps.setProducerName(getUser(ps.getProducerId()).getName());
         } catch (NotFoundException | SQLException ex) {
             Logger.getLogger(ScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);

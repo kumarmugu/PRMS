@@ -9,6 +9,7 @@ import at.nocturne.api.Action;
 import at.nocturne.api.Perform;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.delegate.ScheduledProgramDelegate
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
+import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
@@ -50,7 +52,16 @@ public class ManageScheduledProgramCmd implements Perform {
             if (useraction.equals("1")) {
                 as = new AnnualSchedule(Integer.parseInt(year), user.getId());
                 System.out.println("+++++++User Slection to create annual schedule" + useraction);
-                pdel.PorcessCreateAnnualSchedule(as);
+               try
+               {
+                   
+                    pdel.PorcessCreateAnnualSchedule(as);
+                    //req.setAttribute("msgSuccess", as);
+               }catch (Exception ex) {
+                // msg = "Fail to construct Program Slot.";            
+                 Logger.getLogger(ManageScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
+               }
+               
 
             }
 
@@ -69,7 +80,8 @@ public class ManageScheduledProgramCmd implements Perform {
 
         }
         req.setAttribute("events", ws.getProgramSlots());
-        req.setAttribute("default", new ProgramSlot());
+        Date startDate = DateUtil.getStartDateOfWeek(year, week);
+        req.setAttribute("default", new ProgramSlot(startDate, startDate, ""));
         req.setAttribute("startDate", ws.getStartDate());
         req.setAttribute("weekNo", ws.getWeekNo());
         req.setAttribute("currentYear", ws.getYear());
