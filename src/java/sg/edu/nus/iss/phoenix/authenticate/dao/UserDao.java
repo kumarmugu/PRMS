@@ -5,6 +5,7 @@ import java.util.List;
 
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 
 public interface UserDao {
 
@@ -93,7 +94,7 @@ public interface UserDao {
      * @throws sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException
      * @throws java.sql.SQLException
 	 */
-	public abstract void save(User valueObject)
+	public abstract void save(User valueObject,boolean isIncludePassword)
 			throws NotFoundException, SQLException;
 
 	/**
@@ -112,7 +113,7 @@ public interface UserDao {
      * @throws java.sql.SQLException
 	 */
 	public abstract void delete(User valueObject)
-			throws NotFoundException, SQLException;
+			throws NotFoundException, SQLException, UserProgramConstraintsException;
 
 	/**
 	 * deleteAll-method. This method will remove all information from the table
@@ -166,6 +167,15 @@ public interface UserDao {
 			throws SQLException;
         
         public abstract boolean isUserDeletable(String uid)
+			throws SQLException;
+        
+        public abstract boolean isUserAssigned(String uid)
+			throws SQLException;
+        
+        public abstract boolean isUserAssignedAsPresenter(String uid)
+			throws SQLException;
+        
+        public abstract boolean isUserAssignedAsProcedure(String uid)
 			throws SQLException;
         
 }

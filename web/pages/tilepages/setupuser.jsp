@@ -36,7 +36,7 @@
   
                                     </c:if> 
                                     <c:if test="${insert=='false'}">
-                                        
+                                                
                                                 <td> <input type="text" name="id" value="${id}" size=15 maxlength=20 readonly="readonly"></td>
                                                 <input type="hidden" name="insert" value="false" />
                                                 

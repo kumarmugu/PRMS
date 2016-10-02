@@ -15,6 +15,7 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.core.exceptions.UserProgramConstraintsException;
 
 /**
  * User Data Access Object (DAO). This class contains all database handling that
@@ -158,9 +159,9 @@ public class UserDaoImpl implements UserDao {
 	 * , sg.edu.nus.iss.phoenix.authenticate.entity.User)
 	 */
 	@Override
-	public void save(User valueObject) throws NotFoundException, SQLException {
+	public void save(User valueObject,boolean isNewUser) throws NotFoundException, SQLException {
 
-		String sql = "UPDATE user SET password = ?, name = ?, role = ? WHERE (id = ? ) ";
+		String sql = "UPDATE user SET  name = ?, role = ? WHERE (id = ? ) ";
 		PreparedStatement stmt = null;
                 String roles ="";
                 if (valueObject.getRoles()!=null){
@@ -169,12 +170,12 @@ public class UserDaoImpl implements UserDao {
                 }
 		try {
 			stmt = this.connection.prepareStatement(sql);
-			stmt.setString(1, valueObject.getPassword());
-			stmt.setString(2, valueObject.getName());
+			
+			stmt.setString(1, valueObject.getName());
 			//stmt.setString(3, valueObject.getRoles().get(0).getRole());
-                        stmt.setString(3, roles);
+                        stmt.setString(2, roles);
 
-			stmt.setString(4, valueObject.getId());
+			stmt.setString(3, valueObject.getId());
 
 			int rowcount = databaseUpdate(stmt);
 			if (rowcount == 0) {
@@ -192,6 +193,7 @@ public class UserDaoImpl implements UserDao {
 				stmt.close();
 		}
 	}
+        
 
 	/*
 	 * (non-Javadoc)
@@ -201,12 +203,18 @@ public class UserDaoImpl implements UserDao {
 	 * Connection, sg.edu.nus.iss.phoenix.authenticate.entity.User)
 	 */
 	@Override
-	public void delete(User valueObject) throws NotFoundException, SQLException {
+	public void delete(User valueObject) throws NotFoundException, SQLException ,UserProgramConstraintsException{
 
 		String sql = "DELETE FROM user WHERE (id = ? ) ";
 		PreparedStatement stmt = null;
-
+                
+              /*  if( isUserDeletable(valueObject.getId())){
+                    throw new UserProgramConstraintsException("User have assigned one or more scheduled program");
+                }
+              */
+                
 		try {
+                      
 			stmt = this.connection.prepareStatement(sql);
 			stmt.setString(1, valueObject.getId());
 
@@ -492,32 +500,104 @@ public class UserDaoImpl implements UserDao {
 		}
 		return conn;
 	}
+        
+    @Override
+    public boolean isUserAssigned(String uid) throws SQLException {
+
+        String sql = "SELECT * FROM `program-slot` WHERE (producerid = ? OR presenterid = ? ) AND  (programStartDateTime + duration) >= now()";
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+
+        try {
+            stmt = this.connection.prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, uid);
+
+            result = stmt.executeQuery();
+
+            if (result.next()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (result != null) {
+                result.close();
+            }
+        }
+    }
+    
+    @Override
+    public boolean isUserAssignedAsProcedure(String uid) throws SQLException {
+
+        String sql = "SELECT * FROM `program-slot` WHERE (producerid = ? ) AND  (programStartDateTime + duration) >= now()";
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+
+        try {
+            stmt = this.connection.prepareStatement(sql);
+            stmt.setString(1, uid);
+            
+            result = stmt.executeQuery();
+
+            if (result.next()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (result != null) {
+                result.close();
+            }
+        }
+    }
+
+     @Override
+    public boolean isUserAssignedAsPresenter(String uid) throws SQLException {
+
+        String sql = "SELECT * FROM `program-slot` WHERE (presenterid = ? ) AND  (programStartDateTime + duration) >= now()";
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+
+        try {
+            stmt = this.connection.prepareStatement(sql);
+            stmt.setString(1, uid);
+            
+            result = stmt.executeQuery();
+
+            if (result.next()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (result != null) {
+                result.close();
+            }
+        }
+    }
+
+
 
     @Override
     public boolean isUserDeletable(String uid) throws SQLException {
-
-		String sql = "SELECT * FROM `program-slot` WHERE (producer_id = ? OR presenter_id = ? ) AND  (programStartDateTime + duration) >= now()";
-		PreparedStatement stmt = null;
-                ResultSet result =null;
-
-		try {
-			stmt = this.connection.prepareStatement(sql);
-			stmt.setString(1, uid);
-			stmt.setString(2, uid);
-
-                        result = stmt.executeQuery();
-
-			if (result.next()) {
-                            return false;
-			} else {
-                            return true;
-			}
-
-		} finally {
-			if (stmt != null)
-				stmt.close();
-                        if(result!= null)
-                            result.close();
-		}
+        if ( isUserAssigned(uid)){
+            return false;
+        }else {
+            return true;
+        }
     }
+    
 }

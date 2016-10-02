@@ -10,6 +10,7 @@
 <title> <fmt:message key="title.crudrp"/> </title>
 </head>
 <body>
+        
         <h1><fmt:message key="label.crudrp"/></h1>
         <c:url var="url" scope="page" value="/nocturne/addeditrp">
         		<c:param name="name" value=""/>

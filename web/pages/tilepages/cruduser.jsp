@@ -10,6 +10,7 @@
 <title> <fmt:message key="title.cruduser"/> </title>
 </head>
 <body>
+        <h6>${deleteErrMsg}</h6>
         <h1><fmt:message key="label.cruduser"/></h1>
         <c:url var="url" scope="page" value="/nocturne/createmodifyuser">
         		<c:param name="id" value=""/>

@@ -46,29 +46,22 @@ public class CreateModifyUserCmd implements Perform{
         List<Role> roles = new ArrayList();
         List<Role> userRoles = new ArrayList();
         List<String> listUserRole = new ArrayList<String>();
-        
+       
         if (req.getParameter("roles") != null) {
              listUserRole = Arrays.asList(req.getParameter("roles").split(":"));
             for (String strUserRole : listUserRole) {
                 userRoles.add(new Role(strUserRole));
             }
         }
-        
+      
         try {
-            users = del.processFindUser("superUser");
-            for (User user : users) {
-            if ( user.getId().equalsIgnoreCase("superUser"))
-            {
-                for (Role role : user.getRoles()) {
-                    roles.add(role);
-                }
-            }
 
-        }
+            roles = del.processLoadAllRoles();
         } catch (SQLException ex) {
             Logger.getLogger(CreateModifyUserCmd.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+      
+      
         req.setAttribute("insert", req.getParameter("insert"));
         req.setAttribute("errMsg", "");
         req.setAttribute("name", req.getParameter("name"));
