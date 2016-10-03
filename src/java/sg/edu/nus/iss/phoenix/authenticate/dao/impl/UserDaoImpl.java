@@ -501,7 +501,14 @@ public class UserDaoImpl implements UserDao {
 		return conn;
 	}
         
-    @Override
+    /**
+     * This method is to check if user is assigned as producer/presenter in upcoming scheduled programs
+     * @author Mugunthan
+     * @param uid
+     * @return
+     * @throws SQLException 
+     */
+        @Override
     public boolean isUserAssigned(String uid) throws SQLException {
 
         String sql = "SELECT * FROM `program-slot` WHERE (producerid = ? OR presenterid = ? ) AND  (programStartDateTime + duration) >= now()";
@@ -531,6 +538,13 @@ public class UserDaoImpl implements UserDao {
         }
     }
     
+    /**
+     * This method is to check if user is assigned as procedure role in upcoming scheduled program
+     * @author misitesawn
+     * @param uid
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public boolean isUserAssignedAsProcedure(String uid) throws SQLException {
 
@@ -559,7 +573,13 @@ public class UserDaoImpl implements UserDao {
             }
         }
     }
-
+    /**
+     * This method is to check if user is assigned as presenter role in upcoming sheduled program
+     * @author misitesawn
+     * @param uid
+     * @return
+     * @throws SQLException 
+     */
      @Override
     public boolean isUserAssignedAsPresenter(String uid) throws SQLException {
 
