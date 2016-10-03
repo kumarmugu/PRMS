@@ -142,7 +142,6 @@ public class ScheduledProgramService {
          System.out.println("Program end time " + programSlot.getEndTime().getTime() + " - CurrentTime " +  currentTime.getTime()+
                  programSlot);
          if( programSlot.getEndTime().getTime() > currentTime.getTime()){
-             System.out.println("Program end time is less than currentTime");
              return true;
          }
          return false;
