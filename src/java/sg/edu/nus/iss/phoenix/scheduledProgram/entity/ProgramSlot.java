@@ -7,6 +7,7 @@ package sg.edu.nus.iss.phoenix.scheduledProgram.entity;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import sg.edu.nus.iss.phoenix.util.DateUtil;
 import sg.edu.nus.iss.phoenix.util.ValidationResult;
@@ -161,5 +162,26 @@ public class ProgramSlot {
 
     public String getProducerName() {
         return producerName;
+    }
+    
+    @Override
+    public int hashCode() {
+        return (int)getID();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProgramSlot other = (ProgramSlot) obj;
+        if (this.getID() != other.getID()) {
+            return false;
+        }
+
+        return true;
     }
 }
