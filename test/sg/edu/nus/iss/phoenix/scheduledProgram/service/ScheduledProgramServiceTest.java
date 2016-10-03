@@ -70,8 +70,8 @@ public class ScheduledProgramServiceTest {
     private static final Map<Long, ProgramSlot> programSlots = new HashMap<>(); 
     
     
-    private Answer createPS, updatePS, deletePS, loadWeeklyPS ;
-    
+    private final Answer createPS, updatePS, deletePS;
+    private final Answer loadWeeklyPS;
     
     ScheduledProgramService service;
 
@@ -90,24 +90,7 @@ public class ScheduledProgramServiceTest {
         this.presenters = new HashMap<>();
         this.producers = new HashMap<>();
         
-        createPS = new Answer<Object>() {
-        public Object answer(InvocationOnMock invocation) throws SQLException, NotFoundException {
-            ProgramSlot ps = invocation.getArgumentAt(0, ProgramSlot.class);
-            if (ScheduledProgramServiceTest.programSlots.containsKey(ps.getID()) == false) {
-                ScheduledProgramServiceTest.programSlots.put(ps.getID(), ps);
-                
-                Mockito.doThrow(new SQLException()).when(spDao).create(ps);
-                Mockito.doAnswer(updatePS).when(spDao).update(ps);
-                Mockito.doAnswer(deletePS).when(spDao).delete(ps);
-            }
-            else {
-                throw new NotFoundException();
-            }
-            return true;
-        } };
-        
-        updatePS = new Answer<Object>() {
-        public Object answer(InvocationOnMock invocation) throws NotFoundException {
+        updatePS = (Answer<Object>) (InvocationOnMock invocation) -> {
             ProgramSlot ps = invocation.getArgumentAt(0, ProgramSlot.class);
             if (ScheduledProgramServiceTest.programSlots.containsKey(ps.getID()) == true) {
                 ScheduledProgramServiceTest.programSlots.put(ps.getID(), ps);
@@ -116,10 +99,9 @@ public class ScheduledProgramServiceTest {
                 throw new NotFoundException();
             }
             return null;
-        } };
+        };
         
-        deletePS = new Answer<Object>() {
-        public Object answer(InvocationOnMock invocation) throws NotFoundException, SQLException {
+        deletePS = (Answer<Object>) (InvocationOnMock invocation) -> {
             ProgramSlot ps = invocation.getArgumentAt(0, ProgramSlot.class);
             if (ScheduledProgramServiceTest.programSlots.containsKey(ps.getID()) == true) {
                 ScheduledProgramServiceTest.programSlots.remove(ps.getID());
@@ -129,20 +111,34 @@ public class ScheduledProgramServiceTest {
                 throw new NotFoundException();
             }
             return null;
-        } };
+        };
         
-        loadWeeklyPS = new Answer<Object>() {
-        public Object answer(InvocationOnMock invocation) throws NotFoundException, SQLException {
-            WeeklySchedule ws = invocation.getArgumentAt(0, WeeklySchedule.class);
-            ArrayList<ProgramSlot> programSlots = new ArrayList<>();
-            for(ProgramSlot eps : ScheduledProgramServiceTest.programSlots.values()) {
-                if (eps.getWeek() == ws.getWeekNo() && 
-                    eps.getYear() == ws.getYear())
-                    programSlots.add(eps);
+        createPS = (Answer<Object>) (InvocationOnMock invocation) -> {
+            ProgramSlot ps = invocation.getArgumentAt(0, ProgramSlot.class);
+            if (ScheduledProgramServiceTest.programSlots.containsKey(ps.getID()) == false) {
+                ScheduledProgramServiceTest.programSlots.put(ps.getID(), ps);
+                
+                Mockito.doThrow(new SQLException()).when(spDao).create(ps);
+                Mockito.doAnswer(updatePS).when(spDao).update(ps);
+                Mockito.doAnswer(deletePS).when(spDao).delete(ps);
+                when(spDao.getProgramSlot(ps.getStartTime())).thenReturn(ps);
             }
-            ws.setProgramSlots(programSlots);
+            else {
+                throw new NotFoundException();
+            }
+            return true;
+        };
+        
+        loadWeeklyPS = (Answer<Object>) (InvocationOnMock invocation) -> {
+            WeeklySchedule ws = invocation.getArgumentAt(0, WeeklySchedule.class);
+            ArrayList<ProgramSlot> programSlots1 = new ArrayList<>();
+            ScheduledProgramServiceTest.programSlots.values().stream().filter((eps) -> (eps.getWeek() == ws.getWeekNo() && 
+                    eps.getYear() == ws.getYear())).forEach((eps) -> {
+                        programSlots1.add(eps);
+            });
+            ws.setProgramSlots(programSlots1);
             return ws;
-        } };
+        };
     }
 
     /**
@@ -160,11 +156,7 @@ public class ScheduledProgramServiceTest {
         proDao = mock(ProducerDAO.class);
         userDAO = mock(UserDao.class);
         factory = mock(DAOFactoryImpl.class);
-        //MockitoAnnotations.initMocks(this);
         
-
-        
-           
         service = new ScheduledProgramService();
         service.factory = factory;       
         service.spDao = spDao;       
@@ -175,8 +167,7 @@ public class ScheduledProgramServiceTest {
         
         Mockito.doNothing().when(spDao).setManualCommitRequired(true);
         Mockito.doNothing().when(spDao).setManualCommitRequired(false);
-        Mockito.doNothing().when(spDao).complete();
-      
+        Mockito.doNothing().when(spDao).complete();      
 
         createUser("user1", false, false);
         createUser("user2", false, true);
@@ -190,40 +181,16 @@ public class ScheduledProgramServiceTest {
         createRadioPrograms("Radio Program 2");
         createRadioPrograms("Radio Program 3");
         createRadioPrograms("Radio Program 4");
-        
-        
-        
-        
-//        
-//        
-//        Calendar cal = Calendar.getInstance();
-//
-//        WeeklySchedule ws1 = new WeeklySchedule(cal.get(Calendar.YEAR), cal.get(Calendar.WEEK_OF_YEAR));
-//        when(spdao.getAnnualSchedule(ws1)).thenReturn(new AnnualSchedule(cal.get(Calendar.YEAR), "user1"));
-////        ws1.setStartDate(new Date());
-////        when(spdao.loadWeekInfo(ws1)).thenReturn(ws1);
-//        ArrayList<ProgramSlot> programSlots1 = new ArrayList<ProgramSlot>();
-//        for (int i = 0; i < 5; i++) {
-//            programSlots1.add(new ProgramSlot());
-//        }
-//        ws1.setProgramSlots(programSlots1);
-//        when(spdao.loadAllScheduleForWeek(ws1)).thenReturn(ws1);
-//
-//        WeeklySchedule ws2 = new WeeklySchedule(2017, 12);
-//        when(spdao.getAnnualSchedule(ws2)).thenReturn(new AnnualSchedule(2017, "user2"));
-////        when(spdao.loadWeekInfo(ws2)).thenReturn(ws2);
-//        when(spdao.loadAllScheduleForWeek(ws2)).thenReturn(ws2);
-////
-//        WeeklySchedule ws3 = new WeeklySchedule(2018, 10);
-//        when(spdao.getAnnualSchedule(ws3)).thenReturn(null);
-//
-//        ArrayList<ProgramSlot> programSlots2 = new ArrayList<ProgramSlot>();
-//        WeeklySchedule ws4 = new WeeklySchedule(2016, 10);
-//        ws3.setProgramSlots(programSlots2);
-//        when(spdao.getAnnualSchedule(ws4)).thenReturn(new AnnualSchedule(2016, "user2"));
-//        when(spdao.loadAllScheduleForWeek(ws4)).thenThrow(SQLException.class);
     }
     
+    /**
+     * Test Data Operation: 
+     * Create weekly schedule for the whole year
+     * @param year - year in integer
+     * @param name - name of the creator/user
+     * @throws SQLException
+     * @throws NotFoundException 
+     */
     private void createWeeklySchedules(int year, String name) throws SQLException, NotFoundException {
         AnnualSchedule as = new AnnualSchedule(year, name);
         ArrayList<WeeklySchedule> wsList = new ArrayList<>();
@@ -248,6 +215,13 @@ public class ScheduledProgramServiceTest {
         annualsWeeks.put(as, wsList);
     }
 
+    /**
+     * Test Data Operation:
+     * Create Radio programs
+     * @param name - radio program name
+     * @throws NotFoundException
+     * @throws SQLException 
+     */
     private void createRadioPrograms(String name) throws NotFoundException, SQLException{
         RadioProgram rp = new RadioProgram();
         rp.setName(name);
@@ -255,6 +229,15 @@ public class ScheduledProgramServiceTest {
         when(rpDao.getObject(name)).thenReturn(rp);            
     }
     
+    /**
+     * Test Data Operation:
+     *  Create User Data
+     * @param userID   - user id
+     * @param isPresenter - if it is presenter
+     * @param isProducer  - if it is producer
+     * @throws NotFoundException
+     * @throws SQLException 
+     */
     private void createUser(String userID, 
             boolean isPresenter, 
             boolean isProducer) throws NotFoundException, SQLException{
@@ -281,20 +264,29 @@ public class ScheduledProgramServiceTest {
         }
     }    
     
+    /**
+     * Test Data Operation:
+     *  Set up initial mock answer for DAO operation
+     * @param ps
+     * @throws NotFoundException
+     * @throws SQLException 
+     */
     private void setUpDaoForProgramSlot(ProgramSlot ps) throws NotFoundException, SQLException {
         Mockito.doAnswer(createPS).when(spDao).create(ps);
-        when(this.spDao.getProgramSlot(ps.getStartTime())).thenReturn(ps);
-    }
-    
-    private void recordProgramSlot(ProgramSlot ps) throws NotFoundException, SQLException {
-        this.programSlots.put(ps.getID(), ps);
     }
     
     @After
     public void tearDown() {
     }
     
-    //@Test(expected = SQLException.class)
+    /**
+     * Test Normal process flow
+     *  1. Create One schedule Program: Date: 2016-10-05
+     *  2. Copy another one
+     *  3. Modify the sec one
+     *  4. Delete sec one
+     *  5. Delete first one
+     */
 
     @Test   
     public void testNoramlProcess() {
@@ -316,7 +308,6 @@ public class ScheduledProgramServiceTest {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
             service.PorcessCreate(ps);
-            recordProgramSlot(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -330,7 +321,6 @@ public class ScheduledProgramServiceTest {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
             service.PorcessCopy(ps);
-            recordProgramSlot(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -371,7 +361,14 @@ public class ScheduledProgramServiceTest {
        assertTrue(programSlots.size() == 0);
     }
     
-    
+    /**
+     * Test Stress Test process flow
+     *  1. Create One schedule Program: Date: 2016-10-05
+     *  2. Copy another one twice, expect exception on sec copy
+     *  3. Modify the sec one, to overlapping with first
+     *  4. Delete sec one
+     *  5. Delete first one
+     */
     @Test   
     public void testStressTestProcess() {
         // Create, copy, modify , delete delete.
@@ -392,7 +389,6 @@ public class ScheduledProgramServiceTest {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
             service.PorcessCreate(ps);
-            recordProgramSlot(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -406,7 +402,6 @@ public class ScheduledProgramServiceTest {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
             service.PorcessCopy(ps);
-            recordProgramSlot(ps);
             ids.add(ps.getID());
             try {
                 service.PorcessCopy(ps); //Create at same time slot
