@@ -1,1 +1,0 @@
-GRANT ALL ON phoenix.* TO 'phoenix'@'localhost' IDENTIFIED BY 'password';
