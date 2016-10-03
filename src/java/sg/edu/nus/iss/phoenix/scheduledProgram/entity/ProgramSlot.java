@@ -14,7 +14,7 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
- * @author Mugunthan
+ * @author Mugunthan, Zehua, Mi Zaw, Thiri
  */
 //Note:: This class does not include all the parameters
 public class ProgramSlot {

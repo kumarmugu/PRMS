@@ -14,7 +14,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewAndSelectScheduledProgramService;
 
 /**
- * * @author Mugunthan
+ * * @author Mugunthan, Zehua, Mi Zaw, Thiri
  */
 public class ReviewAndSelectScheduledProgramDelegate {
 

@@ -20,7 +20,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.service.ScheduledProgramService;
 import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
- * * @author Mugunthan
+ * * @author Mugunthan, Zehua, Mi Zaw, Thiri
  */
 public class ScheduledProgramDelegate {
 

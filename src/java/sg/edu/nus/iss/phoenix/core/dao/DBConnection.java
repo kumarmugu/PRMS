@@ -14,15 +14,15 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Mugunthan
+ * @author Mugunthan, Zehua
  */
 public class DBConnection {
 
     private Connection myConnection = null;
 
     /**
-     *
-     * @return
+     * Open DB connection when it is close or null
+     * 
      */
     private void openConnection() throws SQLException {
         if (myConnection != null && !myConnection.isClosed()) {
@@ -37,7 +37,12 @@ public class DBConnection {
             throw new SQLException("Unknown SQL Connection class.");
         }
     }
-
+    /**
+     * Get SQL prepare statement object for the connection
+     * @param sql - SQL query in string
+     * @return SQL prepare statement object
+     * @throws SQLException upon SQL error
+     */
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         if (myConnection == null || myConnection.isClosed()) {
             openConnection();
@@ -45,6 +50,11 @@ public class DBConnection {
         return myConnection.prepareStatement(sql);
     }
 
+    /**
+     * Set auto commit mode for this connection
+     * @param autoCommit - set auto commit mode
+     * @throws SQLException upon SQL error
+     */
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         if (myConnection == null || myConnection.isClosed()) {
             openConnection();
@@ -52,6 +62,11 @@ public class DBConnection {
         myConnection.setAutoCommit(autoCommit);
     }
 
+    /**
+     * get current auto commit mode
+     * @return auto commit mode
+     * @throws SQLException upon SQL error
+     */
     public boolean isAutoCommit() throws SQLException {
         if (myConnection == null || myConnection.isClosed()) {
             openConnection();
@@ -59,12 +74,19 @@ public class DBConnection {
         return myConnection.getAutoCommit();
     }
 
+    /**
+     * Commit changes, this only required when it is not in auto commit mode
+     * @throws SQLException upon SQL error
+     */
     public void commit() throws SQLException {
         if (myConnection != null && !myConnection.isClosed()) {
             myConnection.commit();
         }
     }
-
+    /**
+     * Roll back the changes(before commit), only work in non-auto commit mode
+     * @throws SQLException upon SQL error
+     */
     public void rollback() throws SQLException {
         if (myConnection != null && !myConnection.isClosed()) {
             myConnection.rollback();
@@ -72,7 +94,7 @@ public class DBConnection {
     }
 
     /**
-     *
+     * Close current SQL connection
      *
      */
     public void closeConnection() {
