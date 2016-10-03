@@ -184,7 +184,7 @@ public class UserManagementServiceTest {
      * @throws SQLException 
      */
     @Test
-    public void testFindUsersByUserId() throws SQLException{
+    public void testFindUsersByUserId() throws SQLException, NotFoundException{
         ArrayList<User> resultUsers = new ArrayList<>();
         resultUsers = usermanagmentService.processFindUser("finduser");
         if( resultUsers.size() != 4){

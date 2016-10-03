@@ -38,6 +38,8 @@ public class FindUsercmd implements Perform {
             data = del.processFindUser(req.getParameter("userid"));
         } catch (SQLException ex) {
             Logger.getLogger(FindUsercmd.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotFoundException ex) {
+            Logger.getLogger(FindUsercmd.class.getName()).log(Level.SEVERE, null, ex);
         }
         req.setAttribute("findString", req.getParameter("userid"));
         req.setAttribute("users", data);
