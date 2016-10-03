@@ -309,7 +309,7 @@ public class ScheduledProgramServiceTest {
        try {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
-            service.PorcessCreate(ps);
+            service.processCreate(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -322,7 +322,7 @@ public class ScheduledProgramServiceTest {
        try {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
-            service.PorcessCopy(ps);
+            service.processCopy(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -390,7 +390,7 @@ public class ScheduledProgramServiceTest {
        try {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
-            service.PorcessCreate(ps);
+            service.processCreate(ps);
             ids.add(ps.getID());
         } catch (Exception ex) {
             Logger.getLogger(ScheduledProgramServiceTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -403,10 +403,10 @@ public class ScheduledProgramServiceTest {
        try {
             ProgramSlot ps = service.constructProgramSlot(parameters, user);
             setUpDaoForProgramSlot(ps);
-            service.PorcessCopy(ps);
+            service.processCopy(ps);
             ids.add(ps.getID());
             try {
-                service.PorcessCopy(ps); //Create at same time slot
+                service.processCopy(ps); //Create at same time slot
                 fail();
             }catch (Exception ex) {
                 //expected fails due to already exists

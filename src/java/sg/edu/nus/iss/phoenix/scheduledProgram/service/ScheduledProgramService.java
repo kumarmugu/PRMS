@@ -34,10 +34,10 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
- * @author Mugunthan
+ * @author Mugunthan, Zehua, Mi Zaw, Thiri
  */
 public class ScheduledProgramService {
-
+    // Public DAO for Mockito to access. 
     DAOFactoryImpl factory;
     ScheduleDAO spDao;
     ProgramDAO rpDao;
@@ -59,8 +59,10 @@ public class ScheduledProgramService {
     }
 
     /**
-     *
-     *
+     * Process delete program slot
+     *  throws NotFoundException when there is not such program slot in DB
+     *  or SQLException when there is SQL connection error
+     *  or ScheduledProgramNotDeletableException when the program slot can not be deleted due to business rule(s)
      */
     public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException, ScheduledProgramNotDeletableException{
         if (IsProgramSlotDeletable(programSlot)) {
@@ -75,7 +77,10 @@ public class ScheduledProgramService {
         }
     }
 
-    // public abstract Boolean PorcessCreateAnnualSchedule(AnnualSchedule as) throws SQLException;
+    /**
+     * Create annual schedule, with all weekly schedule in the year
+     * @param as - the annual schedule
+     */
     public void processCreateAnnualSchedule(AnnualSchedule as) {
 
         try {
@@ -103,7 +108,12 @@ public class ScheduledProgramService {
 
     }
 
-    public void PorcessCreate(ProgramSlot programSlot)throws Exception  {
+    /**
+     * Create Program slot
+     * @param programSlot - the new program slot to be created in DB
+     * @throws Exception - when validation fails or sql connection error
+     */
+    public void processCreate(ProgramSlot programSlot)throws Exception  {
         
            ProgramSlot existingProgramSlot = getProgramSlot(programSlot.getID());
         if (existingProgramSlot != null
@@ -138,11 +148,21 @@ public class ScheduledProgramService {
          return false;
          
     }
-
-    public void PorcessCopy(ProgramSlot newProgramSlot) throws Exception {
-        PorcessCreate(newProgramSlot); // reuse. same logic applies
+    /**
+     * Copy Program slot, similar to Create program slot 
+     * @param newProgramSlot - the new program slot to be created in DB
+     * @throws Exception - when validation fails or sql connection error
+     */
+    public void processCopy(ProgramSlot newProgramSlot) throws Exception {
+        processCreate(newProgramSlot); // reuse. same logic applies
     }
 
+    /**
+     * Modify Program slot
+     * @param modifyingProgramSlot - the old program slot is modifying 
+     * @param newProgramSlot - the new program slot to be created in DB
+     * @throws Exception - when validation fails or sql connection error
+     */
     public void processModify(ProgramSlot modifyingProgramSlot, ProgramSlot newProgramSlot) throws Exception {
         ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
         if (existingProgramSlot != null
@@ -180,6 +200,15 @@ public class ScheduledProgramService {
         }
     }
 
+    /**
+     * Validate Program slot data from two aspects
+     *  1. entity rules - mainly focus on new program slot 
+     *  2. business rules
+     * @param newProgramSlot - new program slot
+     * @param modifyingProgramSlot - the old program slot
+     * @return Validation result as boolean.
+     * @throws Exception upon failure
+     */
     private ValidationResult<Boolean> validateData(ProgramSlot newProgramSlot,ProgramSlot modifyingProgramSlot) throws Exception {
         ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
         if (!validation.result) {
@@ -195,6 +224,11 @@ public class ScheduledProgramService {
         return new ValidationResult(true);
     } 
     
+    /**
+     * Get program slot with specific ID
+     * @param id - program slot ID == program slot start date time
+     * @return program slot found or null when not found;
+     */
     public ProgramSlot getProgramSlot(long id) {
         try {
             return spDao.getProgramSlot(new Date(id));
@@ -203,6 +237,13 @@ public class ScheduledProgramService {
         }
     }
 
+    /**
+     * Construct program slot with parameter map
+     * @param params - program slot parameter map
+     * @param user - the user who creating this 
+     * @return - program slot object
+     * @throws Exception - when parameters are insufficient or incorrect
+     */
     public ProgramSlot constructProgramSlot(Map<String, String[]> params, User user) throws Exception {
 
         String programName = params.get("program")[0];//req.getParameter("program");
@@ -254,7 +295,17 @@ public class ScheduledProgramService {
         return ps;
     }
 
-    public ValidationResult validateProgramSlotDetail(ProgramSlot ps) {
+    /**
+     * Validate Program slot detail
+     *  - check radio program name
+     *  - check presenter name
+     *  - check producer name
+     *  - check updater name
+     *  - check updating time vs creation time
+     * @param ps - the program slot to be validated
+     * @return validation result
+     */
+    public ValidationResult<Boolean> validateProgramSlotDetail(ProgramSlot ps) {
         ValidationResult<Boolean> valdiation = ps.valdiate();
         if (valdiation.result == false) {
             return valdiation;
@@ -290,6 +341,12 @@ public class ScheduledProgramService {
         return valdiation;
     }
 
+    /**
+     * Checking if the new program slot will be overlapping with existing program slots
+     * @param newPs - the new program slot 
+     * @param oldPs - the old program slot, to be excluded from checking
+     * @return true when there is overlapping, false for not overlapping. 
+     */
     public boolean isProgramSlotOverlapping(ProgramSlot newPs, ProgramSlot oldPs) {
         if (newPs == null) {
             return false;

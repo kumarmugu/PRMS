@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * Validation result
+ *  - result : the result that is expected
+ *  - reasons: the reasons for validation failure
  * @author Rong
  */
 public class ValidationResult<T> {

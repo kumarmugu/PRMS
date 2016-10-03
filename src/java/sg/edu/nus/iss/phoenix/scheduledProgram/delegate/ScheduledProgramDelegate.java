@@ -48,7 +48,7 @@ public class ScheduledProgramDelegate {
     
     public void ProcessCreate(ProgramSlot prd) throws Exception
     {
-        service.PorcessCreate(prd);
+        service.processCreate(prd);
     }
 
     public void processDelete(ProgramSlot programSlot) throws NotFoundException, SQLException,ScheduledProgramNotDeletableException {
@@ -68,7 +68,7 @@ public class ScheduledProgramDelegate {
     
     public ProgramSlot ProcessCopy(ProgramSlot newProgramSlot) throws Exception
     {
-        service.PorcessCopy(newProgramSlot);
+        service.processCopy(newProgramSlot);
         return newProgramSlot;  
     }
     
