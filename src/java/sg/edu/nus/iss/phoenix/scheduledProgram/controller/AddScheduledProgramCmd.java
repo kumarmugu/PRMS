@@ -30,7 +30,7 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
- * @author Mi Zaw
+ * @author Phyu Me Zaw
  */
 @Action("addsp")
 public class AddScheduledProgramCmd implements Perform {

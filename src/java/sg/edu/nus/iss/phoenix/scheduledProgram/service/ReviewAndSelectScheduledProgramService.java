@@ -21,7 +21,7 @@ import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
- * @author Mugunthan
+ * @author Mugunthan,Phyu Me Zaw
  */
 public class ReviewAndSelectScheduledProgramService {
 

@@ -15,7 +15,7 @@ import sg.edu.nus.iss.phoenix.scheduledProgram.entity.WeeklySchedule;
 
 /**
  *
- * @author Mugunthan, Zehua, Mi Zaw, Thiri
+ * @author Mugunthan, Zehua,  Phyu Me Zaw, Thiri
  */
 public interface ScheduleDAO {
 

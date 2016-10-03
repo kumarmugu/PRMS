@@ -24,7 +24,7 @@ import sg.edu.nus.iss.phoenix.util.DateUtil;
 
 /**
  *
- * @author Mugunthan, Zehua, Mi Zaw, Thiri
+ * @author Mugunthan, Zehua, Phyu Me Zaw, Thiri
  */
 public class ScheduleDAOImpl implements ScheduleDAO {
 
