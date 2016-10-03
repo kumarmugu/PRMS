@@ -70,7 +70,9 @@ public class ScheduledProgramServiceTest {
     private static final Map<Long, ProgramSlot> programSlots = new HashMap<>(); 
     
     
-    private final Answer createPS, updatePS, deletePS;
+    private final Answer createPS;
+    private final Answer updatePS;
+    private final Answer deletePS;
     private final Answer loadWeeklyPS;
     
     ScheduledProgramService service;
