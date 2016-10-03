@@ -40,7 +40,7 @@ public class UserDelegate {
     }
     
      
-    public ArrayList<User> processFindUser(String userId) throws SQLException{
+    public ArrayList<User> processFindUser(String userId) throws SQLException, NotFoundException{
         return usrservice.processFindUser(userId);
     }
     
