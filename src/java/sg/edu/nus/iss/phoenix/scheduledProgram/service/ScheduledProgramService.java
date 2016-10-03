@@ -103,27 +103,22 @@ public class ScheduledProgramService {
 
     }
 
-    public void PorcessCreate(ProgramSlot srp)throws Exception  {
+    public void PorcessCreate(ProgramSlot programSlot)throws Exception  {
         
-           ProgramSlot existingProgramSlot = getProgramSlot(srp.getID());
+           ProgramSlot existingProgramSlot = getProgramSlot(programSlot.getID());
         if (existingProgramSlot != null
-                && existingProgramSlot.getID() != srp.getID()) {
+                && existingProgramSlot.getID() != programSlot.getID()) {
             throw new Exception("A Program already exists in the new timeslot.");
         }
 
-        ValidationResult<Boolean> validation = validateProgramSlotDetail(srp);
+        ValidationResult<Boolean> validation = validateData(programSlot, null);
         if (!validation.result) {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
         }
 
-        boolean isOverlapping = isProgramSlotOverlapping(srp, null);
-        if (isOverlapping) {
-            throw new Exception("New time slot is overlapping with existing program slot(s). ");
-        }
-
         try {
             
-            spDao.create(srp);
+            spDao.create(programSlot);
             spDao.complete();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -145,39 +140,7 @@ public class ScheduledProgramService {
     }
 
     public void PorcessCopy(ProgramSlot newProgramSlot) throws Exception {
-        ProgramSlot existingProgramSlot = getProgramSlot(newProgramSlot.getID());
-        if (existingProgramSlot != null
-                && existingProgramSlot.getID() != newProgramSlot.getID()) {
-            throw new Exception("A Program already exists in the new timeslot.");
-        }
-
-        ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
-        if (!validation.result) {
-            throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
-        }
-
-        boolean isOverlapping = isProgramSlotOverlapping(newProgramSlot, null);
-        if (isOverlapping) {
-            throw new Exception("New time slot is overlapping with existing program slot(s). ");
-        }
-
-        try {
-            /*
-                spDao.setManualCommitRequired(true);
-                try {
-                    spDao.getScheduleForWeek(newProgramSlot.getYear(),newProgramSlot.getWeek());
-                } catch (NotFoundException e) {
-                    WeeklySchedule ws = new WeeklySchedule(newProgramSlot.getYear(),newProgramSlot.getWeek());
-                    spDao.create(ws);
-                }
-                spDao.create(newProgramSlot);
-                spDao.setManualCommitRequired(false);  */
-            spDao.create(newProgramSlot);
-            spDao.complete();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        PorcessCreate(newProgramSlot); // reuse. same logic applies
     }
 
     public void processModify(ProgramSlot modifyingProgramSlot, ProgramSlot newProgramSlot) throws Exception {
@@ -187,14 +150,9 @@ public class ScheduledProgramService {
             throw new Exception("A Program already exists in the new timeslot.");
         }
 
-        ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
+        ValidationResult<Boolean> validation = validateData(newProgramSlot, modifyingProgramSlot);
         if (!validation.result) {
             throw new Exception("Invalid Program Slot. " + validation.reasons.toString());
-        }
-
-        boolean isOverlapping = isProgramSlotOverlapping(newProgramSlot, modifyingProgramSlot);
-        if (isOverlapping) {
-            throw new Exception("New time slot is overlapping with existing program slot(s). ");
         }
 
         try {
@@ -218,10 +176,25 @@ public class ScheduledProgramService {
 
         } catch (NotFoundException | SQLException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw e;
         }
     }
 
+    private ValidationResult<Boolean> validateData(ProgramSlot newProgramSlot,ProgramSlot modifyingProgramSlot) throws Exception {
+        ValidationResult<Boolean> validation = validateProgramSlotDetail(newProgramSlot);
+        if (!validation.result) {
+            return validation;
+        }
+
+        boolean isOverlapping = isProgramSlotOverlapping(newProgramSlot, modifyingProgramSlot);
+        if (isOverlapping) {
+            validation = new ValidationResult(false);
+            validation.reasons.add("New time slot is overlapping with existing program slot(s). ");
+            return validation;
+        }     
+        return new ValidationResult(true);
+    } 
+    
     public ProgramSlot getProgramSlot(long id) {
         try {
             return spDao.getProgramSlot(new Date(id));
