@@ -19,7 +19,7 @@ import sg.edu.nus.iss.phoenix.core.exceptions.ScheduledProgramNotDeletableExcept
 
 /**
  *
- * @author Mugunthan, Zehua, Mi Zaw, Thiri
+ * @author Mugunthan, Zehua, Phyu Me Zaw, Thiri
  */
 public class DateUtil {
         private static final Map<Integer, String> myDayMap = new HashMap<Integer, String>() {
