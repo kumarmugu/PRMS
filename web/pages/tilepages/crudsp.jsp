@@ -354,10 +354,6 @@
                     $("#details #msg").html(msg);
                 }
                 if (mode === "create") {
-                    $("#program").val("");
-                    $("#presenter").val("");
-                    $("#producer").val("");
-
                     setReadOnly("#details #startTime", true);
                     setReadOnly("#details #endTime", true);
                     dateChange();

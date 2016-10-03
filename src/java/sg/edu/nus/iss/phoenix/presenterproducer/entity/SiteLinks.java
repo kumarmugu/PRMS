@@ -10,15 +10,28 @@ import java.io.Serializable;
 /**
  *
  * @author THIRILWIN
+ * 
+ * SiteLinks Value Object. This class is value object representing database table
+ * role This class is intended to be used together with associated Dao object.
  */
 public class SiteLinks implements Cloneable, Serializable  {
+    /**
+	 * Persistent Instance variables. 
+     */
     private String ID;
     private String SiteLink;
     private String URL;
     
+    /**
+	 * Constructors. The first one takes no arguments and provides the most
+	 * simple way to create object instance. 
+	 */
     public SiteLinks(){}
 
     /**
+	 * Get- and Set-methods for persistent variables. The default behaviour does
+	 * not make any checks against malformed data, so these might require some
+	 * manual additions.
      * @return the ID
      */
     public String getID() {
