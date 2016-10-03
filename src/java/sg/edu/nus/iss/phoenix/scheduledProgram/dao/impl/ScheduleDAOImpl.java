@@ -5,14 +5,11 @@
  */
 package sg.edu.nus.iss.phoenix.scheduledProgram.dao.impl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,8 +48,8 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     public boolean getManualCommitRequired() throws SQLException {
         return !dbUtil.isAutoCommit();
     }
-    
-    public void complete() throws SQLException  {
+
+    public void complete() throws SQLException {
         if (getManualCommitRequired()) {
             dbUtil.commit();
         }

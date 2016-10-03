@@ -6,7 +6,6 @@
 package sg.edu.nus.iss.phoenix.scheduledProgram.service;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +30,7 @@ public class ReviewAndSelectScheduledProgramService {
     UserDao userDAO;
 
     /**
-     * 
+     * This is the constructor method of ReviewAndSelectScheduledProgramService
      */
     public ReviewAndSelectScheduledProgramService() {
         super();
@@ -41,60 +40,25 @@ public class ReviewAndSelectScheduledProgramService {
     }
 
     /**
-     * 
-     * 
+     * This method will return all the scheduled programs for a week. As default
+     * this method will return all the scheduled program for current week(year
+     * and week parameters are null).
+     *
+     * If the year is not exist in the application it will throw
+     * AnnualSchedueNotExistException
+     *
+     * @param year - Current year will be used if this parameter is null
+     * @param week - Current week will be used if this parameter is null
+     * @return WeeklySchedule - Includes list of program slot for a week
+     * @throws AnnualSchedueNotExistException - If annual schedule not exist
      */
-    public void processDelete(String id) {
-    }
-    
-    // public abstract Boolean PorcessCreateAnnualSchedule(AnnualSchedule as) throws SQLException;
-
-    public  void PorcessCreateAnnualSchedule(AnnualSchedule as){
-        
-        try { 
-                ArrayList<WeeklySchedule> wsList= new ArrayList<WeeklySchedule>();
-                WeeklySchedule ws;
-                  
-                  for(int i=1;i<54;i++)
-                  {
-                     ws = new WeeklySchedule();
-                      if(i==1){
-                          ws.setStartDate(DateUtil.getFirstDayOfYear(as.getYear()));}
-                      else{
-                            ws.setStartDate(DateUtil.getStartDateOfWeek( as.getYear(), i));}                        
-                            ws.setWeekNo(i);
-                            ws.setYear(as.getYear());                      
-                            wsList.add(ws);
-                  }
-                  
-                   spdao.processCreateAnnualSchedule(as,wsList);
-                
-                  
-              }
-            
-         catch (SQLException ex) {
-            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
-    
-   
-    
-    /**
-     * 
-     * @param year
-     * @param week
-     * @return
-     * @throws AnnualSchedueNotExistException 
-     */
-    
     public WeeklySchedule reviewSelectScheduledProgram(String year, String week) throws AnnualSchedueNotExistException, SQLException {
         WeeklySchedule ws = null;
         Calendar cal = Calendar.getInstance();
         cal.setFirstDayOfWeek(1);
         cal.setMinimalDaysInFirstWeek(1);
         int yearToSearch = cal.get(Calendar.YEAR);
-        int weekToSearch  = cal.get(Calendar.WEEK_OF_YEAR);
+        int weekToSearch = cal.get(Calendar.WEEK_OF_YEAR);
         try {
             if (year != null && year.matches("^-?\\d{4}+$") && week != null && week.matches("^-?\\d+$")) {
                 yearToSearch = Integer.parseInt(year);
@@ -103,21 +67,20 @@ public class ReviewAndSelectScheduledProgramService {
             ws = new WeeklySchedule(yearToSearch, weekToSearch);
             ws.setStartDate(DateUtil.getStartDateOfWeek(yearToSearch, weekToSearch));
             AnnualSchedule as = spdao.getAnnualSchedule(ws);
-            
-            if(as != null)
-            {
+
+            if (as != null) {
                 ws = spdao.loadAllScheduleForWeek(ws);
-                for( ProgramSlot ps : ws.getProgramSlots()) {                    
+                for (ProgramSlot ps : ws.getProgramSlots()) {
                     try {
-                            ps.setPresenterName(userDAO.getObject(ps.getPresenterId()).getName());
-                            ps.setProducerName(userDAO.getObject(ps.getProducerId()).getName());
+                        ps.setPresenterName(userDAO.getObject(ps.getPresenterId()).getName());
+                        ps.setProducerName(userDAO.getObject(ps.getProducerId()).getName());
                     } catch (NotFoundException ex) {
-                            Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                }
+            } else {
+                throw new AnnualSchedueNotExistException("Annual Schedule not exist");
             }
-            else 
-                 throw new AnnualSchedueNotExistException("Annual Schedule not exist");
         } catch (SQLException ex) {
             Logger.getLogger(ReviewAndSelectScheduledProgramService.class.getName()).log(Level.SEVERE, null, ex);
             throw ex;
