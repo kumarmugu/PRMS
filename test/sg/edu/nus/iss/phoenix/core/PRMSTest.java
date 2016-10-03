@@ -15,13 +15,22 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import sg.edu.nus.iss.phoenix.scheduledProgram.service.ReviewAndSelectScheduledProgramServiceTest;
 import sg.edu.nus.iss.phoenix.presenterproducer.service.ReviewSelectPresenterProducerServiceTest;
+import sg.edu.nus.iss.phoenix.scheduledProgram.service.ScheduledProgramServiceTest;
+import sg.edu.nus.iss.phoenix.user.service.UserManagementServiceTest;
+import sg.edu.nus.iss.phoenix.util.DateUtilTest;
 
 /**
  *
  * @author Mugunthan
  */
-@RunWith(Suite.class)@Suite.SuiteClasses({ReviewSelectPresenterProducerServiceTest.class,
-					 ReviewSelectPresenterProducerServiceTest.class})
+@RunWith(Suite.class)@Suite.SuiteClasses({ReviewAndSelectScheduledProgramServiceTest.class,
+					 ReviewSelectPresenterProducerServiceTest.class,
+                                         ScheduledProgramServiceTest.class,
+                                         UserManagementServiceTest.class,
+                                         DateUtilTest.class})
+/**
+ * This is the test suit which includes all the unit test of PRMS application
+ */
 public class PRMSTest {
 
 }

@@ -13,7 +13,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Mugunthan
+ * @author Mi Zaw
  */
 public class DateUtilTest {
  

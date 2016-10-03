@@ -23,22 +23,27 @@ public interface ScheduleDAO {
 
     /**
      * Create Program slot in DB
+     *
      * @param ValueObject - the program slot value object
      * @return true if it successes, else return false
      * @throws SQLException upon sql error (connection or insertion error)
      */
     public abstract boolean create(ProgramSlot ValueObject)
             throws SQLException;
+
     /**
      * Delete Program slot in DB
+     *
      * @param ValueObject - the program slot value object
      * @return true if it successes, else return false
      * @throws SQLException upon sql error (connection or insertion error)
      */
     public abstract void delete(ProgramSlot valueObject)
             throws NotFoundException, SQLException;
+
     /**
      * Modify Program slot in DB
+     *
      * @param ValueObject - the program slot value object
      * @return true if it successes, else return false
      * @throws SQLException upon sql error (connection or insertion error)
@@ -60,7 +65,8 @@ public interface ScheduleDAO {
 
     /**
      * Get annual schedule from DB
-     * @param ws - the weekly schedule 
+     *
+     * @param ws - the weekly schedule
      * @return annual schedule if found
      * @throws SQLException on sql error
      */
@@ -68,6 +74,7 @@ public interface ScheduleDAO {
 
     /**
      * Create new annual schedule with specific weekly schedule list
+     *
      * @param as - annual schedule to be created
      * @param wsList - weekly schedule for the whole year
      * @return true upon success else return false
@@ -77,10 +84,11 @@ public interface ScheduleDAO {
 
     /**
      * Get program slot with specific start time from DB
+     *
      * @param theStartTime - the start time of the program slot
      * @return the program slot if found
      * @throws NotFoundException when not found
-     * @throws SQLException  when sql error
+     * @throws SQLException when sql error
      */
     public ProgramSlot getProgramSlot(Date theStartTime) throws NotFoundException, SQLException;
 
@@ -88,6 +96,7 @@ public interface ScheduleDAO {
 
     /**
      * Set DAO connection manual commit required
+     *
      * @param manual - if manual required
      * @throws SQLException on sql connection error
      */
@@ -95,21 +104,23 @@ public interface ScheduleDAO {
 
     /**
      * Query current setting, if manual commit is required
+     *
      * @return true when it need manual commit,, else return false
      * @throws SQLException upon sql connection error
      */
     public boolean getManualCommitRequired() throws SQLException;
-    
+
     /**
-     * Complete DAO transaction
-     *  this will trigger db connection to commit 
-     *  and then close the db connection.
-     * @throws SQLException 
+     * Complete DAO transaction this will trigger db connection to commit and
+     * then close the db connection.
+     *
+     * @throws SQLException
      */
     public void complete() throws SQLException;
 
     /**
      * Create weekly schedule in to DB
+     *
      * @param valueObject - weekly schedule to be inserted
      * @throws SQLException upon sql error
      */

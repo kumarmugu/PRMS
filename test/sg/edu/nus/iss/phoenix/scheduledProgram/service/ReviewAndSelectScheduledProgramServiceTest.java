@@ -44,14 +44,6 @@ public class ReviewAndSelectScheduledProgramServiceTest {
 
     ReviewAndSelectScheduledProgramService reviewSelectScheduledService;
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
     /**
      * This method will execute before test case execute. This method mock the
      * ScheduleDAO, DAOFactoryImpl. Also it mocks methods of ScheduleDAO with
@@ -107,10 +99,6 @@ public class ReviewAndSelectScheduledProgramServiceTest {
         when(spdao.loadAllScheduleForWeek(ws4)).thenThrow(SQLException.class);
         
         when(spdao.processCreateAnnualSchedule(new AnnualSchedule(2016, "user2"), new ArrayList<WeeklySchedule>())).thenThrow(SQLException.class);
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**

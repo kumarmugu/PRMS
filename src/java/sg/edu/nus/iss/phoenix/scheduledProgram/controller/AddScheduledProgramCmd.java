@@ -30,7 +30,7 @@ import sg.edu.nus.iss.phoenix.util.ValidationResult;
 
 /**
  *
- * @author Mugunthan
+ * @author Mi Zaw
  */
 @Action("addsp")
 public class AddScheduledProgramCmd implements Perform {
@@ -75,7 +75,18 @@ public class AddScheduledProgramCmd implements Perform {
              
         WeeklySchedule ws= null;
         if (srd == null) {
-            srd = new ProgramSlot();
+            Date startDate = DateUtil.getDate(req.getParameter("date"), "yyyy-MM-dd");
+            Date startTime = DateUtil.getTime(req.getParameter("startTime"), "HH:mm");
+            Date endTime = DateUtil.getTime(req.getParameter("endTime"), "HH:mm");
+
+            Date startDateTime = DateUtil.AddDateTime(startDate, startTime);
+            Date endDateTime = DateUtil.AddDateTime(startDate, endTime);
+            srd = new ProgramSlot(startDateTime, endDateTime, program);
+            srd.setPresenterName(presenter);
+            srd.setPresenterId(presetnerid);
+            srd.setProducerId(producerid);
+            srd.setProducerName(producer);
+            srd.setProgramName(program);
         }
         try {
             ws = del.reviewSelectScheduledProgram(year, week);
@@ -88,23 +99,14 @@ public class AddScheduledProgramCmd implements Perform {
           
         } catch (SQLException ex) {
             Logger.getLogger(AddScheduledProgramCmd.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
         
-        if (srd == null) {
-            srd = new ProgramSlot();
-        }
-        
-        if (ws == null) {
-            ws = new WeeklySchedule();
-        }
-        
-        
-        req.setAttribute("program",program);
-        req.setAttribute("scheduledProgramId", programid);
-        req.setAttribute("producer", "ZZZZZZZZZZZZZZZZZZZZZZZ");
-        req.setAttribute("producerId", producerid);
-        req.setAttribute("presenter", presenter);
-        req.setAttribute("presenterId",presetnerid);
+//        req.setAttribute("program",program);
+//        req.setAttribute("scheduledProgramId", programid);
+//        req.setAttribute("producer", "ZZZZZZZZZZZZZZZZZZZZZZZ");
+//        req.setAttribute("producerId", producerid);
+//        req.setAttribute("presenter", presenter);
+//        req.setAttribute("presenterId",presetnerid);
        
         
         
