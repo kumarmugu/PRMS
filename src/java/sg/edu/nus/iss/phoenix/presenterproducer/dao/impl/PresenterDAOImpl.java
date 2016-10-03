@@ -21,6 +21,10 @@ import sg.edu.nus.iss.phoenix.presenterproducer.entity.Presenter;
  *
  * @author THIRILWIN
  */
+/**
+ * Presenter Data Access Object (DAO). This class contains all database handling that
+ * is needed to permanently store and retrieve Presenter object instances.
+ */
 public class PresenterDAOImpl implements PresenterDAO{
     Connection connection;
     
@@ -76,6 +80,17 @@ public class PresenterDAOImpl implements PresenterDAO{
 		}
 	}
 
+    /**
+	 * databaseQuery-method. This method is a helper method for internal use. It
+	 * will execute all database queries that will return multiple rows. The
+	 * result set will be converted to the List of valueObjects. If no rows were
+	 * found, an empty List will be returned.
+	 * 
+	 * @param stmt
+	 *            This parameter contains the SQL statement to be executed.
+     * @return ListOfPresenter
+     * @throws java.sql.SQLException
+	 */
     private List<Presenter> listQuery(PreparedStatement stmt) throws SQLException {
                  ArrayList<Presenter> searchResults = new ArrayList<>();
 		ResultSet result = null;
