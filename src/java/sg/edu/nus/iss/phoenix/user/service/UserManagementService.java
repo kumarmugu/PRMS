@@ -166,25 +166,23 @@ public class UserManagementService {
      * @return
      * @throws SQLException 
      */
-    public ArrayList<User> processFindUser(String userId) throws SQLException {
-        ArrayList<User> users  = new ArrayList();
-        User user = new User(userId);
-        if(  user.getId().equalsIgnoreCase("superuser")){
-            try {
-                List<Role> roles =   roledao.loadAll();
-                user.setRoles((ArrayList<Role>) roles);
-            } catch (SQLException ex) {
-                Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
+    public ArrayList<User> processFindUser(String userId) throws SQLException, NotFoundException {
+          ArrayList<User> users  = new ArrayList();
+         
+      
+        try {
+            users = (ArrayList<User>) usrdao.searchById(userId);
+            for(User user:users){
+                for(Role role:user.getRoles()){
+                    role.setAccessPrivilege(roledao.getObject(role.getRole()).getAccessPrivilege());
+                }
             }
-            users.add(user);
-            return users;
-            
+        } catch (SQLException ex) {
+            Logger.getLogger(UserManagementService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        users = (ArrayList<User>) usrdao.searchById(userId);
+      
         return users;
-        
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      
     } 
     
 }
