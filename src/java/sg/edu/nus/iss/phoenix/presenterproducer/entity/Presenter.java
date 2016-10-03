@@ -10,16 +10,26 @@ import java.io.Serializable;
 /**
  *
  * @author THIRILWIN
+ * 
+ * Presenter Value Object. This class is value object representing database table
+ * role This class is intended to be used together with associated Dao object.
  */
+ 
 public class Presenter implements Cloneable, Serializable {
     
+    /**
+	 * Persistent Instance variables. 
+     */
     private String id;
     private String name;
     private String Photo;
     private String Email;
     private String Description;
 
-      
+     /**
+	 * Constructors. The first one takes no arguments and provides the most
+	 * simple way to create object instance. 
+	 */
     public Presenter () {
 
     }
@@ -32,6 +42,9 @@ public class Presenter implements Cloneable, Serializable {
     }
 
     /**
+        * Get- and Set-methods for persistent variables. The default behaviour does
+        * not make any checks against malformed data, so these might require some
+        * manual additions.
      * @return the id
      */
     public String getId() {

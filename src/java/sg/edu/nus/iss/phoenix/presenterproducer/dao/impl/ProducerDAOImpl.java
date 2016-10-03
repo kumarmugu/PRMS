@@ -21,6 +21,10 @@ import sg.edu.nus.iss.phoenix.presenterproducer.entity.Producer;
  *
  * @author THIRILWIN
  */
+/**
+ * Producer Data Access Object (DAO). This class contains all database handling that
+ * is needed to permanently store and retrieve Producer object instances.
+ */
 public class ProducerDAOImpl implements ProducerDAO {
          
        Connection connection;
@@ -68,6 +72,17 @@ public class ProducerDAOImpl implements ProducerDAO {
 		}
 	}
 
+    /**
+	 * databaseQuery-method. This method is a helper method for internal use. It
+	 * will execute all database queries that will return multiple rows. The
+	 * result set will be converted to the List of valueObjects. If no rows were
+	 * found, an empty List will be returned.
+	 * 
+	 * @param stmt
+	 *            This parameter contains the SQL statement to be executed.
+     * @return ListOfProducer
+     * @throws java.sql.SQLException
+	 */
     private List<Producer> listQuery(PreparedStatement stmt) throws SQLException {
                  ArrayList<Producer> searchResults = new ArrayList<>();
 		ResultSet result = null;
