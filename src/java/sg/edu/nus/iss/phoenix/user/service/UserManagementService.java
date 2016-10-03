@@ -41,8 +41,9 @@ public class UserManagementService {
 		usrdao = factory.getUserDAO();
 		roledao = factory.getRoleDAO();
     }
+    
     /**
-     * This method will Load all the User Roles
+     * This method will Load all the User Rolesl
      * @return ArrayList<Role>
      */
     public ArrayList<Role> processLoadAllRoles(){
@@ -57,7 +58,7 @@ public class UserManagementService {
     }
     
     /**
-     * This method will Load All the existing users
+     * This method will Load All the existing users.
      * @return ArrayList<User>
      * @throws NotFoundException 
      */
@@ -78,9 +79,9 @@ public class UserManagementService {
     }
     
     /**
-     * This method will modify user
-     * Exceptions will throws when to try to remove roles of presenter/producer 
-     * if user is assigned in upcoming scheduled programs
+     * This method will modify user.
+     * Exception will throw when try to remove user presenter/producer roles which
+     * user is assigned in upcoming scheduled programs
      * @param user
      * @throws NotFoundException
      * @throws SQLException
@@ -125,8 +126,9 @@ public class UserManagementService {
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     }
+    
     /**
-     * This method will process delete user 
+     * This method will process delete user. 
      * Exception will thrown if try to delete user that assigned in upcoming scheduled program
      * @param userId
      * @throws NotFoundException
@@ -140,7 +142,12 @@ public class UserManagementService {
         usrdao.delete(user);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    /**
+     * This method will create new User.
+     * @param user
+     * @throws SQLException 
+     */
     public void processCreateUser(User user) throws SQLException{
         try {
             usrdao.create(user);
