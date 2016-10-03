@@ -346,10 +346,12 @@
 
                     $("#details #startTime").attr('readonly', true);
                     $("#details #endTime").attr('readonly', true);
+                    dateChange();
                 } else if (mode === "modify") {
                     $("#details #date").attr('readonly', false);
                     $("#details #startTime").attr('readonly', false);
                     $("#details #endTime").attr('readonly', false);
+                    dateChange();
                 } else if (mode === "copy") {
                     $("#scheduledProgramId").val(0);
                     if (msg === "")
@@ -399,7 +401,8 @@
                     return;
                 $("#details #year").attr('value', date.getFullYear());
                 var onejan = new Date(date.getFullYear(), 0, 1);
-                var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+                var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay()) / 7);
+                //var week = date.getWeek();
                 $("#details #week").attr('value', week);
                 $("#details #day").attr('value', days[date.getDay()]);
             }
