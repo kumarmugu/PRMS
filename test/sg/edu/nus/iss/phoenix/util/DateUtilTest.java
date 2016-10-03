@@ -7,17 +7,20 @@ package sg.edu.nus.iss.phoenix.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import javax.validation.constraints.AssertTrue;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  *
- * @author Mi Zaw
+ * @author Phyu Me Zaw
  */
 public class DateUtilTest {
  
     /**
+     * @author Phyu Me Zaw
      * This is the
      * testgetStartDateOfWeekwithStringParam Return Start Date of Week Value test case
      * method for getStartDateOfWeek method in
@@ -32,7 +35,7 @@ public class DateUtilTest {
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");     
      
-        Date expectedSDate =  sdf.parse(sdf.format(new Date()));
+        Date expectedSDate =  sdf.parse("2016-10-02");
         Date startDate = DateUtil.getStartDateOfWeek("2016", "41");
         Assert.assertEquals(expectedSDate, startDate);
 
@@ -41,6 +44,8 @@ public class DateUtilTest {
     
     
      /**
+     * 
+     * @author Phyu Me Zaw
      * This is the
      * testgetStartDateOfWeekwithIntegerParam Return Start Date of Week Value test case
      * method for getStartDateOfWeek method in
@@ -52,15 +57,16 @@ public class DateUtilTest {
      */
     @Test 
     public void testgetStartDateOfWeekwithIntegerParam() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");      
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
        
-        Date expectedSDate =  sdf.parse(sdf.format(new Date()));
+        Date expectedSDate =  sdf.parse("2016-10-02");
         Date startDate = DateUtil.getStartDateOfWeek(2016, 41);
         Assert.assertEquals(expectedSDate, startDate);
  
     }
     
      /**
+     * @author Phyu Me Zaw
      * This is the
      * testgetStartDateOfWeekwithInvalidIntegerParam Return AssertionError test case
      * method for getStartDateOfWeek method in
@@ -84,6 +90,7 @@ public class DateUtilTest {
    
    
     /**
+     *@author Phyu Me Zaw
      * This is the
      * testgetStartDateOfWeekwithInvalidIntegerParam Return AssertionError test case
      * method for getStartDateOfWeek method in
@@ -104,27 +111,127 @@ public class DateUtilTest {
  
     }
     
-    /**
+  
+   /**
+     * @author Phyu Me Zaw
      * This is the
-     * testgetDateDiffwithInvalidParam Return AssertionError test case
-     * method for getStartDateOfWeek method in
+     * testgetDateDiffwithInValidParam Return datetime difference test case
+     * method for getDateDiff method in
      * 2nd Oct 2016 This method  return value expect
-     * @param year 0    
-     * @return AssertionError
+     * @param startdatetime 2016-10-04 18:30:00
+     * @param enddatetime 2016-10-04 18:30:00  
+     * @return Invalid Param -- 
      *
      */
-     @Test(expected = AssertionError.class)
-    public void testgetDateDiffwithInvalidParam() throws ParseException {
+     @Test
+    public void testgetDateDiffwithInValidParam() throws ParseException {
        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");      
+            
+       Date startdatetime =  sdf.parse("2016-10-04 19:30:00");
+       Date enddatetime =  sdf.parse("2016-10-04 19:30:00");        
+       Date resultDate = DateUtil.getDateDiff(startdatetime,enddatetime);      
+       Assert.assertTrue("Invalid Param",resultDate.getTime()<0);
+      
        
-        Date startdatetime =  sdf.parse(sdf.format("2016-10-04 18:30:00"));
-        Date enddatetime =  sdf.parse(sdf.format("2016-10-04 19:30:00"));
-        Date expectedSDate =  sdf.parse(sdf.format("2016-10-04 01:00:00"));
+ 
+    }
+    
+     /**
+     * @author Phyu Me Zaw
+     * This is the
+     * testAddDateTime Return addition of Date value and Time Value test case
+     * method for AddDateTime, getDate and getTime in
+     * 2016-10-04 18:30:00 This method  return value expect
+     * @param date 2016-10-04
+     * @param time  18:30:00  
+     * @return 2016-10-04 18:30:00 -- 
+     *
+     */
+     @Test
+    public void testAddDateTime() throws ParseException {
+       
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");      
+            
+       Date expectedDatetime =  sdf.parse("2016-10-04 18:30:00");     
+       String paramDate = "2016-10-04";
+       String time ="18:30";
+       
+       Date startDate = DateUtil.getDate(paramDate, "yyyy-MM-dd");
+       Date startTime = DateUtil.getTime(time, "HH:mm");
+       Date resultDateTime = DateUtil.AddDateTime(startDate, startTime);
         
-       java.lang.AssertionError expectedErr = new AssertionError();      
-       Date resultDate = DateUtil.getDateDiff(enddatetime,startdatetime);
-       Assert.assertEquals(expectedSDate, resultDate);
+        Assert.assertEquals(expectedDatetime, resultDateTime);
+       
+ 
+    }
+
+      /**
+     * 
+     * @author Phyu Me Zaw
+     * This is the
+     * testgetgetDayOfWeek Return Day of Week Value test case
+     * method for getgetDayOfWeek method in
+     * Tuesday This method  return value expect
+     * @param Date 2016-10-04     
+     * @return Tuesday
+     *
+     */
+    @Test 
+    public void testgetgetDayOfWeek() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+       
+        
+        Date paramDate =  sdf.parse("2016-10-04");
+        String exectedDay="Tuesday";
+        String resultedDay = DateUtil.getDayOfWeek(paramDate);
+        Assert.assertEquals(exectedDay, resultedDay);
+ 
+    }
+   
+      /**
+     * 
+     * @author Phyu Me Zaw
+     * This is the
+     * testgetWeekOfYear Return Week of Year Value test case
+     * method for getWeekOfYear method in
+     * 41 This method  return value expect
+     * @param Date 2016-10-04     
+     * @return Week 41
+     *
+     */
+    @Test 
+    public void testgetWeekOfYear() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+       
+        
+        Date paramDate =  sdf.parse("2016-10-04");
+        int exectedWeek=41;
+        int resultedWeek = DateUtil.getWeekOfYear(paramDate);
+        Assert.assertEquals(exectedWeek, resultedWeek);
+ 
+    }
+    
+     /**
+     * 
+     * @author Phyu Me Zaw
+     * This is the
+     * testgetYear Return Year of Date Value test case
+     * method for getYear method in
+     * 41 This method  return value expect
+     * @param Date 2016-10-04     
+     * @return Year 2016
+     *
+     */
+    @Test 
+    public void testgetYear() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+       
+        
+        Date paramDate =  sdf.parse("2016-10-04");
+        int exectedYear=2016;
+        int resultedYear = DateUtil.getYear(paramDate);
+        Assert.assertEquals(exectedYear, resultedYear);
  
     }
     
