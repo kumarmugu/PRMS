@@ -79,7 +79,8 @@ public class UserManagementService {
     
     /**
      * This method will modify user
-     * Exceptions will throws 
+     * Exceptions will throws when to try to remove roles of presenter/producer 
+     * if user is assigned in upcoming scheduled programs
      * @param user
      * @throws NotFoundException
      * @throws SQLException
@@ -125,7 +126,8 @@ public class UserManagementService {
     }
     }
     /**
-     *
+     * This method will process delete user 
+     * Exception will thrown if try to delete user that assigned in upcoming scheduled program
      * @param userId
      * @throws NotFoundException
      */
@@ -149,7 +151,14 @@ public class UserManagementService {
             throw new SQLException(ex.getMessage());
         }
     }
-
+    
+    
+    /**
+     * This method will find user by userId and will return ArrayList<User> that matches with given userID
+     * @param userId
+     * @return
+     * @throws SQLException 
+     */
     public ArrayList<User> processFindUser(String userId) throws SQLException {
         ArrayList<User> users  = new ArrayList();
         User user = new User(userId);
