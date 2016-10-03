@@ -125,6 +125,10 @@
                                 if (calEvent.start >= today) {
                                     createScheduleProgram(calEvent);
                                     loadScreen("create");
+                                    $("#calendar").weekCalendar("updateEvent",selectedScheduledProgram); 
+                                    $("#calendar").weekCalendar("removeUnsavedEvents"); 
+                                    $("#calendar").weekCalendar("refresh"); 
+                            
                                 }
                             }                            
                         },
@@ -133,7 +137,8 @@
                             return false;
                         },
                         eventClick: function (calEvent, $event) {
-                            selectedScheduledProgram = calEvent;
+                            if (calEvent.title != "")
+                                selectedScheduledProgram = calEvent;
                             $('.wc-cal-event').css('backgroundColor', '#68a1e5');
                             $event.css('backgroundColor', '#F09E73');
                             $event.find('.time').css({'backgroundColor': '#999', 'border': '1px solid #888'});
@@ -286,15 +291,23 @@
             }
             
             function createScheduleProgram(calEvent) {
-                selectedScheduledProgram.title = "";
-                selectedScheduledProgram.programName = "";
-                selectedScheduledProgram.presenterName = "";
-                selectedScheduledProgram.producerName = "";
-                selectedScheduledProgram.presenterID = "";
-                selectedScheduledProgram.producerID = "";
-                selectedScheduledProgram.day = calEvent.start.getDay() + 1; // google calender starts on monday, java calendar starts on sunday
-                var date = new Date(calEvent.start.getTime());                
-                var onejan = new Date(selectedScheduledProgram.start.getFullYear(), 0, 1);
+                selectedScheduledProgram = {
+                'id': calEvent.start.getTime(),
+                'title': '',
+                'programName': '',
+                'producerID': '',
+                'presenterID': '',
+                'producerName': '',
+                'presenterName': '',
+                'year': 0,
+                'week': 0,
+                'day': 0,
+                'start': null,
+                'end': null
+                };
+                var date = new Date(calEvent.start.getTime());  
+                
+                var onejan = new Date(date.getFullYear(), 0, 1);
                 var week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
                 
                 selectedScheduledProgram.start = date;
@@ -323,14 +336,15 @@
                 $("#details #programBrowse").attr('hidden', false);
                 $("#details #presenterBrowse").attr('hidden', false);
                 $("#details #producerBrowse").attr('hidden', false);
-                $("#program").attr('readonly', true);
-                $("#presenter").attr('readonly', true);
-                $("#producer").attr('readonly', true);
-                $("#details #year").attr('readonly', true);
-                $("#details #week").attr('readonly', true);
-                $("#details #day").attr('readonly', true);
-                $("#details #date").attr('readonly', true);                    
-
+                setReadOnly("#program", true);
+                setReadOnly("#presenter", true);
+                setReadOnly("#producer", true);
+                setReadOnly("#details #year", true);
+                setReadOnly("#details #week", true);
+                setReadOnly("#details #day", true);
+                setReadOnly("#details #year", true);
+                setReadOnly("#details #date", true);
+                    
                 var firstDateOfYear = new Date(selectedScheduledProgram.year, 0, 1);
                 $("#details #date").attr('min', $.datepicker.formatDate('yy-mm-dd', firstDateOfYear));
                 var lastDateOfYear = new Date(selectedScheduledProgram.year, 11, 31);
@@ -344,13 +358,13 @@
                     $("#presenter").val("");
                     $("#producer").val("");
 
-                    $("#details #startTime").attr('readonly', true);
-                    $("#details #endTime").attr('readonly', true);
+                    setReadOnly("#details #startTime", true);
+                    setReadOnly("#details #endTime", true);
                     dateChange();
                 } else if (mode === "modify") {
-                    $("#details #date").attr('readonly', false);
-                    $("#details #startTime").attr('readonly', false);
-                    $("#details #endTime").attr('readonly', false);
+                    setReadOnly("#details #date", false);
+                    setReadOnly("#details #startTime", false);
+                    setReadOnly("#details #endTime", false);
                     dateChange();
                 } else if (mode === "copy") {
                     $("#scheduledProgramId").val(0);
@@ -362,24 +376,25 @@
                         $("#details #date").attr('value', $.datepicker.formatDate('yy-mm-dd', nextWeek));
                         dateChange();
                     }
-                    $("#details #date").attr('readonly', false);
-                    $("#details #startTime").attr('readonly', false);
-                    $("#details #endTime").attr('readonly', false);
+                    setReadOnly("#details #date", false);
+                    setReadOnly("#details #startTime", false);
+                    setReadOnly("#details #endTime", false);
                 } else if (mode === "delete" || mode === "detail")
                 {
                     $("#details #programBrowse").attr('hidden', true);
                     $("#details #presenterBrowse").attr('hidden', true);
                     $("#details #producerBrowse").attr('hidden', true);
-                    $("#details #week").attr('readonly', true);
-                    $("#details #day").attr('readonly', true);
-                    $("#details #startTime").attr('readonly', true);
-                    $("#details #endTime").attr('readonly', true);
-                    $("#details #year").attr('readonly', true);
-                    $("#details #date").attr('readonly', true);
+                    
+                    setReadOnly("#details #date", true);
+                    setReadOnly("#details #startTime", true);
+                    setReadOnly("#details #endTime", true);
                 }
                 return $("#details");
             }
-
+            function setReadOnly(fieldID, isReadOnly) {
+                $(fieldID).attr('readonly', isReadOnly);
+                $(fieldID).attr('style', (isReadOnly) ? "background-color: #E5E7E9": "background-color: white" );
+            }
             function displayMsg() {
                 if (mode !== "")
                     $('#msg').html(msg);
